@@ -67,6 +67,7 @@ Route::middleware('auth')->group(function () {
 
     // Quotation list
     Route::get('/quotations', [QuotationController::class, 'index'])->name('quotations.index');
+    Route::get('/canvas', [QuotationController::class, 'canvas'])->name('quotations.canvas');
 
 // Quotation edit
     Route::get('/quotations/{quotation}/edit', [QuotationController::class, 'edit'])->name('quotations.edit');

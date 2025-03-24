@@ -500,6 +500,9 @@ class QuotationController extends Controller
         return redirect()->route('quotations.index')->with('success', 'Quotation title updated successfully.');
     }
 
-
+    public function canvas()
+    {
+        return view('canvas.canvas');
+    }
 }
 
