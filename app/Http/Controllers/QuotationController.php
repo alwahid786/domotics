@@ -471,7 +471,6 @@ class QuotationController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
         ]);
-
         // Create a new quotation
         $quotation = new Quotation();
         $quotation->title = $request->title;
