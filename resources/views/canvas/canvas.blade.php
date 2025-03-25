@@ -109,7 +109,7 @@
   <div id="dotModal" class="modal-overlay">
       <div class="modal-content">
           <span class="close-modal" id="closeModal">&times;</span>
-          <div class="modal-header">Dot Information</div>
+          <div class="modal-header">Sensor Information</div>
           <div class="modal-body">
               <form id="dotForm">
                   <div class="mb-3">
@@ -120,9 +120,6 @@
                       <label for="sensorSelect" class="form-label">Sensor</label>
                       <select class="form-select" id="sensorSelect">
                           <option value="">Select Sensor</option>
-                          <option value="sensor1">Sensor 1</option>
-                          <option value="sensor2">Sensor 2</option>
-                          <option value="sensor3">Sensor 3</option>
                       </select>
                   </div>
                   <!-- Hidden fields to store dot coordinates -->
@@ -165,13 +162,33 @@
       const generatePDFBtn = document.getElementById('generatePDF');
       const sensorListContainer = document.getElementById('sensorListContainer');
       const pdfBtnContainer = document.getElementById('pdfBtnContainer');
+      const sensorSelectTag = document.getElementById('sensorSelect');
+      let sensorPrices = {};
+      let selectedSensors = new Set();
 
-      // Mapping sensor to price
-      const sensorPrices = {
-          sensor1: 100,
-          sensor2: 200,
-          sensor3: 300
-      };
+      const fetchSensors = async () => {
+        try {
+            const res = await fetch('https://67e251e997fc65f535356cb3.mockapi.io/api/canvas');
+            if(!res.ok) {
+             throw new Error("Error while fetching sensors")
+            }
+            const data = await res.json();
+            if(data?.length > 0) {
+                sensorPrices = {};
+
+                data?.forEach((sensor) => {
+                    const {sensorName, price} = sensor?.sensors;
+                    sensorPrices[sensorName] = price;
+
+                    sensorSelectTag.innerHTML += `<option value="${sensorName}">${sensorName}</option>`
+                })
+            }
+        } catch (error) {
+            console.error("Error while fetching sensors", error.message)
+        }
+      }
+
+      fetchSensors();
 
       let dotCount = 0;
 
@@ -248,6 +265,10 @@
               alert('Please enter a name and select a sensor.');
               return;
           }
+
+          selectedSensors.add(sensor);
+          sensorSelectTag.querySelector(`option[value="${sensor}"]`).remove();
+
           dotCount++;
           const dotId = 'dot-' + (dotCount - 1);
           const dot = document.getElementById(dotId);
@@ -255,7 +276,7 @@
           dot.dataset.sensor = sensor;
           dot.title = `Name: ${name}, Sensor: ${sensor}`;
 
-          const price = sensorPrices[sensor] || 0;
+          const price = sensorPrices[sensor] || "$0";;
           const tr = document.createElement('tr');
           tr.innerHTML = `<td>${dotCount}</td><td>${name}</td><td>${sensor}</td><td>${price}</td>`;
           sensorTableBody.appendChild(tr);
