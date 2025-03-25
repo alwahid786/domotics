@@ -165,6 +165,7 @@
       const sensorSelectTag = document.getElementById('sensorSelect');
       let sensorPrices = {};
       let selectedSensors = new Set();
+      let lastDot = null;
 
       const fetchSensors = async () => {
         try {
@@ -192,12 +193,18 @@
 
       let dotCount = 0;
 
-      function showModal() {
+      function showModal(dot) {
+          lastDot = dot;
           dotModal.style.display = 'flex';
       }
       function hideModal() {
           dotModal.style.display = 'none';
           dotForm.reset();
+
+          if(lastDot) {
+            lastDot.remove();
+            lastDot = null;
+          }
       }
 
       closeModal.addEventListener('click', hideModal);
@@ -254,7 +261,7 @@
           document.getElementById('dotX').value = x;
           document.getElementById('dotY').value = y;
 
-          showModal();
+          showModal(dot);
       });
 
       // Save dot details and add sensor info to table
@@ -269,7 +276,9 @@
           selectedSensors.add(sensor);
           sensorSelectTag.querySelector(`option[value="${sensor}"]`).remove();
 
+          lastDot = null;
           dotCount++;
+          
           const dotId = 'dot-' + (dotCount - 1);
           const dot = document.getElementById(dotId);
           dot.dataset.name = name;
