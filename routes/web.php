@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EstimationController;
 use App\Http\Controllers\RoomController;
 
 
@@ -67,7 +68,8 @@ Route::middleware('auth')->group(function () {
 
     // Quotation list
     Route::get('/quotations', [QuotationController::class, 'index'])->name('quotations.index');
-    Route::get('/canvas', [QuotationController::class, 'canvas'])->name('quotations.canvas');
+    Route::get('/estimations', [EstimationController::class, 'estimate'])->name('estimations.create');
+    Route::get('/sensors', [EstimationController::class, 'sensors'])->name('estimations.sensor');
 
 // Quotation edit
     Route::get('/quotations/{quotation}/edit', [QuotationController::class, 'edit'])->name('quotations.edit');
