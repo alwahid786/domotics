@@ -21,10 +21,10 @@ class CreateRoomsTable extends Migration
             $table->timestamps();
         });
 
-        // Add room_id to the products table
-        Schema::table('products', function (Blueprint $table) {
-            $table->foreignId('room_id')->constrained('rooms')->onDelete('cascade');
-        });
+        // // Add room_id to the products table
+        // Schema::table('products', function (Blueprint $table) {
+        //     $table->foreignId('room_id')->constrained('rooms')->onDelete('cascade');
+        // });
     }
 
     /**
@@ -34,10 +34,10 @@ class CreateRoomsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropForeign(['room_id']);
-            $table->dropColumn('room_id');
-        });
+        // Schema::table('products', function (Blueprint $table) {
+        //     $table->dropForeign(['room_id']);
+        //     $table->dropColumn('room_id');
+        // });
 
         Schema::dropIfExists('rooms');
     }

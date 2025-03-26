@@ -27,15 +27,14 @@
                     <x-nav-link :href="route('quotations.index')" :active="request()->routeIs('quotations.index')">
                         {{ __('Preventivi') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('estimations.create')" :active="request()->routeIs('estimations.create')">
+                        {{ __('Stime') }}
+                    </x-nav-link>
                     @if(Auth::user()->hasRole('Admin'))
                     <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
                         {{ __('Utenti') }}
                     </x-nav-link>
                     @endif
-
-
-
-
                 </div>
             </div>
 

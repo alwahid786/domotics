@@ -17,7 +17,7 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->decimal('price', 10, 2); // Main price column
+            $table->decimal('price', 10, 2)->default(0.00); // Main price column
             $table->string('image')->nullable(); // Image file path
             $table->timestamps();
         });
