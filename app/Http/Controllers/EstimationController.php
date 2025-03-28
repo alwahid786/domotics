@@ -108,24 +108,26 @@ class EstimationController extends Controller
         return view('estimation.view', compact('estimate'));
     }
 
-    public function fetch()
+    public function fetch(Request $request)
     {
+        $id = $request->estimate; 
         $estimations = DB::table('estimations')
             ->leftJoin('estimation_products', 'estimations.id', '=', 'estimation_products.estimation_id')
             ->select(
                 'estimations.id as estimation_id',
-                'estimations.user_id',
                 'estimations.image',
                 'estimations.total',
-                'estimations.created_at',
-                'estimation_products.id as product_id',
                 'estimation_products.name as product_name',
                 'estimation_products.price as product_price',
                 'estimation_products.x_position',
                 'estimation_products.y_position'
             )
+            ->when($id, function ($query, $id) {
+                return $query->where('estimations.id', $id);
+            })
             ->get();
-
+    
         return response()->json($estimations);
     }
+    
 }

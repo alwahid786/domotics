@@ -35,7 +35,6 @@
             .then(response => response.json())
             .then(data => {
                 console.log(data); // Debugging response in the console
-                updateTable(data);
             })
             .catch(error => console.error("Error fetching estimations:", error));
     }
