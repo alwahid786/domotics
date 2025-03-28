@@ -81,9 +81,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/estimations/create', [EstimationController::class, 'create'])->name('estimations.create');
     Route::post('/estimations/store', [EstimationController::class, 'store'])->name('estimations.store');
     Route::get('/estimations/{estimate}/edit', [EstimationController::class, 'edit'])->name('estimations.edit');
-    Route::get('/estimations/{estimate}/{room}', [EstimationController::class, 'show'])->name('estimations.show');
+    Route::get('/estimations/{estimate}/show', [EstimationController::class, 'show'])->name('estimations.show');
     Route::put('/estimations/{estimate}', [EstimationController::class, 'update'])->name('estimations.update');
     Route::delete('/estimations/{estimate}/delete', [EstimationController::class, 'destroy'])->name('estimations.destroy');
+    Route::get('/estimations/view', [EstimationController::class, 'fetch'])->name('estimations.fetch');
 
 // Quotation update
     Route::put('/quotations/{quotation}', [QuotationController::class, 'update'])->name('quotations.update');

@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('estimation_products', function (Blueprint $table) {
             $table->id();
             $table->integer('estimation_id');
-            $table->integer('product_id');
-            $table->string('product_coordinates')->nullable(); 
+            $table->integer('product_id')->comment('sensor_id')->nullable();
+            $table->string('x_position')->nullable(); 
+            $table->string('y_position')->nullable(); 
             $table->string('name')->nullable(); 
             $table->decimal('price', 10, 2);
             $table->timestamps();
