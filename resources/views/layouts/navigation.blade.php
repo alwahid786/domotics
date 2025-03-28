@@ -27,7 +27,7 @@
                     <x-nav-link :href="route('quotations.index')" :active="request()->routeIs('quotations.index')">
                         {{ __('Preventivi') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('estimations.create')" :active="request()->routeIs('estimations.create')">
+                    <x-nav-link :href="route('estimations.index')" :active="request()->routeIs('estimations.index')">
                         {{ __('Stime') }}
                     </x-nav-link>
                     @if(Auth::user()->hasRole('Admin'))
@@ -103,6 +103,9 @@
             <x-responsive-nav-link :href="route('quotations.index')" :active="request()->routeIs('quotations.index')">
                 {{ __('Preventivi') }}
             </x-responsive-nav-link>
+            <x-nav-link :href="route('estimations.index')" :active="request()->routeIs('estimations.index')">
+                {{ __('Stime') }}
+            </x-nav-link>
             @if(Auth::user()->hasRole('Admin'))
                 <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
                     {{ __('Utenti') }}
