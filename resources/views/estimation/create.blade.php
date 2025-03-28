@@ -91,10 +91,20 @@
                         <th>Name</th>
                         <th>Sensor</th>
                         <th>Price</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                 </tbody>
+                <tfoot>
+                    <tr id="totalRow">
+                        <td>Total Price</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>$<span id="totalPrice">0</span></td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     
@@ -163,10 +173,12 @@
       const sensorListContainer = document.getElementById('sensorListContainer');
       const pdfBtnContainer = document.getElementById('pdfBtnContainer');
       const sensorSelectTag = document.getElementById('sensorSelect');
+      
       let sensorPrices = {};
       let selectedSensors = new Set();
       let lastDot = null;
-      const sensorsIds = [];
+      let dotCount = 0;
+      let productsData = [];
 
       const fetchSensors = async () => {
         try {
@@ -175,6 +187,7 @@
              throw new Error("Error while fetching sensors")
             }
             const data = await res.json();
+            console.log('product data', data)
             if (data?.sensors?.length > 0) {
                 sensorPrices = {};
                 data.sensors.forEach((sensor) => {
@@ -191,8 +204,6 @@
 
       fetchSensors();
 
-      let dotCount = 0;
-
       function showModal(dot) {
           lastDot = dot;
           dotModal.style.display = 'flex';
@@ -202,7 +213,6 @@
           dotForm.reset();
 
           if(lastDot) {
-            lastDot.remove();
             lastDot = null;
           }
       }
@@ -264,108 +274,158 @@
           showModal(dot);
       });
 
+      function updateTotalPrice() {
+        const totalPriceEl = document.getElementById('totalPrice');
+        const total = productsData.reduce((acc, item) => acc + Number(item.price), 0)
+        totalPriceEl.textContent = total;
+      }
+
       // Save dot details and add sensor info to table
       document.getElementById('saveDot').addEventListener('click', function() {
-          const name = document.getElementById('dotName').value;
+          const name = document.getElementById('dotName').value.trim();
           const sensor = document.getElementById('sensorSelect').value;
           const sensorSelectTag = document.getElementById('sensorSelect');
-        const selectedOption = sensorSelectTag.options[sensorSelectTag.selectedIndex];
-        const sensorId = selectedOption.getAttribute("data-id");
+          const selectedOption = sensorSelectTag.options[sensorSelectTag.selectedIndex];
+          const sensorId = selectedOption.getAttribute("data-id");
 
           if (!name || !sensor) {
               alert('Please enter a name and select a sensor.');
               return;
           }
 
-          selectedSensors.add(sensor);
           sensorSelectTag.querySelector(`option[value="${sensor}"]`).remove();
 
-          lastDot = null;
-          dotCount++;
-          
-          const dotId = 'dot-' + (dotCount - 1);
-          const dot = document.getElementById(dotId);
+          // Retrieve coordinates from hidden inputs
+          const x = parseFloat(document.getElementById('dotX').value);
+          const y = parseFloat(document.getElementById('dotY').value);
+          const price = sensorPrices[sensor] || "$0";
+          const currentDotId = 'dot-' + dotCount;
+
+          // Save the dot details into ProductsData array
+          productsData.push({
+              id: currentDotId,
+              name,
+              sensor,
+              sensorId,
+              price,
+              x,
+              y
+          });
+
+          // Increase dot count and set attributes on the dot element
+          const dot = document.getElementById(currentDotId);
           dot.dataset.name = name;
           dot.dataset.sensor = sensor;
           dot.title = `Name: ${name}, Sensor: ${sensor}`;
-
-          const price = sensorPrices[sensor] || "$0";;
-          const tr = document.createElement('tr');
-          tr.innerHTML = `<td>${dotCount}</td><td>${name}</td><td>${sensor}</td><td>$${price}</td>`;
-          sensorTableBody.appendChild(tr);
-          sensorsIds.push(sensorId)
+          dotCount++;
           
+          // Create a new table row with a delete button (✕)
+          const tr = document.createElement('tr');
+          tr.setAttribute('id', 'row-' + currentDotId);
+          tr.innerHTML = `<td>${dotCount}</td>
+                          <td>${name}</td>
+                          <td>${sensor}</td>
+                          <td>$${price}</td>
+                          <td><button class="delete-btn" data-dotid="${currentDotId}">✕</button></td>`;
+          sensorTableBody.appendChild(tr);
+
+          // Add event listener to the delete button to remove the dot and row
+          tr.querySelector('.delete-btn').addEventListener('click', function() {
+              const dotId = this.getAttribute('data-dotid');
+              // Remove dot from canvas
+              const dotElem = document.getElementById(dotId);
+              if(dotElem) dotElem.remove();
+              // Remove table row
+              const row = document.getElementById('row-' + dotId);
+              if(row) row.remove();
+              const removedProduct = productsData.find(item => item.id === dotId)
+              // Remove the corresponding entry from ProductsData
+              productsData = productsData.filter(item => item.id !== dotId);
+
+              console.log('removed product', removedProduct);
+
+              if(removedProduct) {
+                const newOption = document.createElement("option");
+                newOption.value = removedProduct.sensor;
+                newOption.setAttribute('data-id', removedProduct.sensorId);
+                newOption.textContent = removedProduct.sensor;
+                sensorSelectTag.appendChild(newOption)
+              }
+              updateTotalPrice()
+          });
+
           hideModal();
+          updateTotalPrice()
+          console.log('products data', productsData)
+          console.log('final image', finalImage)
         });
         
         // Generate PDF instantly using composed image and sensor table
         generatePDFBtn.addEventListener('click', function() {
-          console.log('sensor ids:', sensorsIds)
-          generatePDFBtn.disabled = true;
-          generatePDFBtn.classList.add('loading');
-          generatePDFBtn.textContent = 'Generating PDF...';
+    generatePDFBtn.disabled = true;
 
-          // Create an offscreen canvas using the natural dimensions of the final image
-          const offscreenCanvas = document.createElement('canvas');
-          const baseImg = new Image();
-          baseImg.onload = function() {
-              offscreenCanvas.width = baseImg.naturalWidth;
-              offscreenCanvas.height = baseImg.naturalHeight;
-              const ctx = offscreenCanvas.getContext('2d');
-              // Draw the base image
-              ctx.drawImage(baseImg, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
+    // Create an offscreen canvas using the natural dimensions of the final image
+    const offscreenCanvas = document.createElement('canvas');
+    const baseImg = new Image();
+    baseImg.onload = function() {
+        offscreenCanvas.width = baseImg.naturalWidth;
+        offscreenCanvas.height = baseImg.naturalHeight;
+        const ctx = offscreenCanvas.getContext('2d');
+        // Draw the base image
+        ctx.drawImage(baseImg, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
-              // Calculate scale factor: finalImage is displayed scaled, so compare its width to natural width
-              const scaleFactor = offscreenCanvas.width / finalImage.width;
+        // Calculate scale factor: finalImage is displayed scaled, so compare its width to natural width
+        const scaleFactor = offscreenCanvas.width / finalImage.width;
 
-              // Draw each dot from the canvasContainer onto the offscreen canvas
-              const dots = canvasContainer.querySelectorAll('div');
-              dots.forEach(dot => {
-                  let dotLeft = parseFloat(dot.style.left);
-                  let dotTop = parseFloat(dot.style.top);
-                  // Scale coordinates
-                  dotLeft *= scaleFactor;
-                  dotTop *= scaleFactor;
-                  const radius = 2.5 * scaleFactor;
-                  ctx.beginPath();
-                  ctx.arc(dotLeft + radius, dotTop + radius, radius, 0, Math.PI * 2);
-                  ctx.fillStyle = 'red';
-                  ctx.fill();
-              });
+        // Draw each dot from the canvasContainer onto the offscreen canvas
+        const dots = canvasContainer.querySelectorAll('div');
+        dots.forEach(dot => {
+            let dotLeft = parseFloat(dot.style.left);
+            let dotTop = parseFloat(dot.style.top);
+            // Scale coordinates
+            dotLeft *= scaleFactor;
+            dotTop *= scaleFactor;
+            const radius = 2.5 * scaleFactor;
+            ctx.beginPath();
+            ctx.arc(dotLeft + radius, dotTop + radius, radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'red';
+            ctx.fill();
+        });
 
-              // Convert the composed canvas to data URL
-              const combinedImgData = offscreenCanvas.toDataURL('image/png');
+        // Convert the composed canvas to data URL
+        const combinedImgData = offscreenCanvas.toDataURL('image/png');
 
-              // Create a new PDF document and add the combined image
-              const pdf = new jsPDF('p', 'mm', 'a4');
-              const pageWidth = pdf.internal.pageSize.getWidth();
-              const margin = 10;
-              const pdfImgWidth = pageWidth - (2 * margin);
-              const pdfImgHeight = (offscreenCanvas.height * pdfImgWidth) / offscreenCanvas.width;
-              pdf.addImage(combinedImgData, 'PNG', margin, margin, pdfImgWidth, pdfImgHeight);
+        // Create a new PDF document and add the combined image
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const margin = 10;
+        const pdfImgWidth = pageWidth - (2 * margin);
+        const pdfImgHeight = (offscreenCanvas.height * pdfImgWidth) / offscreenCanvas.width;
+        pdf.addImage(combinedImgData, 'PNG', margin, margin, pdfImgWidth, pdfImgHeight);
 
-              // Gather table data from sensor table
-              let tableData = [];
-              sensorTableBody.querySelectorAll('tr').forEach(row => {
-                  const cols = row.querySelectorAll('td');
-                  tableData.push([cols[0].innerText, cols[1].innerText, cols[2].innerText, cols[3].innerText]);
-              });
+        // Gather table data from sensor table (only tbody rows)
+        let tableData = [];
+        sensorTableBody.querySelectorAll('tr').forEach(row => {
+            const cols = row.querySelectorAll('td');
+            tableData.push([cols[0].innerText, cols[1].innerText, cols[2].innerText, cols[3].innerText]);
+        });
+        // Append the total price row (the tfoot is outside tbody)
+        const total = document.getElementById('totalPrice').innerText;
+        tableData.push(["", "", "Total Price", "$" + total]);
 
-              // Add sensor table below the image using autoTable
-              pdf.autoTable({
-                  startY: pdfImgHeight + margin + 5,
-                  head: [['Sr. No', 'Name', 'Sensor', 'Price']],
-                  body: tableData,
-                  theme: 'grid',
-                  styles: { fontSize: 10 }
-              });
+        // Add sensor table below the image using autoTable
+        pdf.autoTable({
+            startY: pdfImgHeight + margin + 5,
+            head: [['Sr. No', 'Name', 'Sensor', 'Price']],
+            body: tableData,
+            theme: 'grid',
+            styles: { fontSize: 10 }
+        });
 
-              pdf.save('estimation.pdf');
-              generatePDFBtn.disabled = false;
-              generatePDFBtn.classList.remove('loading');
-              generatePDFBtn.textContent = 'Generate PDF Estimation';
-          };
-          baseImg.src = finalImage.src;
-      });
+        pdf.save('estimation.pdf');
+        generatePDFBtn.disabled = false;
+    };
+    baseImg.src = finalImage.src;
+});
   </script>
 </x-app-layout>
