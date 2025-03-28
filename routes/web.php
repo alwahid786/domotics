@@ -67,17 +67,23 @@ Route::middleware('auth')->group(function () {
 
 
     // Quotation list
-    Route::get('/quotations', [QuotationController::class, 'index'])->name('quotations.index');
-    Route::get('/estimations', [EstimationController::class, 'estimate'])->name('estimations.create');
-    Route::get('/sensors', [EstimationController::class, 'sensors'])->name('estimations.sensor');
-
-// Quotation edit
+    Route::get('/quotations', [QuotationController::class, 'index'])->name('quotations.index');    
+    // Quotation edit
     Route::get('/quotations/{quotation}/edit', [QuotationController::class, 'edit'])->name('quotations.edit');
     // Quotation view
     Route::get('/quotations/{quotation}/view', [QuotationController::class, 'view'])->name('quotations.view');
     Route::get('/quotations/{quotation}/confirm', [QuotationController::class, 'confirmQuotation'])->name('quotations.confirm');
     Route::get('/quotations/{quotation}/complete', [QuotationController::class, 'completeQuotation'])->name('quotations.complete');
-
+    
+    //estimation routes
+    Route::get('/sensors', [EstimationController::class, 'sensors'])->name('estimations.sensor');    
+    Route::get('/estimations', [EstimationController::class, 'index'])->name('estimations.index');
+    Route::get('/estimations/create', [EstimationController::class, 'create'])->name('estimations.create');
+    Route::post('/estimations/store', [EstimationController::class, 'store'])->name('estimations.store');
+    Route::get('/estimations/{estimate}/edit', [EstimationController::class, 'edit'])->name('estimations.edit');
+    Route::get('/estimations/{estimate}/{room}', [EstimationController::class, 'show'])->name('estimations.show');
+    Route::put('/estimations/{estimate}', [EstimationController::class, 'update'])->name('estimations.update');
+    Route::delete('/estimations/{estimate}/delete', [EstimationController::class, 'destroy'])->name('estimations.destroy');
 
 // Quotation update
     Route::put('/quotations/{quotation}', [QuotationController::class, 'update'])->name('quotations.update');

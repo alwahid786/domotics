@@ -8,8 +8,17 @@ use Illuminate\Http\Request;
 
 class EstimationController extends Controller
 {
-    public function estimate()
+    public function index(Request $request)
     {   
+        return view('estimation.index');
+    }
+    public function create()
+    {   
+        return view('estimation.create');
+    }
+    public function store(Request $request)
+    {   
+        dd($request->all());
         return view('estimation.create');
     }
     public function sensors()
