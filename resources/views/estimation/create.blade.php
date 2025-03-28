@@ -300,7 +300,23 @@
         
         // Generate PDF instantly using composed image and sensor table
         generatePDFBtn.addEventListener('click', function() {
-          console.log('sensor ids:', sensorsIds)
+          fetch('/estimations/store', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            },
+            body: JSON.stringify({
+              _method: 'POST',
+              sensors: sensorsIds,
+            }),
+            }).then((res) => res.json())
+              .then((data) => {
+                // console.log(data);
+                })
+                .catch((error) => console.error(error)
+            );
+
           generatePDFBtn.disabled = true;
           generatePDFBtn.classList.add('loading');
           generatePDFBtn.textContent = 'Generating PDF...';
