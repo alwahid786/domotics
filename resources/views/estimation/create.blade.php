@@ -364,6 +364,91 @@
         
         // Generate PDF instantly using composed image and sensor table
         generatePDFBtn.addEventListener('click', function() {
+
+          fetch('/estimations/store', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            },
+            body: JSON.stringify({
+              _method: 'POST',
+              sensors: sensorsIds,
+            }),
+            }).then((res) => res.json())
+              .then((data) => {
+                // console.log(data);
+                })
+                .catch((error) => console.error(error)
+            );
+
+          generatePDFBtn.disabled = true;
+          generatePDFBtn.classList.add('loading');
+          generatePDFBtn.textContent = 'Generating PDF...';
+
+          // Create an offscreen canvas using the natural dimensions of the final image
+          const offscreenCanvas = document.createElement('canvas');
+          const baseImg = new Image();
+          baseImg.onload = function() {
+              offscreenCanvas.width = baseImg.naturalWidth;
+              offscreenCanvas.height = baseImg.naturalHeight;
+              const ctx = offscreenCanvas.getContext('2d');
+              // Draw the base image
+              ctx.drawImage(baseImg, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
+
+              // Calculate scale factor: finalImage is displayed scaled, so compare its width to natural width
+              const scaleFactor = offscreenCanvas.width / finalImage.width;
+
+              // Draw each dot from the canvasContainer onto the offscreen canvas
+              const dots = canvasContainer.querySelectorAll('div');
+              dots.forEach(dot => {
+                  let dotLeft = parseFloat(dot.style.left);
+                  let dotTop = parseFloat(dot.style.top);
+                  // Scale coordinates
+                  dotLeft *= scaleFactor;
+                  dotTop *= scaleFactor;
+                  const radius = 2.5 * scaleFactor;
+                  ctx.beginPath();
+                  ctx.arc(dotLeft + radius, dotTop + radius, radius, 0, Math.PI * 2);
+                  ctx.fillStyle = 'red';
+                  ctx.fill();
+              });
+
+              // Convert the composed canvas to data URL
+              const combinedImgData = offscreenCanvas.toDataURL('image/png');
+
+              // Create a new PDF document and add the combined image
+              const pdf = new jsPDF('p', 'mm', 'a4');
+              const pageWidth = pdf.internal.pageSize.getWidth();
+              const margin = 10;
+              const pdfImgWidth = pageWidth - (2 * margin);
+              const pdfImgHeight = (offscreenCanvas.height * pdfImgWidth) / offscreenCanvas.width;
+              pdf.addImage(combinedImgData, 'PNG', margin, margin, pdfImgWidth, pdfImgHeight);
+
+              // Gather table data from sensor table
+              let tableData = [];
+              sensorTableBody.querySelectorAll('tr').forEach(row => {
+                  const cols = row.querySelectorAll('td');
+                  tableData.push([cols[0].innerText, cols[1].innerText, cols[2].innerText, cols[3].innerText]);
+              });
+
+              // Add sensor table below the image using autoTable
+              pdf.autoTable({
+                  startY: pdfImgHeight + margin + 5,
+                  head: [['Sr. No', 'Name', 'Sensor', 'Price']],
+                  body: tableData,
+                  theme: 'grid',
+                  styles: { fontSize: 10 }
+              });
+
+              pdf.save('estimation.pdf');
+              generatePDFBtn.disabled = false;
+              generatePDFBtn.classList.remove('loading');
+              generatePDFBtn.textContent = 'Generate PDF Estimation';
+          };
+          baseImg.src = finalImage.src;
+      });
+      
     generatePDFBtn.disabled = true;
 
     // Create an offscreen canvas using the natural dimensions of the final image
@@ -429,5 +514,6 @@
     };
     baseImg.src = finalImage.src;
 });
+
   </script>
 </x-app-layout>
