@@ -23,42 +23,97 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 9999;
+            z-index: 10000;
         }
 
         .modal-content {
             background: #fff;
-            padding: 20px;
-            border-radius: 4px;
-            width: 300px;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease;
             position: relative;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .modal-header {
-            font-size: 18px;
+            font-size: 20px;
             margin-bottom: 15px;
+            font-weight: bold;
+            color: #333;
         }
 
         .close-modal {
             position: absolute;
-            top: 8px;
-            right: 10px;
-            font-size: 20px;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            color: #888;
             cursor: pointer;
+            border: none;
+            background: transparent;
+            outline: none;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-body label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            display: block;
+            color: #555;
+        }
+
+        .modal-body input,
+        .modal-body select {
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
         }
 
         .modal-footer {
             text-align: right;
-            margin-top: 15px;
         }
 
         .modal-footer button {
-            margin-left: 5px;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+
+        .modal-footer .btn-secondary {
+            background-color: #ccc;
+            color: #333;
+        }
+
+        .modal-footer .btn-primary {
+            background-color: #007bff;
+            color: #fff;
         }
 
         /* Table styling */
