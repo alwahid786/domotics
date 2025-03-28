@@ -190,6 +190,7 @@
         let lastDot = null;
         let dotCount = 0;
         let productsData = [];
+        let totalPrice = 0;
 
         const fetchSensors = async () => {
             try {
@@ -260,14 +261,27 @@
 
         // Crop Image & display final image with dots container active
         cropButton.addEventListener('click', function() {
+            // if (cropper) {
+            //     const canvas = cropper.getCroppedCanvas();
+            //     finalImage.src = canvas.toDataURL();
+            //     finalImage.style.display = 'block';
+            //     cropContainer.style.display = 'none';
+            //     // Show sensor table and PDF button once image is available
+            //     sensorListContainer.style.display = 'block';
+            //     pdfBtnContainer.style.display = 'block';
+            // }
             if (cropper) {
-                const canvas = cropper.getCroppedCanvas();
-                finalImage.src = canvas.toDataURL();
-                finalImage.style.display = 'block';
-                cropContainer.style.display = 'none';
-                // Show sensor table and PDF button once image is available
-                sensorListContainer.style.display = 'block';
-                pdfBtnContainer.style.display = 'block';
+                cropper.getCroppedCanvas().toBlob(function(blob) {
+                    // Set the final image to a blob URL for display purposes
+                    finalImage.src = URL.createObjectURL(blob);
+                    finalImage.style.display = 'block';
+                    // Save the blob for later use in your API call
+                    finalImage.blob = blob;
+                    cropContainer.style.display = 'none';
+                    // Show sensor table and PDF button once image is available
+                    sensorListContainer.style.display = 'block';
+                    pdfBtnContainer.style.display = 'block';
+                }, 'image/png');
             }
         });
 
@@ -298,6 +312,7 @@
             const totalPriceEl = document.getElementById('totalPrice');
             const total = productsData.reduce((acc, item) => acc + Number(item.price), 0)
             totalPriceEl.textContent = total;
+            totalPrice = total;
         }
 
         // Save dot details and add sensor info to table
@@ -383,7 +398,32 @@
 
         // Generate PDF instantly using composed image and sensor table
         generatePDFBtn.addEventListener('click', function() {
+            const formData = new FormData();
+            formData.append('productsData', JSON.stringify(productsData));
+            formData.append('totalPrice', totalPrice)
+            formData.append('image', finalImage.blob, 'canvas-image.png');
+
+            try {
+                fetch('/estimations/store', {
+                        method: 'POST',
+                        headers: {
+                            // 'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        },
+                        body: formData,
+                    })
+                    .then((res) => res.json())
+                    .then((data) => {
+                        console.log("Response:", data);
+                        // Optionally do something with the response data
+                    })
+                    .catch((error) => console.error("Fetch error:", error));
+            } catch (error) {
+                console.error("Error caught:", error);
+            }
+
             generatePDFBtn.disabled = true;
+
 
             // Create an offscreen canvas using the natural dimensions of the final image
             const offscreenCanvas = document.createElement('canvas');
