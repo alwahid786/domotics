@@ -213,6 +213,7 @@
           dotForm.reset();
 
           if(lastDot) {
+            lastDot.remove();
             lastDot = null;
           }
       }
@@ -354,6 +355,7 @@
               updateTotalPrice()
           });
 
+          lastDot = null;
           hideModal();
           updateTotalPrice()
           console.log('products data', productsData)
