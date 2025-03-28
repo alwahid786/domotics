@@ -385,22 +385,6 @@
         generatePDFBtn.addEventListener('click', function() {
             generatePDFBtn.disabled = true;
 
-            fetch('/estimations/store', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    },
-                    body: JSON.stringify({
-                        _method: 'POST',
-                        sensors: sensorsIds,
-                    }),
-                }).then((res) => res.json())
-                .then((data) => {
-                    // console.log(data);
-                })
-                .catch((error) => console.error(error));
-
             // Create an offscreen canvas using the natural dimensions of the final image
             const offscreenCanvas = document.createElement('canvas');
             const baseImg = new Image();
