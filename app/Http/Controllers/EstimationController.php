@@ -69,7 +69,11 @@ class EstimationController extends Controller
 
         DB::table('estimation_products')->insert($productData);
 
-        return redirect()->route('estimation.index')->with('success', 'Estimation saved successfully.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Stima creata con successo.',
+        ]);
+
     }
 
     public function sensors()
@@ -129,5 +133,14 @@ class EstimationController extends Controller
     
         return response()->json($estimations);
     }
+    public function destroy($estimate)
+    {
+        DB::table('estimations')->where('id', $estimate)->delete();
+        DB::table('estimation_products')->where('estimation_id', $estimate)->delete();
+
+        return redirect()->route('estimations.index')
+            ->withSuccess('Stime cancellato con successo.');
+    }
+
     
 }

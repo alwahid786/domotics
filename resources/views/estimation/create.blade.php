@@ -459,24 +459,24 @@
         formData.append('totalPrice', totalPrice)
         formData.append('image', finalImage.blob, 'canvas-image.png');
 
-        try {
-            fetch('/estimations/store', {
-                    method: 'POST',
-                    headers: {
-                        // 'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    },
-                    body: formData,
-                })
-                .then((res) => res.json())
-                .then((data) => {
-                    console.log("Response:", data);
-                    // Optionally do something with the response data
-                })
-                .catch((error) => console.error("Fetch error:", error));
-        } catch (error) {
-            console.error("Error caught:", error);
-        }
+    fetch('/estimations/store', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            },
+            body: formData,
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            if (data.success) {
+                alert(data.message);
+            }
+            setTimeout(() => {
+                window.location.href = '/estimations';
+            }, 1000);
+
+        })
+        .catch((error) => console.error("Fetch error:", error));
 
         generatePDFBtn.disabled = true;
 
