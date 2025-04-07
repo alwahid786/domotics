@@ -69,7 +69,7 @@ class EstimationController extends Controller
 
         DB::table('estimation_products')->insert($productData);
 
-        return redirect()->route('estimations.index')->with('success', 'Estimation saved successfully.');
+        return redirect()->route('estimation.index')->with('success', 'Estimation saved successfully.');
     }
 
     public function sensors()
