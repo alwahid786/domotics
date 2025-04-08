@@ -255,7 +255,6 @@
                 throw new Error("Error while fetching sensors")
             }
             const data = await res.json();
-            console.log('product data', data)
             if (data?.sensors?.length > 0) {
                 sensorPrices = {};
                 data.sensors.forEach((sensor) => {
@@ -433,8 +432,6 @@
             // Remove the corresponding entry from ProductsData
             productsData = productsData.filter(item => item.id !== dotId);
 
-            console.log('removed product', removedProduct);
-
             if (removedProduct) {
                 const newOption = document.createElement("option");
                 newOption.value = removedProduct.sensor;
@@ -448,8 +445,6 @@
         lastDot = null;
         hideModal();
         updateTotalPrice()
-        console.log('products data', productsData)
-        console.log('final image', finalImage)
     });
 
     // Generate PDF instantly using composed image and sensor table
@@ -459,7 +454,7 @@
         formData.append('totalPrice', totalPrice)
         formData.append('image', finalImage.blob, 'canvas-image.png');
 
-    fetch('/estimations/store', {
+    fetch(`{{ route('estimations.store') }}`, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -472,7 +467,7 @@
                 alert(data.message);
             }
             setTimeout(() => {
-                window.location.href = '/estimations';
+                window.location.href = "{{ route('estimations.index') }}";
             }, 1000);
 
         })

@@ -87,7 +87,7 @@
         var estimateInput = document.getElementById("estimate");
         var estimate = estimateInput ? estimateInput.value : "";
 
-        fetch("/estimations/fetch?estimate=" + encodeURIComponent(estimate))
+        fetch("{{ route('estimations.fetch') }}?estimate=" + encodeURIComponent(estimate))
             .then(response => response.json())
             .then(data => {
                 estimationData = data; // store globally
@@ -141,7 +141,7 @@
         totalPriceCell.textContent = "$" + totalPrice.toFixed(2);
     }
 
-    function drawCanvas(data) {
+    function drawCanvas(data) {    
         const canvas = document.getElementById("estimationCanvas");
         const ctx = canvas.getContext("2d");
 
@@ -149,7 +149,7 @@
 
         // Load the background image from the first item (adjust as needed)
         const backgroundImage = new Image();
-        backgroundImage.src = "/" + data[0].image;
+        backgroundImage.src = `{{ asset('${data[0].image}') }}`;
         backgroundImage.onload = function() {
             // Set canvas size to the image size (you can adjust to fit container)
             canvas.width = backgroundImage.width;
