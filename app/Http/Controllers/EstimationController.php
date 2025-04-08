@@ -67,12 +67,20 @@ class EstimationController extends Controller
             ];
         }
 
-        DB::table('estimation_products')->insert($productData);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Stima creata con successo.',
-        ]);
+       $saved =  DB::table('estimation_products')->insert($productData);
+        if($saved) {
+            return response()->json([
+                'success' => true,
+                'type' => 'success',
+                'message' => 'Stima creata con successo.',
+            ]);
+        }else{
+            return response()->json([
+                'success' => false,
+                'type' => 'error',
+                'message' => 'Errore durante la creazione della stima.',
+            ]);
+        }
 
     }
 

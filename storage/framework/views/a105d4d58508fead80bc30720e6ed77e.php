@@ -469,7 +469,7 @@
         formData.append('totalPrice', totalPrice)
         formData.append('image', finalImage.blob, 'canvas-image.png');
 
-    fetch('/estimations/store', {
+    fetch(`<?php echo e(route('estimations.store')); ?>`, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -479,11 +479,22 @@
         .then((res) => res.json())
         .then((data) => {
             if (data.success) {
-                alert(data.message);
-            }
+        const toast = document.createElement('div');
+        toast.className = `fixed top-16 right-4 z-50 px-5 py-3 rounded shadow-lg text-white bg-${data.type === 'success' ? 'green' : 'red'}-500 opacity-0 transition-opacity duration-300`;
+        toast.innerHTML = `<strong>${data.type === 'success' ? 'Success:' : 'Error:'}</strong> ${data.message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.remove('opacity-0');
+            toast.classList.add('opacity-100');
+        }, 10);
+        setTimeout(() => {
+            toast.classList.add('opacity-0');
+            setTimeout(() => toast.remove(), 300);
+        }, 2000);
+    }
             setTimeout(() => {
-                window.location.href = '/estimations';
-            }, 3000);
+                window.location.href = "<?php echo e(route('estimations.index')); ?>";
+            }, 2000);
 
         })
         .catch((error) => console.error("Fetch error:", error));
