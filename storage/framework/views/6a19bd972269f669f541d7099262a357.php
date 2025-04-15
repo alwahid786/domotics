@@ -109,13 +109,9 @@
         const estimateInput = document.getElementById("estimate");
         const estimate = estimateInput ? estimateInput.value : "";
         const url = "<?php echo e(route('estimations.fetch')); ?>?estimate=" + encodeURIComponent(estimate);
-
-        console.log("Fetching data from:", url);
-
         fetch(url)
             .then(response => response.json())
             .then(responseData => {
-                console.log("Full API response:", responseData);
                 // Update: our required data is nested in responseData.data
                 if (!responseData.data) {
                     console.error("API response missing 'data' property.");
@@ -187,20 +183,16 @@
         const floorImage = new Image();
         floorImage.crossOrigin = "Anonymous";
         floorImage.src = data.image;
-        console.log("Loading floor plan image:", data.image);
 
         floorImage.onload = function () {
             // Set canvas dimensions
             canvas.width = floorImage.width;
             canvas.height = floorImage.height;
-            console.log("Canvas dimensions:", canvas.width, canvas.height);
-
             // Draw the background image
             ctx.drawImage(floorImage, 0, 0);
 
             // Draw rooms as polygons
             if (data.roomsData && data.roomsData.length > 0) {
-                console.log("Drawing room polygons:", data.roomsData);
                 data.roomsData.forEach(room => {
                     drawRoomPolygon(ctx, room.coordinates);
                 });
@@ -211,8 +203,7 @@
             // Draw sensor dots
             sensorDots = [];  // Reset sensor dots array
             if (data.sensorsData && data.sensorsData.length > 0) {
-                console.log("Drawing sensor dots:", data.sensorsData);
-                data.sensorsData.forEach(sensor => {
+                    data.sensorsData.forEach(sensor => {
                     const x = parseFloat(sensor.sensorCoordinates.x);
                     const y = parseFloat(sensor.sensorCoordinates.y);
 

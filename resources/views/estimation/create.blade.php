@@ -301,6 +301,8 @@
     let currentPolygon = null; // { id, vertices: [ {x, y} ], name }
     const polygons = []; // Completed room polygons
     let dotCount = 0;
+    let temporaryDotId = null;
+
     // UI Mode Switching
     function setMode(mode) {
       currentMode = mode;
@@ -342,7 +344,15 @@
     }
     fetchSensors();
     // Close handlers for sensor modal
-    function hideDotModal() {
+    function hideDotModal({keepDot = false}) {
+      if (!keepDot && temporaryDotId) {
+        const tempDot = document.getElementById(temporaryDotId);
+        if (tempDot) {
+          tempDot.remove();
+        }
+      }
+      
+      temporaryDotId = null;
       dotModal.style.display = 'none';
       document.getElementById('dotForm').reset();
     }
@@ -487,8 +497,10 @@
         dot.style.borderRadius = '50%';
         dot.style.left = (x - 2.5) + 'px';
         dot.style.top = (y - 2.5) + 'px';
-        dot.setAttribute('id', 'dot-' + dotCount);
+        const dotId = 'dot-' + dotCount;
+        dot.setAttribute('id', dotId);
         canvasContainer.appendChild(dot);
+        temporaryDotId = dotId;
         dotModal.style.display = 'flex';
       }
     });
@@ -638,7 +650,7 @@
         productsData = productsData.filter(item => item.id !== dotId);
         updateTotalPrice();
       });
-      hideDotModal();
+      hideDotModal({keepDot: true});
       updateTotalPrice();
     });
     // Update total price display
