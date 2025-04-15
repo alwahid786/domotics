@@ -109,10 +109,10 @@
         fetch("<?php echo e(route('estimations.fetch')); ?>?estimate=" + encodeURIComponent(estimate))
             .then(response => response.json())
             .then(data => {
-                estimationData = data; // store globally
-                // Build the table
+                estimationData = data;
+                console.log("Fetched data:", data);
+                
                 buildEstimationTable(data);
-                // Draw the canvas (image + dots)
                 drawCanvas(data);
             })
             .catch(error => console.error("Error fetching estimations:", error));
