@@ -265,7 +265,6 @@
                 throw new Error("Error while fetching sensors")
             }
             const data = await res.json();
-            console.log('product data', data)
             if (data?.sensors?.length > 0) {
                 sensorPrices = {};
                 data.sensors.forEach((sensor) => {
@@ -443,8 +442,6 @@
             // Remove the corresponding entry from ProductsData
             productsData = productsData.filter(item => item.id !== dotId);
 
-            console.log('removed product', removedProduct);
-
             if (removedProduct) {
                 const newOption = document.createElement("option");
                 newOption.value = removedProduct.sensor;
@@ -458,8 +455,6 @@
         lastDot = null;
         hideModal();
         updateTotalPrice()
-        console.log('products data', productsData)
-        console.log('final image', finalImage)
     });
 
     // Generate PDF instantly using composed image and sensor table
@@ -479,22 +474,11 @@
         .then((res) => res.json())
         .then((data) => {
             if (data.success) {
-        const toast = document.createElement('div');
-        toast.className = `fixed top-16 right-4 z-50 px-5 py-3 rounded shadow-lg text-white bg-${data.type === 'success' ? 'green' : 'red'}-500 opacity-0 transition-opacity duration-300`;
-        toast.innerHTML = `<strong>${data.type === 'success' ? 'Success:' : 'Error:'}</strong> ${data.message}`;
-        document.body.appendChild(toast);
-        setTimeout(() => {
-            toast.classList.remove('opacity-0');
-            toast.classList.add('opacity-100');
-        }, 10);
-        setTimeout(() => {
-            toast.classList.add('opacity-0');
-            setTimeout(() => toast.remove(), 300);
-        }, 2000);
-    }
+                alert(data.message);
+            }
             setTimeout(() => {
                 window.location.href = "<?php echo e(route('estimations.index')); ?>";
-            }, 2000);
+            }, 1000);
 
         })
         .catch((error) => console.error("Fetch error:", error));
