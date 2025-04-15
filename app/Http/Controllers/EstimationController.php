@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Mail\SendEstimation;
 use App\Models\Product;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class EstimationController extends Controller
 {
@@ -99,11 +101,18 @@ class EstimationController extends Controller
 
         $productData = DB::table('estimation_products')->insert($productData);
 
+        if ($request->hasFile('estimation_pdf')) {
+            $pdf = $request->file('estimation_pdf');
+            $fileName = time() . '_estimation.pdf';
+            $path = $pdf->storeAs('estimations', $fileName, 'local');
+            
+            // Mail::to($user->email)
+            Mail::to('zafaraliab@gmail.com')
+            // ->cc('dott.izzo@mydomotics.it')
+            // ->cc('preventivi@mydomotics.it')
+            ->send(new SendEstimation($path));
+        }
         if ($productData) {
-            Mail::to($user->email)
-            ->cc('dott.izzo@mydomotics.it')
-            ->cc('preventivi@mydomotics.it')
-            ->send(new SendEstimation($validatedData['roomsData'], $validatedData['sensorsData'], $validatedData['totalPrice'], $validatedData['floorName'], $validatedData['image']));
             
             return response()->json([
                 'success' => true,
@@ -228,6 +237,7 @@ class EstimationController extends Controller
     {
         DB::table('estimations')->where('id', $estimate)->delete();
         DB::table('estimation_products')->where('estimation_id', $estimate)->delete();
+        DB::table('estimation_room')->where('estimation_id', $estimate)->delete();
 
         return redirect()->route('estimations.index')
             ->withSuccess('Stime cancellato con successo.');
