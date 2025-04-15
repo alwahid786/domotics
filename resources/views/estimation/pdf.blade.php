@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Quotation PDF</title>
+    <title>Estimation PDF</title>
     <style>
         body {
             font-family: DejaVu Sans;

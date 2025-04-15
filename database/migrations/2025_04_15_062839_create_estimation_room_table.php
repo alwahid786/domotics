@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('estimation_room', function (Blueprint $table) {
             $table->id();
             $table->string('room_name')->nullable(); 
+            $table->string('room_id')->nullable(); 
             $table->integer('estimation_id');
             $table->string('x_position')->nullable(); 
             $table->string('y_position')->nullable(); 

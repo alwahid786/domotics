@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('estimation_products', function (Blueprint $table) {
-            $table->integer('room_id')->comment('estimation_room_id')->nullable();
+            $table->string('room_id')->comment('estimation_room_id')->nullable();
         });
     }
 
