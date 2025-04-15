@@ -35,8 +35,9 @@
                         <thead>
                             <tr class="bg-gray-100">
                                 <th class="px-4 py-2">Immagine</th>
-                                <th class="px-4 py-2">total</th>
-                                <th class="px-4 py-2">Actions</th>
+                                <th class="px-4 py-2">Nome del Floor</th>
+                                <th class="px-4 py-2">Totale</th>
+                                <th class="px-4 py-2">Azioni</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -44,7 +45,8 @@
                             <tr>
                                 <td class="border px-4 py-2"><img src="<?php echo e(asset($estimation->image)); ?>"
                                         alt="<?php echo e($estimation->image); ?>" class="w-16 h-16 object-cover"></td>
-                                <td class="border px-4 py-2"><?php echo e($estimation->total); ?></a></td>
+                                <td class="border px-4 py-2"><?php echo e($estimation->floor_name); ?></td>
+                                <td class="border px-4 py-2"><?php echo e($estimation->total); ?></td>
                                 <td class="border px-4 py-2">
                                     <a href="<?php echo e(route('estimations.show', $estimation->id)); ?>"
                                         class="nline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">La
@@ -66,6 +68,10 @@
                             <?php endif; ?>
                         </tbody>
                     </table>
+                </div>
+                <div class="mt-4">
+                    <?php echo e($estimations->links()); ?>
+
                 </div>
             </div>
         </div>

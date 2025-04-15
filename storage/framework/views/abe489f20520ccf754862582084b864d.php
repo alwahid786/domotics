@@ -152,7 +152,7 @@
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-white shadow p-2 rounded mt-4">
       <!-- Image Upload -->
       <div class="mb-2 mt-4 flex items-center gap-4">
-        <input type="text" class="form-control border p-2 floor-name" placeholder="Floor name" />
+        <input type="text" class="form-control border p-2 floor-name" placeholder="Floor name" required />
         <input type="file" id="imageUpload" accept="image/*" class="form-control border p-2 w-full">
       </div>
       <!-- Mode buttons: initially hidden, will be shown after picture upload -->
@@ -791,7 +791,7 @@
                 alert(data.message);
               }
               // Optionally redirect after a delay:
-              // setTimeout(() => { window.location.href = "<?php echo e(route('estimations.index')); ?>"; }, 1000);
+              setTimeout(() => { window.location.href = "<?php echo e(route('estimations.index')); ?>"; }, 1000);
             })
             .catch(error => {
               console.error("Fetch error:", error);

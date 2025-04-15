@@ -7,15 +7,19 @@
         </div>
     </x-slot>
 
+    <!-- Hidden input for estimate value -->
     <input type="hidden" id="estimate" value="{{ $estimate }}">
 
-    <!-- Bootstrap CSS (if not already included) -->
-    <!-- If you're using Laravel Mix or another bundler, make sure Bootstrap is properly imported -->
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
 
     <style>
         body {
             overflow-x: hidden !important;
+        }
+        canvas {
+            border: 1px solid #ccc;
+            max-width: 100%;
         }
     </style>
 
@@ -25,7 +29,7 @@
 
                 <!-- Canvas Container -->
                 <div class="mb-4 text-center">
-                    <canvas id="estimationCanvas" style="border:1px solid #ccc; max-width: 100%;"></canvas>
+                    <canvas id="estimationCanvas"></canvas>
                 </div>
 
                 <!-- Table Container -->
@@ -34,14 +38,12 @@
                         <thead>
                             <tr>
                                 <th>Sr. No</th>
-                                <th>Name</th>
-                                <th>Sensor</th>
+                                <th>Sensor Name</th>
+                                <th>Room</th>
                                 <th>Price</th>
                             </tr>
                         </thead>
-                        <tbody id="estimationTableBody">
-                            <!-- Rows will be appended by JS -->
-                        </tbody>
+                        <tbody id="estimationTableBody"></tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="3" class="text-end fw-bold">Total Price</td>
@@ -55,7 +57,7 @@
         </div>
     </main>
 
-    <!-- Bootstrap Modal for Dot Click -->
+    <!-- Bootstrap Modal for Sensor Details -->
     <div class="modal fade" id="dotInfoModal" tabindex="-1" aria-labelledby="dotInfoModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -64,7 +66,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="dotInfoContent">
-                    <!-- Dot data will be dynamically inserted here -->
+                    <!-- Sensor info will be loaded here -->
                 </div>
             </div>
         </div>
@@ -72,146 +74,220 @@
 
 </x-app-layout>
 
-<!-- Bootstrap JS (if not already included) -->
+<!-- Bootstrap Bundle JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    let estimationData = []; // Will hold the fetched data
-    let dots = []; // Will hold the dot positions for click detection
+    // Global variables
+    let apiData = null;       // Holds the full API response data.data
+    let sensorDots = [];      // Sensor dots info for click detection
 
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         fetchEstimations();
     });
 
     function fetchEstimations() {
-        var estimateInput = document.getElementById("estimate");
-        var estimate = estimateInput ? estimateInput.value : "";
+        const estimateInput = document.getElementById("estimate");
+        const estimate = estimateInput ? estimateInput.value : "";
+        const url = "{{ route('estimations.fetch') }}?estimate=" + encodeURIComponent(estimate);
 
-        fetch("{{ route('estimations.fetch') }}?estimate=" + encodeURIComponent(estimate))
+        console.log("Fetching data from:", url);
+
+        fetch(url)
             .then(response => response.json())
-            .then(data => {
-                estimationData = data;
-                console.log("Fetched data:", data);
-                
-                buildEstimationTable(data);
-                drawCanvas(data);
+            .then(responseData => {
+                console.log("Full API response:", responseData);
+                // Update: our required data is nested in responseData.data
+                if (!responseData.data) {
+                    console.error("API response missing 'data' property.");
+                    return;
+                }
+                apiData = responseData.data;
+
+                // Check for image existence
+                if (!apiData.image) {
+                    console.error("No image URL provided in API data.");
+                    return;
+                }
+
+                buildEstimationTable(apiData);
+                drawFloorPlan(apiData);
             })
-            .catch(error => console.error("Error fetching estimations:", error));
+            .catch(error => {
+                console.error("Error fetching estimations:", error);
+            });
     }
 
+    // Builds the table with sensor details and total price
     function buildEstimationTable(data) {
         const tableBody = document.getElementById("estimationTableBody");
         const totalPriceCell = document.getElementById("totalPrice");
-        tableBody.innerHTML = ""; // clear existing rows
+        tableBody.innerHTML = "";  // Clear any existing rows
 
-        let totalPrice = 0;
-        data.forEach((item, index) => {
+        if (!data.sensorsData || data.sensorsData.length === 0) {
+            totalPriceCell.textContent = "$0.00";
+            console.warn("No sensor data available.");
+            return;
+        }
+
+        data.sensorsData.forEach((sensor, index) => {
             const tr = document.createElement("tr");
 
-            // Sr. No
+            // Serial Number
             const tdSrNo = document.createElement("td");
             tdSrNo.textContent = index + 1;
             tr.appendChild(tdSrNo);
 
-            // Name
-            const tdName = document.createElement("td");
-            tdName.textContent = item.product_name || "N/A";
-            tr.appendChild(tdName);
+            // Sensor Name
+            const tdSensorName = document.createElement("td");
+            tdSensorName.textContent = sensor.sensorName || "N/A";
+            tr.appendChild(tdSensorName);
 
-            // Sensor (hard-coded or from item if available)
-            const tdSensor = document.createElement("td");
-            // If you have item.sensor, replace "product.one" with item.sensor
-            tdSensor.textContent = "product.one";
-            tr.appendChild(tdSensor);
+            // Room Name (matched by roomId)
+            const tdRoom = document.createElement("td");
+            const room = data.roomsData.find(r => r.roomId === sensor.roomId);
+            tdRoom.textContent = room ? room.roomName : "Unknown Room";
+            tr.appendChild(tdRoom);
 
             // Price
             const tdPrice = document.createElement("td");
-            tdPrice.textContent = "$" + (item.product_price || "0.00");
+            tdPrice.textContent = "$" + (sensor.sensorPrice || "0.00");
             tr.appendChild(tdPrice);
 
             tableBody.appendChild(tr);
-
-            // Accumulate total price
-            if (item.product_price) {
-                totalPrice += parseFloat(item.product_price);
-            }
         });
 
-        // Show total price (or use data[0].total if each set has a single total)
-        totalPriceCell.textContent = "$" + totalPrice.toFixed(2);
+        // Set total price from API
+        totalPriceCell.textContent = "$" + (data.totalPrice || "0.00");
     }
 
-    function drawCanvas(data) {    
+    // Draw the floor plan image, rooms (as polygons) and sensor dots on the canvas
+    function drawFloorPlan(data) {
         const canvas = document.getElementById("estimationCanvas");
         const ctx = canvas.getContext("2d");
+        const floorImage = new Image();
+        floorImage.crossOrigin = "Anonymous";
+        floorImage.src = data.image;
+        console.log("Loading floor plan image:", data.image);
 
-        if (!data || data.length === 0) return;
+        floorImage.onload = function () {
+            // Set canvas dimensions
+            canvas.width = floorImage.width;
+            canvas.height = floorImage.height;
+            console.log("Canvas dimensions:", canvas.width, canvas.height);
 
-        // Load the background image from the first item (adjust as needed)
-        const backgroundImage = new Image();
-        backgroundImage.src = `{{ asset('${data[0].image}') }}`;
-        backgroundImage.onload = function() {
-            // Set canvas size to the image size (you can adjust to fit container)
-            canvas.width = backgroundImage.width;
-            canvas.height = backgroundImage.height;
-            ctx.drawImage(backgroundImage, 0, 0);
+            // Draw the background image
+            ctx.drawImage(floorImage, 0, 0);
 
-            // Now place dots
-            dots = [];
-            data.forEach((item, index) => {
-                // Convert the stored x_position / y_position to float
-                // If they are percentages, you may need: 
-                //   let x = parseFloat(item.x_position) * canvas.width / 100;
-                //   let y = parseFloat(item.y_position) * canvas.height / 100;
-                let x = parseFloat(item.x_position);
-                let y = parseFloat(item.y_position);
-
-                // Save dot info for click detection
-                dots.push({
-                    x: x,
-                    y: y,
-                    radius: 5,
-                    data: item
+            // Draw rooms as polygons
+            if (data.roomsData && data.roomsData.length > 0) {
+                console.log("Drawing room polygons:", data.roomsData);
+                data.roomsData.forEach(room => {
+                    drawRoomPolygon(ctx, room.coordinates);
                 });
+            } else {
+                console.warn("No room data available.");
+            }
 
-                // Draw the dot
-                ctx.beginPath();
-                ctx.arc(x, y, 5, 0, 2 * Math.PI);
-                ctx.fillStyle = "red";
-                ctx.fill();
-            });
+            // Draw sensor dots
+            sensorDots = [];  // Reset sensor dots array
+            if (data.sensorsData && data.sensorsData.length > 0) {
+                console.log("Drawing sensor dots:", data.sensorsData);
+                data.sensorsData.forEach(sensor => {
+                    const x = parseFloat(sensor.sensorCoordinates.x);
+                    const y = parseFloat(sensor.sensorCoordinates.y);
+
+                    // Save dot info for click detection
+                    sensorDots.push({
+                        x: x,
+                        y: y,
+                        radius: 5,
+                        sensorInfo: sensor
+                    });
+
+                    // Draw the sensor dot
+                    ctx.beginPath();
+                    ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                    ctx.fillStyle = "red";
+                    ctx.fill();
+                });
+            } else {
+                console.warn("No sensor data available.");
+            }
         };
 
-        // Add event listener for clicks
-        canvas.addEventListener("click", function(e) {
-            const rect = canvas.getBoundingClientRect();
-            // Mouse position in canvas coordinates
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
+        floorImage.onerror = function(err) {
+            console.error("Error loading floor image:", err);
+        };
 
-            // Check if user clicked any dot
-            dots.forEach(dot => {
-                const dx = mouseX - dot.x;
-                const dy = mouseY - dot.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                if (distance <= dot.radius) {
-                    // Show the Bootstrap modal with this dot's info
-                    showDotInfo(dot.data);
-                }
-            });
+        // Listen for canvas clicks to detect sensor dot interaction
+        canvas.addEventListener("click", onCanvasClick);
+    }
+
+    // Draw a polygon for a room based on provided coordinates
+    function drawRoomPolygon(ctx, coordinates) {
+        if (!coordinates || coordinates.length === 0) {
+            console.warn("No coordinates to draw room polygon.");
+            return;
+        }
+
+        ctx.beginPath();
+        coordinates.forEach((coord, idx) => {
+            const x = parseFloat(coord.x);
+            const y = parseFloat(coord.y);
+            if (idx === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        });
+        ctx.closePath();
+
+        ctx.fillStyle = "rgba(0, 123, 255, 0.4)"; // semi-transparent blue fill
+        ctx.fill();
+        ctx.strokeStyle = "blue";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+
+    // Handle canvas click events to detect if a sensor dot is clicked
+    function onCanvasClick(e) {
+        const canvas = e.target;
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        sensorDots.forEach(dot => {
+            const dx = mouseX - dot.x;
+            const dy = mouseY - dot.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance <= dot.radius) {
+                showSensorModal(dot.sensorInfo);
+            }
         });
     }
 
-    function showDotInfo(dotData) {
+    // Show sensor details in the Bootstrap modal
+    function showSensorModal(sensor) {
         const modalBody = document.getElementById("dotInfoContent");
+
+        // Find the room name based on roomId
+        let roomName = "Unknown Room";
+        if (apiData && apiData.roomsData) {
+            const room = apiData.roomsData.find(r => r.roomId === sensor.roomId);
+            if (room) {
+                roomName = room.roomName;
+            }
+        }
+
         modalBody.innerHTML = `
-            <p><strong>Name:</strong> ${dotData.product_name}</p>
-            <p><strong>Sensor:</strong> product.one</p>
-            <p><strong>Price:</strong> $${dotData.product_price}</p>
+            <p><strong>Sensor Name:</strong> ${sensor.sensorName}</p>
+            <p><strong>Room:</strong> ${roomName}</p>
+            <p><strong>Price:</strong> $${sensor.sensorPrice}</p>
         `;
 
-        // Show the modal (Bootstrap 5)
-        const dotInfoModal = new bootstrap.Modal(document.getElementById("dotInfoModal"), {});
-        dotInfoModal.show();
+        const modalElement = document.getElementById("dotInfoModal");
+        const sensorModal = new bootstrap.Modal(modalElement, {});
+        sensorModal.show();
     }
 </script>
