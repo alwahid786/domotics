@@ -648,149 +648,144 @@
       totalPrice = total;
     }
     // Generate PDF using jsPDF and prepare data in the desired format
-    generatePDFBtn.addEventListener('click', function() {
+    generatePDFBtn.addEventListener('click', function () {
       generatePDFBtn.disabled = true;
+
       const offscreenCanvas = document.createElement('canvas');
       const ctx = offscreenCanvas.getContext('2d');
       const baseImg = new Image();
-      baseImg.onload = function() {
-        offscreenCanvas.width = baseImg.naturalWidth;
-        offscreenCanvas.height = baseImg.naturalHeight;
-        const scaleFactor = offscreenCanvas.width / finalImage.width;
-        ctx.drawImage(baseImg, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
-        // Draw room polygons from SVG
-        const svgData = new XMLSerializer().serializeToString(svgOverlay);
-        const svgBlob = new Blob([svgData], {
-          type: 'image/svg+xml;charset=utf-8'
-        });
-        const url = URL.createObjectURL(svgBlob);
+      baseImg.onload = function () {
+          offscreenCanvas.width = baseImg.naturalWidth;
+          offscreenCanvas.height = baseImg.naturalHeight;
+          const scaleFactor = offscreenCanvas.width / finalImage.width;
 
-        const svgImg = new Image();
-        svgImg.onload = function() {
-          ctx.drawImage(svgImg, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
-          URL.revokeObjectURL(url);
+          ctx.drawImage(baseImg, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
-          // Draw sensor red dots
-          const dots = canvasContainer.querySelectorAll('div');
-          const sensorCoordinates = [];
-          dots.forEach(dot => {
-            let dotLeft = parseFloat(dot.style.left) * scaleFactor;
-            let dotTop = parseFloat(dot.style.top) * scaleFactor;
-            const radius = 2.5 * scaleFactor;
-            ctx.beginPath();
-            ctx.arc(dotLeft + radius, dotTop + radius, radius, 0, Math.PI * 2);
-            ctx.fillStyle = 'red';
-            ctx.fill();
+          // Draw SVG rooms
+          const svgData = new XMLSerializer().serializeToString(svgOverlay);
+          const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+          const url = URL.createObjectURL(svgBlob);
 
-            sensorCoordinates.push({
-              left: parseFloat(dot.style.left),
-              top: parseFloat(dot.style.top),
-            });
-          });
+          const svgImg = new Image();
+          svgImg.onload = function () {
+              ctx.drawImage(svgImg, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
+              URL.revokeObjectURL(url);
 
-          // Prepare PDF
-          const combinedImgData = offscreenCanvas.toDataURL('image/png');
+              // Draw sensor red dots
+              const dots = canvasContainer.querySelectorAll('div');
+              const sensorCoordinates = [];
+              dots.forEach(dot => {
+                  let dotLeft = parseFloat(dot.style.left) * scaleFactor;
+                  let dotTop = parseFloat(dot.style.top) * scaleFactor;
+                  const radius = 2.5 * scaleFactor;
 
-          const pdf = new jsPDF('p', 'mm', 'a4');
-          const pageWidth = pdf.internal.pageSize.getWidth();
-          const margin = 10;
-          const pdfImgWidth = pageWidth - (2 * margin);
-          const pdfImgHeight = (offscreenCanvas.height * pdfImgWidth) / offscreenCanvas.width;
-          pdf.addImage(combinedImgData, 'PNG', margin, margin, pdfImgWidth, pdfImgHeight);
+                  ctx.beginPath();
+                  ctx.arc(dotLeft + radius, dotTop + radius, radius, 0, Math.PI * 2);
+                  ctx.fillStyle = 'red';
+                  ctx.fill();
 
-          // Create table data for visual reference (optional)
-          let tableData = [];
-          sensorTableBody.querySelectorAll('tr').forEach(row => {
-            const cols = row.querySelectorAll('td');
-            tableData.push([
-              cols[0].innerText,
-              cols[1].innerText,
-              cols[2].innerText,
-              cols[3].innerText,
-              cols[4].innerText
-            ]);
-          });
+                  sensorCoordinates.push({
+                      left: parseFloat(dot.style.left),
+                      top: parseFloat(dot.style.top),
+                  });
+              });
 
-          // Append the total price row (the tfoot is outside tbody)
-          const total = document.getElementById('totalPrice').innerText;
-            tableData.push(["", "", "Total Price", "$" + total]);
+              // Prepare PDF
+              const combinedImgData = offscreenCanvas.toDataURL('image/png');
 
-          pdf.autoTable({
-            startY: pdfImgHeight + margin + 5,
-            head: [
-              ['Sr. No', 'Name', 'Sensor', 'Room', 'Price']
-            ],
-            body: tableData,
-            theme: 'grid',
-            styles: {
-              fontSize: 10
-            }
-          });
+              const pdf = new jsPDF('p', 'mm', 'a4');
+              const pageWidth = pdf.internal.pageSize.getWidth();
+              const margin = 10;
+              const pdfImgWidth = pageWidth - (2 * margin);
+              const pdfImgHeight = (offscreenCanvas.height * pdfImgWidth) / offscreenCanvas.width;
+              pdf.addImage(combinedImgData, 'PNG', margin, margin, pdfImgWidth, pdfImgHeight);
 
-          pdf.save('estimation.pdf');
+              // Table data
+              let tableData = [];
+              sensorTableBody.querySelectorAll('tr').forEach(row => {
+                  const cols = row.querySelectorAll('td');
+                  tableData.push([
+                      cols[0].innerText,
+                      cols[1].innerText,
+                      cols[2].innerText,
+                      cols[3].innerText,
+                      cols[4].innerText
+                  ]);
+              });
 
-          // Prepare rooms data: Each room has a unique id, room name, and coordinates.
-          const roomsData = polygons.map(room => ({
-            id: room.id,
-            roomName: room.name,
-            coordinates: room.vertices
-          }));
-          // Prepare sensors data: Each sensor object contains sensor name, sensor type,
-          // sensor price, room name, sensor coordinates and the room’s unique id.
-          const sensorsData = productsData.map(sensor => {
-            const roomObj = polygons.find(p => p.id === sensor.roomId);
-            return {
-              sensorName: sensor.name,
-              sensorType: sensor.sensor,
-              sensorPrice: sensor.price,
-              sensorId: sensor.sensorId,
-              roomName: roomObj ? roomObj.name : '',
-              sensorCoordinates: {
-                x: sensor.x,
-                y: sensor.y
-              },
-              roomId: sensor.roomId
-            };
-          });
-          // Prepare FormData
-          const formData = new FormData();
-          formData.append('roomsData', JSON.stringify(roomsData));
-          formData.append('sensorsData', JSON.stringify(sensorsData));
-          formData.append('totalPrice', totalPrice);
-          formData.append('image', finalImage.blob, 'canvas-image.png');
-          formData.append('floorName', floorNameInput.value);
-          // Debug log
-          console.log({
-            roomsData,
-            sensorsData,
-            totalPrice,
-            floorName: floorNameInput.value
-          });
-          // Send to backend
-          fetch(`{{ route('estimations.store') }}`, {
-              method: 'POST',
-              headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-              },
-              body: formData
-            })
-            .then(res => res.json())
-            .then(data => {
-              if (data.success) {
-                alert(data.message);
-              }
-              // Optionally redirect after a delay:
-              setTimeout(() => { window.location.href = "{{ route('estimations.index') }}"; }, 1000);
-            })
-            .catch(error => {
-              console.error("Fetch error:", error);
-            });
-          generatePDFBtn.disabled = false;
-        };
-        svgImg.src = url;
+              const total = document.getElementById('totalPrice').innerText;
+              tableData.push(["", "", "Total Price", "$" + total]);
+
+              pdf.autoTable({
+                  startY: pdfImgHeight + margin + 5,
+                  head: [['Sr. No', 'Name', 'Sensor', 'Room', 'Price']],
+                  body: tableData,
+                  theme: 'grid',
+                  styles: { fontSize: 10 }
+              });
+
+              // 👉 Convert PDF to blob and send to backend
+              const pdfBlob = pdf.output('blob');
+              const roomsData = polygons.map(room => ({
+                  id: room.id,
+                  roomName: room.name,
+                  coordinates: room.vertices
+              }));
+              const sensorsData = productsData.map(sensor => {
+                  const roomObj = polygons.find(p => p.id === sensor.roomId);
+                  return {
+                      sensorName: sensor.name,
+                      sensorType: sensor.sensor,
+                      sensorPrice: sensor.price,
+                      sensorId: sensor.sensorId,
+                      roomName: roomObj ? roomObj.name : '',
+                      sensorCoordinates: {
+                          x: sensor.x,
+                          y: sensor.y
+                      },
+                      roomId: sensor.roomId
+                  };
+              });
+
+              const formData = new FormData();
+              formData.append('roomsData', JSON.stringify(roomsData));
+              formData.append('sensorsData', JSON.stringify(sensorsData));
+              formData.append('totalPrice', totalPrice);
+              formData.append('image', finalImage.blob, 'canvas-image.png');
+              formData.append('floorName', floorNameInput.value);
+              formData.append('estimation_pdf', pdfBlob, 'estimation.pdf');
+
+              fetch(`{{ route('estimations.store') }}`, {
+                  method: 'POST',
+                  headers: {
+                      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                  },
+                  body: formData
+              })
+                  .then(res => res.json())
+                  .then(data => {
+                      if (data.success) {
+                          alert(data.message);
+                          // Optionally redirect
+                          setTimeout(() => {
+                              window.location.href = "{{ route('estimations.index') }}";
+                          }, 1000);
+                      }
+                  })
+                  .catch(error => {
+                      console.error("Fetch error:", error);
+                  });
+
+              pdf.save('estimation.pdf');
+
+              generatePDFBtn.disabled = false;
+          };
+          svgImg.src = url;
       };
+
       baseImg.src = finalImage.src;
-    });
+  });
+
   </script>
 </x-app-layout>
