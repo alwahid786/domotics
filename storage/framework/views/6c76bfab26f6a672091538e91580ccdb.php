@@ -1,2 +1,0 @@
-<img src="<?php echo e(asset('brand/logo-mydomotics.png')); ?>" alt="MyDomotics" width="200">
-<?php /**PATH /home/MyDomotics/web/preventivi.mydomotics.it/public_html/resources/views/components/application-logo.blade.php ENDPATH**/ ?>

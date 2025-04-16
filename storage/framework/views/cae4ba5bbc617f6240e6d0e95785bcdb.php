@@ -1,2 +1,0 @@
-<img src="<?php echo e(asset('brand/logo-mydomotics.png')); ?>" alt="MyDomotics" width="200">
-<?php /**PATH /home/Intuisco/web/mydomotics.intuisco.net/public_html/resources/views/components/application-logo.blade.php ENDPATH**/ ?>
