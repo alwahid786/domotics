@@ -1,10 +1,10 @@
-Laravel
+# Laravel
 /vendor
 /node_modules
 /public/storage
-/storage/.key
+/storage/*.key
 .env
-.env.
+.env.*
 .phpunit.result.cache
 Homestead.yaml
 Homestead.json
@@ -12,38 +12,37 @@ Homestead.json
 /.idea
 /.vscode
 
-Laravel Mix / Vite
+# Laravel Mix / Vite
 /public/hot
 /public/build
 /public/mix-manifest.json
 
-Laravel Sail
+# Laravel Sail
 docker-compose.override.yml
 
-Logs
+# Logs
 /storage/logs
 /storage/framework/cache/data
 /storage/framework/sessions
-/storage/framework/views/*
+/storage/framework/views
 /storage/framework/testing
-/bootstrap/cache/*
 
-OS/Editor junk
+# OS/Editor junk
 *.DS_Store
 Thumbs.db
 *.swp
 *.swo
 
-Composer & NPM
+# Composer & NPM
 composer.lock
 package-lock.json
 yarn.lock
 
-PHPUnit
+# PHPUnit
 .phpunit.result.cache
 
-Debugbar
+# Debugbar
 debugbar
 
-Laravel Telescope
+# Laravel Telescope
 storage/telescope

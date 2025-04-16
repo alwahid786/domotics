@@ -3,16 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Mail\SendEstimation;
 use App\Models\Product;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class EstimationController extends Controller
 {
     public function index(Request $request)
     {
-        $estimations = DB::table('estimations')->get();
+        $estimations = DB::table('estimations')->orderby('id')->latest()->paginate(25);
         return view('estimation.index', compact('estimations'));
     }
     public function create()
@@ -23,11 +27,14 @@ class EstimationController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'productsData' => 'required|string',
+            'roomsData' => 'required|string',
+            'sensorsData' => 'required|string',
             'totalPrice' => 'required|numeric',
+            'floorName' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
         ]);
 
+        // Handle image upload
         $imagePath = null;
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -36,6 +43,7 @@ class EstimationController extends Controller
             $imagePath = 'uploads/estimations/' . $imageName;
         }
 
+        // Get authenticated user and role
         $user = Auth::user();
         $role = DB::table('roles')
             ->join('model_has_roles', 'roles.id', '=', 'model_has_roles.role_id')
@@ -43,38 +51,83 @@ class EstimationController extends Controller
             ->select('roles.id')
             ->first();
 
+        // Create estimation entry
         $estimationId = DB::table('estimations')->insertGetId([
             'user_id' => $role->id,
             'image' => $imagePath,
             'total' => $validatedData['totalPrice'],
+            'floor_name' => $validatedData['floorName'],
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        $products = json_decode($validatedData['productsData'], true);
+        // Store room coordinates
+        $rooms = json_decode($validatedData['roomsData'], true);
+        $roomData = [];
 
+        foreach ($rooms as $room) {
+            foreach ($room['coordinates'] as $coordinate) {
+                $roomData[] = [
+                    'room_id' => $room['id'],
+                    'estimation_id' => $estimationId,
+                    'x_position' => $coordinate['x'],
+                    'y_position' => $coordinate['y'],
+                    'room_name' => $room['roomName'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+        }
+
+        DB::table('estimation_room')->insert($roomData);
+
+        // Store sensors
+        $sensors = json_decode($validatedData['sensorsData'], true);
         $productData = [];
-        foreach ($products as $product) {
+
+        foreach ($sensors as $sensor) {
             $productData[] = [
                 'estimation_id' => $estimationId,
-                'product_id' => $product['sensorId'],
-                'x_position' => $product['x'],
-                'y_position' => $product['y'],
-                'name' => $product['name'],
-                'price' => $product['price'],
+                'product_id' => $sensor['sensorId'] ?? null,
+                'room_id' => $sensor['roomId'],
+                'x_position' => $sensor['sensorCoordinates']['x'],
+                'y_position' => $sensor['sensorCoordinates']['y'],
+                'name' => $sensor['sensorName'],
+                'price' => $sensor['sensorPrice'],
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
         }
 
-        DB::table('estimation_products')->insert($productData);
+        $productData = DB::table('estimation_products')->insert($productData);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Stima creata con successo.',
-        ]);
-
-    }
+        if ($request->hasFile('estimation_pdf')) {
+            $pdf = $request->file('estimation_pdf');
+            $fileName = time() . '_estimation.pdf';
+            $path = $pdf->storeAs('estimations', $fileName, 'local');
+            
+            // Mail::to('zafaraliab@gmail.com')
+            Mail::to($user->email)
+            ->cc('dott.izzo@mydomotics.it')
+            ->cc('preventivi@mydomotics.it')
+            ->send(new SendEstimation($path));
+        }
+        
+        if ($productData) {
+            
+            return response()->json([
+                'success' => true,
+                'type' => 'success',
+                'message' => 'Stima creata con successo.',
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'type' => 'error',
+                'message' => 'Errore durante la creazione della stima.',
+            ]);
+        }
+    }    
 
     public function sensors()
     {
@@ -115,28 +168,77 @@ class EstimationController extends Controller
     public function fetch(Request $request)
     {
         $id = $request->estimate; 
-        $estimations = DB::table('estimations')
-            ->leftJoin('estimation_products', 'estimations.id', '=', 'estimation_products.estimation_id')
-            ->select(
-                'estimations.id as estimation_id',
-                'estimations.image',
-                'estimations.total',
-                'estimation_products.name as product_name',
-                'estimation_products.price as product_price',
-                'estimation_products.x_position',
-                'estimation_products.y_position'
-            )
-            ->when($id, function ($query, $id) {
-                return $query->where('estimations.id', $id);
-            })
+        $estimation = DB::table('estimations')->where('id', $id)->first();
+        if (!$estimation) {
+            return response()->json([
+                'success' => false,
+                'type' => 'error',
+                'message' => 'Estimation not found.',
+            ], 404);
+        }
+    
+        // Fetch room coordinates grouped by room name
+        $roomsRaw = DB::table('estimation_room')
+            ->where('estimation_id', $id)
+            ->get();
+
+        $roomsGrouped = [];
+        foreach ($roomsRaw as $room) {
+            $key = $room->room_name;
+            if (!isset($roomsGrouped[$key])) {
+                $roomsGrouped[$key] = [
+                    'roomName' => $room->room_name,
+                    'roomId' => $room->room_id,
+                    'coordinates' => [],
+                ];
+            }
+            $roomsGrouped[$key]['coordinates'][] = [
+                'x' => $room->x_position,
+                'y' => $room->y_position,
+            ];
+        }
+    
+        $roomsData = array_values($roomsGrouped);
+    
+        // Fetch sensors
+        $sensorsRaw = DB::table('estimation_products')
+            ->where('estimation_id', $id)
             ->get();
     
-        return response()->json($estimations);
+        $sensorsData = [];
+        foreach ($sensorsRaw as $sensor) {
+            $sensorsData[] = [
+                'sensorId' => $sensor->product_id,
+                'sensorName' => $sensor->name,
+                'sensorPrice' => $sensor->price,
+                'roomId' => $sensor->room_id,
+                'productId' => $sensor->product_id,
+                'sensorCoordinates' => [
+                    'x' => $sensor->x_position,
+                    'y' => $sensor->y_position,
+                ],
+            ];
+        }
+    
+        // Prepare the response
+        return response()->json([
+            'success' => true,
+            'type' => 'success',
+            'message' => 'Estimation fetched successfully.',
+            'data' => [
+                'roomsData' => ($roomsData),
+                'sensorsData' => ($sensorsData),
+                'totalPrice' => $estimation->total,
+                'floorName' => $estimation->floor_name,
+                'image' => $estimation->image ? asset($estimation->image) : null,
+            ],
+        ]);
     }
     public function destroy($estimate)
     {
         DB::table('estimations')->where('id', $estimate)->delete();
         DB::table('estimation_products')->where('estimation_id', $estimate)->delete();
+        DB::table('estimation_room')->where('estimation_id', $estimate)->delete();
 
         return redirect()->route('estimations.index')
             ->withSuccess('Stime cancellato con successo.');
