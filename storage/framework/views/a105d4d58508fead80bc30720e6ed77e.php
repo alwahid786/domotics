@@ -388,21 +388,46 @@
     // Image upload & Cropper initialization
     imageUpload.addEventListener('change', function(event) {
       const file = event.target.files[0];
+      // if (file) {
+      //   const reader = new FileReader();
+      //   reader.onload = function(e) {
+      //     imageToCrop.src = e.target.result;
+      //     cropContainer.style.display = 'block';
+      //     if (cropper) {
+      //       cropper.destroy();
+      //     }
+      //     cropper = new Cropper(imageToCrop, {
+      //       aspectRatio: 16 / 9,
+      //       viewMode: 1
+      //     });
+      //   };
+      //   reader.readAsDataURL(file);
+      // }
       if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          imageToCrop.src = e.target.result;
-          cropContainer.style.display = 'block';
-          if (cropper) {
-            cropper.destroy();
-          }
-          cropper = new Cropper(imageToCrop, {
-            aspectRatio: 16 / 9,
-            viewMode: 1
-          });
-        };
-        reader.readAsDataURL(file);
-      }
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            imageToCrop.onload = function() {
+              const naturalWidth = imageToCrop.naturalWidth;
+              const naturalHeight = imageToCrop.naturalHeight;
+              const dynamicAspectRatio = naturalWidth / naturalHeight;
+
+              cropContainer.style.display = 'block';
+
+              if (cropper) {
+                cropper.destroy();
+              }
+
+              cropper = new Cropper(imageToCrop, {
+                aspectRatio: dynamicAspectRatio,
+                viewMode: 1
+              });
+            };
+
+            imageToCrop.src = e.target.result;
+          };
+
+          reader.readAsDataURL(file);
+        }
     });
     // Crop image and show final image; also display mode buttons now.
     cropButton.addEventListener('click', function() {
@@ -558,7 +583,7 @@
       // Create polygon element with fill opacity 40%
       const polyElem = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
       polyElem.setAttribute("points", pointsStr);
-      polyElem.setAttribute("fill", "rgba(0, 123, 255, 0.4)");
+      polyElem.setAttribute("fill", "rgba(0, 123, 255, 0.1)");
       polyElem.setAttribute("stroke", "blue");
       polyElem.setAttribute("stroke-width", "2");
       polyElem.setAttribute("data-id", polygon.id);

@@ -234,7 +234,7 @@
         });
         ctx.closePath();
 
-        ctx.fillStyle = "rgba(0, 123, 255, 0.4)"; // semi-transparent blue fill
+        ctx.fillStyle = "rgba(0, 123, 255, 0.1)"; // semi-transparent blue fill
         ctx.fill();
         ctx.strokeStyle = "blue";
         ctx.lineWidth = 2;
