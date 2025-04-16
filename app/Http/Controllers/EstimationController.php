@@ -18,6 +18,7 @@ class EstimationController extends Controller
     {
         $estimations = DB::table('estimations')->orderby('id')->latest()->paginate(25);
         return view('estimation.index', compact('estimations'));
+        
     }
     public function create()
     {
@@ -112,7 +113,7 @@ class EstimationController extends Controller
             ->cc('preventivi@mydomotics.it')
             ->send(new SendEstimation($path));
         }
-        
+
         if ($productData) {
             
             return response()->json([
