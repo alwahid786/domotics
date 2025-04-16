@@ -159,6 +159,7 @@
       <div id="modeButtons" class="my-4 flex items-center gap-4">
         <button id="floorModeBtn" class="mode-btn bg-dark rounded-md text-white font-medium px-4 py-2">Floor Mode</button>
         <button id="deviceModeBtn" class="mode-btn bg-dark rounded-md text-white font-medium px-4 py-2">Device Mode</button>
+        <button id="deleteModeBtn" class="mode-btn bg-dark rounded-md text-white font-medium px-4 py-2">Delete Mode</button>
       </div>
 
       <!-- Image Crop Area (hidden until image is selected) -->
@@ -296,6 +297,7 @@
     // Mode buttons (initially hidden; will be shown after picture upload)
     const floorModeBtn = document.getElementById('floorModeBtn');
     const deviceModeBtn = document.getElementById('deviceModeBtn');
+    const deleteModeBtn = document.getElementById('deleteModeBtn');
     const modeButtons = document.getElementById('modeButtons');
     // Polygon Modal elements
     const polygonModal = document.getElementById('polygonModal');
@@ -316,18 +318,24 @@
     // UI Mode Switching
     function setMode(mode) {
       currentMode = mode;
+
+      floorModeBtn.classList.remove('mode-active');
+      deviceModeBtn.classList.remove('mode-active');
+      deleteModeBtn.classList.remove('mode-active');
+
       if (mode === 'floor') {
         floorModeBtn.classList.add('mode-active');
-        deviceModeBtn.classList.remove('mode-active');
-      } else {
+      } else if (mode === 'device') {
         deviceModeBtn.classList.add('mode-active');
-        floorModeBtn.classList.remove('mode-active');
+      } else if (mode === 'delete') {
+        deleteModeBtn.classList.add('mode-active');
       }
     }
     // Default is Floor Mode
     setMode('floor');
     floorModeBtn.addEventListener('click', () => setMode('floor'));
     deviceModeBtn.addEventListener('click', () => setMode('device'));
+    deleteModeBtn.addEventListener('click', () => setMode('delete'));
     // Fetch sensor data
     const fetchSensors = async () => {
       try {
@@ -409,6 +417,7 @@
           // Show mode buttons now:
           floorModeBtn.style.display = 'block';
           deviceModeBtn.style.display = 'block';
+          deleteModeBtn.style.display = 'block';
           modeButtons.style.display = 'flex';
         }, 'image/png');
       }
@@ -459,11 +468,10 @@
       const rect = finalImage.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      const clickPoint = {
-        x,
-        y
-      };
+      const clickPoint = { x, y };
+
       if (currentMode === 'floor') {
+        // Existing floor mode code…
         if (!currentPolygon) {
           currentPolygon = {
             id: 'room-' + Date.now(),
@@ -483,7 +491,7 @@
         }
         drawTemporaryPolygon();
       } else if (currentMode === 'device') {
-        // Device mode: allow sensor only if click inside a room polygon
+        // Existing device mode code…
         let selectedPolygon = null;
         for (let poly of polygons) {
           if (pointInPolygon(clickPoint, poly.vertices)) {
@@ -512,8 +520,25 @@
         canvasContainer.appendChild(dot);
         temporaryDotId = dotId;
         dotModal.style.display = 'flex';
+      } else if (currentMode === 'delete') {
+        // New delete mode branch: check if click is inside a room polygon
+        let selectedPolygon = null;
+        for (let poly of polygons) {
+          if (pointInPolygon(clickPoint, poly.vertices)) {
+            selectedPolygon = poly;
+            break;
+          }
+        }
+        if (!selectedPolygon) {
+          alert("No room selected for deletion. Please click inside a room.");
+          return;
+        }
+        if (confirm("Are you sure you want to delete this room and all its sensors?")) {
+          deletePolygon(selectedPolygon.id);
+        }
       }
     });
+
     // Save Polygon (Room) details from modal
     savePolygonBtn.addEventListener('click', function() {
       const roomName = polygonNameInput.value.trim();
@@ -539,21 +564,23 @@
       polyElem.setAttribute("data-id", polygon.id);
       finishedGroup.appendChild(polyElem);
       // Determine label position.
-      const xs = polygon.vertices.map(v => v.x);
-      const ys = polygon.vertices.map(v => v.y);
-      const labelX = Math.min(...xs) + 5;
-      const labelY = Math.min(...ys) + 15;
-      // Create a group to combine background rect and text
+      const firstVertex = polygon.vertices[0];
+      // Adjust these offsets as needed – for example, +5 for x and -5 for y so the label sits just above the vertex.
+      const labelX = firstVertex.x + 5;
+      const labelY = firstVertex.y - 5;
+
+      // Create a group for the label elements (a background rect and text)
       const labelGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
       // Background rectangle
       const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      // Width/height can be adjusted based on your needs
       rect.setAttribute("x", labelX - 5);
       rect.setAttribute("y", labelY - 15);
-      rect.setAttribute("width", "100"); // Adjust width if needed
+      rect.setAttribute("width", "100");
       rect.setAttribute("height", "20");
       rect.setAttribute("fill", "white");
       labelGroup.appendChild(rect);
-      // Text label (black)
+      // Text label (room name)
       const textElem = document.createElementNS("http://www.w3.org/2000/svg", "text");
       textElem.setAttribute("x", labelX);
       textElem.setAttribute("y", labelY);
@@ -562,21 +589,6 @@
       textElem.setAttribute("data-id", polygon.id);
       textElem.textContent = polygon.name;
       labelGroup.appendChild(textElem);
-      // Delete icon positioned at top-right of the label
-      const delElem = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      delElem.setAttribute("x", labelX + 90);
-      delElem.setAttribute("y", labelY);
-      delElem.setAttribute("fill", "red");
-      delElem.setAttribute("font-size", "16");
-      delElem.style.cursor = "pointer";
-      delElem.textContent = "✕";
-      delElem.addEventListener('click', function(e) {
-        if (confirm("Remove this room and its sensors?")) {
-          deletePolygon(polygon.id);
-        }
-        e.stopPropagation();
-      });
-      labelGroup.appendChild(delElem);
       finishedGroup.appendChild(labelGroup);
     }
     // Clear temporary drawing group only (not finished polygons)
@@ -594,6 +606,9 @@
         if (sensor.roomId === polyId) {
           const dotElem = document.getElementById(sensor.id);
           if (dotElem) dotElem.remove();
+          const labelElem = document.getElementById('label-' + sensor.id);
+          if (labelElem) labelElem.remove();
+
           const row = document.getElementById('row-' + sensor.id);
           if (row) row.remove();
           return false;
@@ -637,6 +652,21 @@
         dot.dataset.sensor = sensor;
         dot.title = `Name: ${name}, Sensor: ${sensor}`;
       }
+
+      // Create a sensor label element that displays the sensor name
+      // This label will be positioned relative to the dot
+      const sensorLabel = document.createElement('span');
+      sensorLabel.setAttribute('id', 'label-' + currentDotId);
+      sensorLabel.innerText = name;
+      sensorLabel.style.position = 'absolute';
+      sensorLabel.style.fontSize = '12px';
+      sensorLabel.style.background = "white";
+      sensorLabel.style.padding = '2px 4px';
+      sensorLabel.style.color = 'black';
+      sensorLabel.style.left = (x - 10) + 'px';
+      sensorLabel.style.top = (y - 25) + 'px';
+      canvasContainer.appendChild(sensorLabel);
+
       dotCount++;
       // Create sensor table row with room name
       const room = polygons.find(p => p.id === roomId);
@@ -655,6 +685,8 @@
         const dotId = this.getAttribute('data-dotid');
         const dotElem = document.getElementById(dotId);
         if (dotElem) dotElem.remove();
+        const labelElem = document.getElementById('label-' + dotId);
+        if (labelElem) labelElem.remove();
         const row = document.getElementById('row-' + dotId);
         if (row) row.remove();
         productsData = productsData.filter(item => item.id !== dotId);
@@ -711,6 +743,23 @@
                       left: parseFloat(dot.style.left),
                       top: parseFloat(dot.style.top),
                   });
+              });
+
+              // Draw sensor labels on the canvas (new code)
+              const sensorLabels = canvasContainer.querySelectorAll('span');
+              sensorLabels.forEach(label => {
+                  let labelLeft = parseFloat(label.style.left) * scaleFactor;
+                  let labelTop = parseFloat(label.style.top) * scaleFactor;
+                  ctx.font = "12px Arial";
+                  const text = label.innerText;
+                  const textMetrics = ctx.measureText(text);
+                  const textWidth = textMetrics.width;
+                  const textHeight = 12;
+                  const padding = 2;
+                  ctx.fillStyle = "white";
+                  ctx.fillRect(labelLeft - padding, labelTop - textHeight - padding, textWidth + padding * 2, textHeight + padding * 2);
+                  ctx.fillStyle = "black";
+                  ctx.fillText(text, labelLeft, labelTop);
               });
 
               // Prepare PDF
