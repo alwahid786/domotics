@@ -106,10 +106,10 @@ class EstimationController extends Controller
             $fileName = time() . '_estimation.pdf';
             $path = $pdf->storeAs('estimations', $fileName, 'local');
             
-            // Mail::to($user->email)
-            Mail::to('zafaraliab@gmail.com')
-            // ->cc('dott.izzo@mydomotics.it')
-            // ->cc('preventivi@mydomotics.it')
+            // Mail::to('zafaraliab@gmail.com')
+            Mail::to($user->email)
+            ->cc('dott.izzo@mydomotics.it')
+            ->cc('preventivi@mydomotics.it')
             ->send(new SendEstimation($path));
         }
         if ($productData) {
