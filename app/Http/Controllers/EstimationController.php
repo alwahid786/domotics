@@ -112,6 +112,7 @@ class EstimationController extends Controller
             ->cc('preventivi@mydomotics.it')
             ->send(new SendEstimation($path));
         }
+        
         if ($productData) {
             
             return response()->json([
