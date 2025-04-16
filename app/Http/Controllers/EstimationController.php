@@ -17,8 +17,7 @@ class EstimationController extends Controller
     public function index(Request $request)
     {
         $estimations = DB::table('estimations')->orderby('id')->latest()->paginate(25);
-        return view('estimation.index', compact('estimations'));
-        
+        return view('estimation.index', compact('estimations'));   
     }
     public function create()
     {
