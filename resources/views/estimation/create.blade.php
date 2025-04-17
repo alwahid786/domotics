@@ -176,6 +176,7 @@
             <tr>
               <th>Sr. No</th>
               <th>Name</th>
+              <th>Description</th>
               <th>Sensor</th>
               <th>Room</th>
               <th>Price</th>
@@ -185,7 +186,7 @@
           <tbody></tbody>
           <tfoot>
             <tr id="totalRow">
-              <td colspan="4">Total Price</td>
+              <td colspan="5">Total Price</td>
               <td>$<span id="totalPrice">0</span></td>
               <td></td>
             </tr>
@@ -239,10 +240,12 @@
         <form id="polygonForm">
           <div class="mb-3">
             <label for="polygonName" class="form-label">Room Name</label>
-            <input type="text" class="form-control" id="polygonName" required>
+            <select class="form-select" id="polygonName" required>
+              <option value="">Select Room</option>
+            </select>
           </div>
         </form>
-      </div>
+      </div>      
       <div class="modal-footer">
         <button type="button" id="cancelPolygonModal" class="btn btn-secondary">Cancel</button>
         <button type="button" id="savePolygon" class="btn btn-primary">Save</button>
@@ -340,10 +343,11 @@
             const {
               name: sensorName,
               price,
-              id
+              id,
+              description
             } = sensor;
             sensorPrices[sensorName] = price;
-            sensorSelectTag.innerHTML += `<option data-id="${id}" value="${sensorName}">${sensorName}</option>`;
+            sensorSelectTag.innerHTML += `<option data-id="${id}" data-description="${description}" value="${sensorName}">${sensorName}</option>`;
           });
         }
       } catch (error) {
@@ -351,6 +355,29 @@
       }
     }
     fetchSensors();
+
+    const fetchRooms = async () => {
+      try {
+        const result = await fetch("{{ route('estimations.room') }}");
+        if (!result.ok) {
+          throw new Error("Error while fetching rooms");
+        }
+        const data = await result.json();
+        const rooms = data.rooms.map((room) => room.name);
+
+        const select = document.getElementById('polygonName');
+        rooms.forEach((roomName) => {
+          const option = document.createElement('option');
+          option.value = roomName;
+          option.textContent = roomName;
+          select.appendChild(option);
+        });
+      } catch (error) {
+        console.error("Error while fetching rooms", error.message);
+      }
+    };
+    fetchRooms();
+
     // Close handlers for sensor modal
     function hideDotModal({keepDot = false}) {
       if (!keepDot && temporaryDotId) {
@@ -641,6 +668,7 @@
       const sensor = document.getElementById('sensorSelect').value;
       const selectedOption = sensorSelectTag.options[sensorSelectTag.selectedIndex];
       const sensorIdVal = selectedOption ? selectedOption.getAttribute("data-id") : "";
+      const description = selectedOption ? selectedOption.getAttribute("data-description") : "";
       if (!name || !sensor) {
         alert('Please enter a name and select a sensor.');
         return;
@@ -653,6 +681,7 @@
       productsData.push({
         id: currentDotId,
         name, // sensor name from modal input
+        description, // description name from modal input
         sensor, // sensor type/attached sensor name
         sensorId: sensorIdVal,
         price,
@@ -664,6 +693,7 @@
       const dot = document.getElementById(currentDotId);
       if (dot) {
         dot.dataset.name = name;
+        dot.dataset.description = description;
         dot.dataset.sensor = sensor;
         dot.title = `Name: ${name}, Sensor: ${sensor}`;
       }
@@ -690,6 +720,7 @@
       tr.setAttribute('id', 'row-' + currentDotId);
       tr.innerHTML = `<td>${dotCount}</td>
                       <td>${name}</td>
+                      <td>${description}</td>
                       <td>${sensor}</td>
                       <td>${roomName}</td>
                       <td>$${price}</td>
@@ -796,16 +827,17 @@
                       cols[1].innerText,
                       cols[2].innerText,
                       cols[3].innerText,
-                      cols[4].innerText
+                      cols[4].innerText,
+                      cols[5].innerText,
                   ]);
               });
 
               const total = document.getElementById('totalPrice').innerText;
-              tableData.push(["", "", "Total Price", "$" + total]);
+              tableData.push(["", "", "", "Total Price", "$" + total]);
 
               pdf.autoTable({
                   startY: pdfImgHeight + margin + 5,
-                  head: [['Sr. No', 'Name', 'Sensor', 'Room', 'Price']],
+                  head: [['Sr. No', 'Name', 'Description', 'Sensor', 'Room', 'Price']],
                   body: tableData,
                   theme: 'grid',
                   styles: { fontSize: 10 }
@@ -822,6 +854,7 @@
                   const roomObj = polygons.find(p => p.id === sensor.roomId);
                   return {
                       sensorName: sensor.name,
+                      sensorDescription: sensor.description,
                       sensorType: sensor.sensor,
                       sensorPrice: sensor.price,
                       sensorId: sensor.sensorId,

@@ -39,6 +39,7 @@
                             <tr>
                                 <th>Sr. No</th>
                                 <th>Sensor Name</th>
+                                <th>Description</th>
                                 <th>Room</th>
                                 <th>Price</th>
                             </tr>
@@ -46,7 +47,7 @@
                         <tbody id="estimationTableBody"></tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="3" class="text-end fw-bold">Total Price</td>
+                                <td colspan="4" class="text-end fw-bold">Total Price</td>
                                 <td id="totalPrice"></td>
                             </tr>
                         </tfoot>
@@ -138,6 +139,11 @@
             const tdSensorName = document.createElement("td");
             tdSensorName.textContent = sensor.sensorName || "N/A";
             tr.appendChild(tdSensorName);
+
+            // Sensor Description
+            const tdSensorDescription = document.createElement("td");
+            tdSensorDescription.textContent = sensor.sensorDescription || "N/A";
+            tr.appendChild(tdSensorDescription);
 
             // Room Name (matched by roomId)
             const tdRoom = document.createElement("td");
@@ -273,6 +279,7 @@
 
         modalBody.innerHTML = `
             <p><strong>Sensor Name:</strong> ${sensor.sensorName}</p>
+            <p><strong>Description:</strong> ${sensor.sensorDescription}</p>
             <p><strong>Room:</strong> ${roomName}</p>
             <p><strong>Price:</strong> $${sensor.sensorPrice}</p>
         `;

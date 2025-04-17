@@ -86,6 +86,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/estimations/{estimate}/delete', [EstimationController::class, 'destroy'])->name('estimations.destroy');
     Route::get('/estimations/fetch', [EstimationController::class, 'fetch'])->name('estimations.fetch');
 
+    Route::get('/rooms', [EstimationController::class, 'rooms'])->name('estimations.room');    
+
 // Quotation update
     Route::put('/quotations/{quotation}', [QuotationController::class, 'update'])->name('quotations.update');
 

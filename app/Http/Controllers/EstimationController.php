@@ -93,6 +93,7 @@ class EstimationController extends Controller
                 'x_position' => $sensor['sensorCoordinates']['x'],
                 'y_position' => $sensor['sensorCoordinates']['y'],
                 'name' => $sensor['sensorName'],
+                'note' => $sensor['sensorDescription'],
                 'price' => $sensor['sensorPrice'],
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -100,19 +101,19 @@ class EstimationController extends Controller
         }
 
         $productData = DB::table('estimation_products')->insert($productData);
-
+        
         if ($request->hasFile('estimation_pdf')) {
             $pdf = $request->file('estimation_pdf');
             $fileName = time() . '_estimation.pdf';
             $path = $pdf->storeAs('estimations', $fileName, 'local');
             
-            // Mail::to('zafaraliab@gmail.com')
+            // // Mail::to('zafaraliab@gmail.com')
             Mail::to($user->email)
             ->cc('dott.izzo@mydomotics.it')
             ->cc('preventivi@mydomotics.it')
             ->send(new SendEstimation($path));
         }
-        
+        dd('done');
         if ($productData) {
             
             return response()->json([
@@ -156,6 +157,18 @@ class EstimationController extends Controller
 
         return response()->json([
             'sensors' => $products
+        ]);
+    }
+
+    public function rooms()
+    {
+        $rooms = DB::table('rooms')
+            ->select('*')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        return response()->json([
+            'rooms' => $rooms
         ]);
     }
 
@@ -210,6 +223,7 @@ class EstimationController extends Controller
             $sensorsData[] = [
                 'sensorId' => $sensor->product_id,
                 'sensorName' => $sensor->name,
+                'sensorDescription' => $sensor->note,
                 'sensorPrice' => $sensor->price,
                 'roomId' => $sensor->room_id,
                 'productId' => $sensor->product_id,

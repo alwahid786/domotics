@@ -36,7 +36,7 @@
 <body>
     <div class="header">
 
-        <img src="{{ public_path('brand/logo-mydomotics.png') }}" alt="MyDomotics" width="200">
+        <img src="https://www.mydomotics.it/wp-content/uploads/2016/09/logo-1024x221.jpg" alt="MyDomotics" width="200">
 
         <div style="text-align: right; font-size: 12px;">
             Covertec Design S.r.l Via D.Fontana 53/A - 80128 Napoli - www.mydomotics.it - Numero Verde 800.973.138
