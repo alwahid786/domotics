@@ -27,7 +27,7 @@ class SendEstimation extends Mailable
         // Generate the PDF
         return $this->subject('La tua stima MyDomotics')
             ->view('estimation.email')
-            ->attach(storage_path("app/private/{$this->filePath}"), [
+            ->attach(storage_path("app/private/estimations/{$this->filePath}"), [
                 'as' => 'Estimation.pdf',
                 'mime' => 'application/pdf',
             ]);

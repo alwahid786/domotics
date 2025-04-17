@@ -101,19 +101,39 @@ class EstimationController extends Controller
         }
 
         $productData = DB::table('estimation_products')->insert($productData);
-        
-        if ($request->hasFile('estimation_pdf')) {
-            $pdf = $request->file('estimation_pdf');
-            $fileName = time() . '_estimation.pdf';
-            $path = $pdf->storeAs('estimations', $fileName, 'local');
-            
-            // // Mail::to('zafaraliab@gmail.com')
-            Mail::to($user->email)
+                
+        // Fetch for PDF generation
+        $estimation = DB::table('estimations')->where('id', $estimationId)->first();
+        $roomsRaw = DB::table('estimation_room')->where('estimation_id', $estimationId)->get();
+        $sensors = DB::table('estimation_products')->where('estimation_id', $estimationId)->get();
+
+        // Group rooms
+        $rooms = [];
+        foreach ($roomsRaw as $row) {
+            $rooms[$row->room_id]['roomName'] = $row->room_name;
+            $rooms[$row->room_id]['roomId'] = $row->room_id;
+            $rooms[$row->room_id]['coordinates'][] = ['x' => $row->x_position, 'y' => $row->y_position];
+        }
+        $rooms = array_values($rooms);
+
+        // Generate PDF
+        $pdf = Pdf::loadView('estimation.pdf', [
+            'imagePath' => $estimation->image,
+            'totalPrice' => $estimation->total,
+            'floorName' => $estimation->floor_name,
+            'roomsData' => $rooms,
+            'sensorsData' => $sensors,
+        ]);
+
+        $pdfPath = storage_path("app/private/estimations/estimation_{$estimationId}.pdf");
+        file_put_contents($pdfPath, $pdf->output());
+
+        // Mail::to('zafaraliab@gmail.com')
+        Mail::to($user->email)
             ->cc('dott.izzo@mydomotics.it')
             ->cc('preventivi@mydomotics.it')
-            ->send(new SendEstimation($path));
-        }
-        dd('done');
+            ->send(new SendEstimation($pdfPath));
+        
         if ($productData) {
             
             return response()->json([
