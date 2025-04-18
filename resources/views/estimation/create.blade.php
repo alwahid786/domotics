@@ -857,7 +857,8 @@
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     },
-                    body: formData
+                    body: formData,   
+                    credentials: 'include'
                 })
                     .then(res => res.json())
                     .then(data => {
