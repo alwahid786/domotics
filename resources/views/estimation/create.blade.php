@@ -855,10 +855,9 @@
                 fetch(`{{ route('estimations.store') }}`, {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                      'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: formData,   
-                    credentials: 'include'
                 })
                     .then(res => res.json())
                     .then(data => {
