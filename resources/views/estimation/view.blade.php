@@ -79,7 +79,7 @@
                             <tr>
                                 <th>Sr. No</th>
                                 <th>Sensor Name</th>
-                                <th>Description</th>
+                                <th>Installation Notes</th>
                                 <th>Room</th>
                                 <th>Price</th>
                             </tr>
@@ -356,7 +356,7 @@
 
         modalBody.innerHTML = `
             <p><strong>Sensor Name:</strong> ${sensor.sensorName}</p>
-            <p><strong>Description:</strong> ${sensor.sensorDescription}</p>
+            <p><strong>Installation Notes:</strong> ${sensor.sensorDescription}</p>
             <p><strong>Room:</strong> ${roomName}</p>
             <p><strong>Price:</strong> $${sensor.sensorPrice}</p>
         `;

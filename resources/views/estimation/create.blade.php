@@ -176,7 +176,7 @@
             <tr>
               <th>Sr. No</th>
               <th>Name</th>
-              <th>Description</th>
+              <th>Installation Notes</th>
               <th>Sensor</th>
               <th>Room</th>
               <th>Price</th>
@@ -219,7 +219,7 @@
             </select>
           </div>
           <div class="mb-3">
-            <label for="dotNote" class="form-label">Description</label>
+            <label for="dotNote" class="form-label">Installation Notes</label>
             <textarea id="dotNote" cols="2" rows="2" class="form-control" required></textarea>
           </div>
           <!-- Hidden fields to store coordinates and room id -->
@@ -903,7 +903,7 @@
 
                     pdf.autoTable({
                         startY: pdfImgHeight + margin + 5,
-                        head: [['Sr. No', 'Name', 'Description', 'Sensor', 'Room', 'Price']],
+                        head: [['Sr. No', 'Name', 'Installation Notes', 'Sensor', 'Room', 'Price']],
                         body: tableData,
                         theme: 'grid',
                         styles: { fontSize: 10 }

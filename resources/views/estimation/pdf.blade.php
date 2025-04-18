@@ -70,7 +70,7 @@
             <tr>
                 <th>#</th>
                 <th>Sensor Name</th>
-                <th>Description</th>
+                <th>Installation Notes</th>
                 <th>Room</th>
                 <th>Price</th>
             </tr>
