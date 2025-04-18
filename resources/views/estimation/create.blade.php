@@ -266,7 +266,7 @@
   <!-- jsPDF and AutoTable -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
-
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     const {
       jsPDF
@@ -852,25 +852,27 @@
                 formData.append('image', imageFile);
                 formData.append('floorName', floorNameInput.value);
 
-                fetch(`{{ route('estimations.store') }}`, {
-                    method: 'POST',
+                $.ajax({
+                    url: '{{ route('estimations.store') }}',  
+                    type: 'POST',                            
+                    data: formData,                         
+                    processData: false,                     
+                    contentType: false,                   
                     headers: {
-                      'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    body: formData,   
-                })
-                    .then(res => res.json())
-                    .then(data => {
+                    success: function(data) {
                         if (data.success) {
                             alert(data.message);
                             setTimeout(() => {
                                 window.location.href = "{{ route('estimations.index') }}";
                             }, 1000);
                         }
-                    })
-                    .catch(error => {
-                        console.error("Fetch error:", error);
-                    });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX error:", error);
+                    }
+                });
 
                 // ✅ Also download PDF locally (but don’t send to backend)
                 const pdf = new jsPDF('p', 'mm', 'a4');
