@@ -408,25 +408,15 @@
     // Image upload & Cropper initialization
     imageUpload.addEventListener('change', function(event) {
       const file = event.target.files[0];
-      // if (file) {
-      //   const reader = new FileReader();
-      //   reader.onload = function(e) {
-      //     imageToCrop.src = e.target.result;
-      //     cropContainer.style.display = 'block';
-      //     if (cropper) {
-      //       cropper.destroy();
-      //     }
-      //     cropper = new Cropper(imageToCrop, {
-      //       aspectRatio: 16 / 9,
-      //       viewMode: 1
-      //     });
-      //   };
-      //   reader.readAsDataURL(file);
-      // }
       if (file) {
           const reader = new FileReader();
           reader.onload = function(e) {
             imageToCrop.onload = function() {
+              if (file.size > 2 * 1024 * 1024) {
+                alert('Image must be less than 2MB.');
+                event.target.value = '';
+                return;
+              }
               const naturalWidth = imageToCrop.naturalWidth;
               const naturalHeight = imageToCrop.naturalHeight;
               const dynamicAspectRatio = naturalWidth / naturalHeight;
