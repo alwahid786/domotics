@@ -16,8 +16,20 @@ class EstimationController extends Controller
 {
     public function index(Request $request)
     {
-        $estimations = DB::table('estimations')->orderby('id')->latest()->paginate(25);
-        return view('estimation.index', compact('estimations'));
+        $user = Auth::user();
+        $role = DB::table('roles')
+            ->join('model_has_roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->where('model_has_roles.model_id', $user->id)
+            ->select('roles.id')
+            ->first();
+
+        if($role->id == 1 || $role->id == 2){
+            $estimations = DB::table('estimations')->orderby('id')->latest()->paginate(25);
+            return view('estimation.index', compact('estimations'));
+        }else{
+            $estimations = DB::table('estimations')->where('user_id', $role->id)->orderby('id')->latest()->paginate(25);
+            return view('estimation.index', compact('estimations'));
+        }
     }
     public function create()
     {
