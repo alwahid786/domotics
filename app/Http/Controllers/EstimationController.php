@@ -137,14 +137,15 @@ class EstimationController extends Controller
             'sensorsData' => $sensors,
         ]);
 
-        $pdfPath = storage_path("app/private/estimations/estimation_{$estimationId}.pdf");
+        $pdfFileName = "estimation_{$estimationId}.pdf";
+        $pdfPath = storage_path("app/private/estimations/{$pdfFileName}");
         file_put_contents($pdfPath, $pdf->output());
 
         // Mail::to('zafaraliab@gmail.com')
         Mail::to($user->email)
             ->cc('dott.izzo@mydomotics.it')
             ->cc('preventivi@mydomotics.it')
-            ->send(new SendEstimation($pdfPath));
+            ->send(new SendEstimation($pdfFileName));
         
         if ($productData) {
             
