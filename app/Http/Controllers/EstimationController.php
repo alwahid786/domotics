@@ -149,10 +149,12 @@ class EstimationController extends Controller
         
         if ($productData) {
             
+            $downloadUrl = route('estimations.download', ['file' => $pdfFileName]);
             return response()->json([
                 'success' => true,
                 'type' => 'success',
                 'message' => 'Stima creata con successo.',
+                'download_url' => $downloadUrl,
             ]);
         } else {
             return response()->json([

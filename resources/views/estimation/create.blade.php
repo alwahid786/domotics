@@ -852,12 +852,18 @@
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     success: function(data) {
-                        if (data.success) {
-                            alert(data.message);
-                            setTimeout(() => {
-                                window.location.href = "{{ route('estimations.index') }}";
-                            }, 1000);
-                        }
+                      if (data.success) {
+                        var link = document.createElement('a');
+                        link.href = data.download_url;
+                        link.download = '';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        alert(data.message);
+                        setTimeout(function() {
+                            window.location.href = '{{ route('estimations.index') }}';
+                        }, 1000); 
+                      }
                     },
                     error: function(xhr, status, error) {
                         console.error("AJAX error:", error);
@@ -901,7 +907,7 @@
                         styles: { fontSize: 10 }
                     });
 
-                    pdf.save('estimation.pdf');
+                    // pdf.save('estimation.pdf');
                 };
                 reader.readAsDataURL(blob);
 

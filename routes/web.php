@@ -86,6 +86,17 @@ Route::middleware('auth')->group(function () {
     Route::delete('/estimations/{estimate}/delete', [EstimationController::class, 'destroy'])->name('estimations.destroy');
     Route::get('/estimations/fetch', [EstimationController::class, 'fetch'])->name('estimations.fetch');
 
+    Route::get('/estimations/download/{file}', function ($file) {
+        $path = storage_path("app/private/estimations/{$file}");
+    
+        if (file_exists($path)) {
+            return response()->download($path);
+        } else {
+            abort(404);
+        }
+    })->name('estimations.download');
+
+    
     Route::get('/rooms', [EstimationController::class, 'rooms'])->name('estimations.room');    
 
 // Quotation update
