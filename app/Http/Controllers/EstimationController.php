@@ -23,10 +23,10 @@ class EstimationController extends Controller
             ->select('roles.id')
             ->first();
 
-        if($role->id == 1 || $role->id == 2){
+        if ($role->id == 1 || $role->id == 2) {
             $estimations = DB::table('estimations')->orderby('id')->latest()->paginate(25);
             return view('estimation.index', compact('estimations'));
-        }else{
+        } else {
             $estimations = DB::table('estimations')->where('user_id', $role->id)->orderby('id')->latest()->paginate(25);
             return view('estimation.index', compact('estimations'));
         }
@@ -113,7 +113,7 @@ class EstimationController extends Controller
         }
 
         $productData = DB::table('estimation_products')->insert($productData);
-                
+
         // Fetch for PDF generation
         $estimation = DB::table('estimations')->where('id', $estimationId)->first();
         $roomsRaw = DB::table('estimation_room')->where('estimation_id', $estimationId)->get();
@@ -141,14 +141,14 @@ class EstimationController extends Controller
         $pdfPath = storage_path("app/private/estimations/{$pdfFileName}");
         file_put_contents($pdfPath, $pdf->output());
 
-        // Mail::to('zafaraliab@gmail.com')
-        Mail::to($user->email)
-            ->cc('dott.izzo@mydomotics.it')
-            ->cc('preventivi@mydomotics.it')
-            ->send(new SendEstimation($pdfFileName));
-        
+        // // Mail::to('zafaraliab@gmail.com')
+        // Mail::to($user->email)
+        //     ->cc('dott.izzo@mydomotics.it')
+        //     ->cc('preventivi@mydomotics.it')
+        //     ->send(new SendEstimation($pdfFileName));
+
         if ($productData) {
-            
+
             $downloadUrl = route('estimations.download', ['file' => $pdfFileName]);
             return response()->json([
                 'success' => true,
@@ -163,7 +163,7 @@ class EstimationController extends Controller
                 'message' => 'Errore durante la creazione della stima.',
             ]);
         }
-    }    
+    }
 
     public function sensors()
     {
@@ -215,7 +215,7 @@ class EstimationController extends Controller
 
     public function fetch(Request $request)
     {
-        $id = $request->estimate; 
+        $id = $request->estimate;
         $estimation = DB::table('estimations')->where('id', $id)->first();
         if (!$estimation) {
             return response()->json([
@@ -224,7 +224,7 @@ class EstimationController extends Controller
                 'message' => 'Estimation not found.',
             ], 404);
         }
-    
+
         // Fetch room coordinates grouped by room name
         $roomsRaw = DB::table('estimation_room')
             ->where('estimation_id', $id)
@@ -245,14 +245,14 @@ class EstimationController extends Controller
                 'y' => $room->y_position,
             ];
         }
-    
+
         $roomsData = array_values($roomsGrouped);
-    
+
         // Fetch sensors
         $sensorsRaw = DB::table('estimation_products')
             ->where('estimation_id', $id)
             ->get();
-    
+
         $sensorsData = [];
         foreach ($sensorsRaw as $sensor) {
             $sensorsData[] = [
@@ -268,7 +268,7 @@ class EstimationController extends Controller
                 ],
             ];
         }
-    
+
         // Prepare the response
         return response()->json([
             'success' => true,
@@ -292,6 +292,4 @@ class EstimationController extends Controller
         return redirect()->route('estimations.index')
             ->withSuccess('Stime cancellato con successo.');
     }
-
-    
 }
