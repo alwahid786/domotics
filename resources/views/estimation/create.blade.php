@@ -394,7 +394,6 @@
                     throw new Error("Error while fetching sensors");
                 }
                 const data = await res.json();
-                console.log('data', data)
                 if (data?.sensors?.length > 0) {
                     sensorPrices = {};
                     data.sensors.forEach((sensor) => {
@@ -1029,13 +1028,6 @@
 
                     const formData = new FormData();
 
-                    // Debug the data being sent
-                    console.log("Sending data to server:");
-                    console.log("Rooms:", roomsData);
-                    console.log("Sensors:", sensorsData);
-                    console.log("Total Price:", totalPrice);
-                    console.log("Floor Name:", floorNameInput.value);
-
                     // Convert object data to strings for FormData
                     formData.append('roomsData', JSON.stringify(roomsData));
                     formData.append('sensorsData', JSON.stringify(sensorsData));
@@ -1055,12 +1047,6 @@
                         return;
                     }
 
-                    // Debug FormData (limited since it's not directly inspectable)
-                    console.log("FormData entries:");
-                    for (let pair of formData.entries()) {
-                        console.log(pair[0], pair[1] instanceof Blob ? "Blob data" : pair[1]);
-                    }
-
                     // When handling the server response
                     $.ajax({
                         url: `{{ route('estimations.store') }}`,
@@ -1075,8 +1061,6 @@
                             // Remove loading state
                             generatePDFBtn.disabled = false;
                             generatePDFBtn.classList.remove('loading');
-
-                            console.log("Server response:", data);
 
                             if (data && data.success) {
                                 if (data.download_url) {
