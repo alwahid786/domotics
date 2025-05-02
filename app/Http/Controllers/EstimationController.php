@@ -127,11 +127,11 @@ class EstimationController extends Controller
         $estimation = DB::table('estimations')->where('id', $estimationId)->first();
         $roomsRaw = DB::table('estimation_room')->where('estimation_id', $estimationId)->get();
         $sensors = DB::table('estimation_products')
-        ->join('products', 'estimation_products.product_id', '=', 'products.id')
-        ->where('estimation_products.estimation_id', $estimationId)
-        ->select('estimation_products.*', 'products.image as product_image')
-        ->get();
-    
+            ->join('products', 'estimation_products.product_id', '=', 'products.id')
+            ->where('estimation_products.estimation_id', $estimationId)
+            ->select('estimation_products.*', 'products.image as product_image')
+            ->get();
+
 
         // Group rooms
         $rooms = [];
@@ -156,10 +156,10 @@ class EstimationController extends Controller
         file_put_contents($pdfPath, $pdf->output());
 
         // // Mail::to('zafaraliab@gmail.com')
-        Mail::to($user->email)
-            ->cc('dott.izzo@mydomotics.it')
-            ->cc('preventivi@mydomotics.it')
-            ->send(new SendEstimation($pdfFileName));
+        // Mail::to($user->email)
+        //     ->cc('dott.izzo@mydomotics.it')
+        //     ->cc('preventivi@mydomotics.it')
+        //     ->send(new SendEstimation($pdfFileName));
 
         if ($productData) {
 
@@ -319,7 +319,7 @@ class EstimationController extends Controller
     {
 
         $id = $estimate;
-        $estimation = DB::table('estimations')->select('id','user_id','total','floor_name','clean_image')->where('id', $id)->first();
+        $estimation = DB::table('estimations')->select('id', 'user_id', 'total', 'floor_name', 'clean_image')->where('id', $id)->first();
         if (!$estimation) {
             return redirect()->route('estimations.index')->with('error', 'Estimation not found.');
         }
