@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-800 leading-tight">
-            {{ __('Nuovo Preventivo') }}
+            {{ __('Modifica Preventivo') }}
         </h2>
     </x-slot>
 
@@ -156,9 +156,10 @@
     <!-- Mode Switching Buttons & Other UI -->
     <div style="padding-top: 30px; padding-bottom: 30px;">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-white shadow p-2 rounded mt-4">
+            <input type="hidden" id="estimationId" value="{{ $estimation->id }}">
             <!-- Image Upload -->
             <div class="mb-2 mt-4 flex items-center gap-4">
-                <input type="text" class="form-control border p-2 floor-name" placeholder="Floor name" required />
+                <input type="text" value="{{ $estimation->floor_name }}" class="form-control border p-2 floor-name" placeholder="Floor name" required />
                 <input type="file" id="imageUpload" accept="image/*" class="form-control border p-2 w-full">
             </div>
             <!-- Mode buttons: initially hidden, will be shown after picture upload -->
@@ -301,6 +302,43 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        fetchEstimationData();
+    });
+
+    function fetchEstimationData() {
+        const estimateInput = document.getElementById("estimationId");
+        const estimate = estimateInput ? estimateInput.value : "";
+        const url = "{{ route('estimations.fetch') }}?estimate=" + encodeURIComponent(estimate);
+        fetch(url)
+            .then(response => response.json())
+            .then(responseData => {
+                // Update: our required data is nested in responseData.data
+                if (!responseData.data) {
+                    console.error("API response missing 'data' property.");
+                    return;
+                }
+                apiData = responseData.data;
+                console.log('apiData', apiData);
+                
+                // Check for image existence
+                if (!apiData.clean_image) {
+                    console.error("No image URL provided in API data.");
+                    return;
+                }
+
+                buildEstimationTable(apiData);
+                drawFloorPlan(apiData);
+            })
+            .catch(error => {
+                console.error("Error fetching estimations:", error);
+            });
+    }
+
+    </script>
+
     <script>
         const {
             jsPDF

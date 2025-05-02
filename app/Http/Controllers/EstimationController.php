@@ -55,6 +55,14 @@ class EstimationController extends Controller
             $imagePath = 'uploads/estimations/' . $imageName;
         }
 
+        $cleanimagePath = null;
+        if ($request->hasFile('image_clean')) {
+            $cleanimage = $request->file('image_clean');
+            $cleanimageName = 'clean_' . time() . '_' . $cleanimage->getClientOriginalName();
+            $cleanimage->move(public_path('uploads/estimations'), $cleanimageName);
+            $cleanimagePath = 'uploads/estimations/' . $cleanimageName;
+        }
+
         // Get authenticated user and role
         $user = Auth::user();
         $role = DB::table('roles')
@@ -67,6 +75,7 @@ class EstimationController extends Controller
         $estimationId = DB::table('estimations')->insertGetId([
             'user_id' => $role->id,
             'image' => $imagePath,
+            'clean_image' => $cleanimagePath,
             'total' => $validatedData['totalPrice'],
             'floor_name' => $validatedData['floorName'],
             'created_at' => now(),
@@ -286,6 +295,7 @@ class EstimationController extends Controller
                 'totalPrice' => $estimation->total,
                 'floorName' => $estimation->floor_name,
                 'image' => $estimation->image ? asset($estimation->image) : null,
+                'clean_image' => $estimation->clean_image ? asset($estimation->clean_image) : null,
             ],
         ]);
     }
@@ -303,5 +313,17 @@ class EstimationController extends Controller
     {
         $image =  DB::table('products')->select('image')->where('id', $id)->first();
         return $image;
+    }
+
+    public function Edit($estimate)
+    {
+
+        $id = $estimate;
+        $estimation = DB::table('estimations')->select('id','user_id','total','floor_name','clean_image')->where('id', $id)->first();
+        if (!$estimation) {
+            return redirect()->route('estimations.index')->with('error', 'Estimation not found.');
+        }
+
+        return view('estimation.edit', compact('estimation'));
     }
 }
