@@ -117,7 +117,12 @@ class EstimationController extends Controller
         // Fetch for PDF generation
         $estimation = DB::table('estimations')->where('id', $estimationId)->first();
         $roomsRaw = DB::table('estimation_room')->where('estimation_id', $estimationId)->get();
-        $sensors = DB::table('estimation_products')->where('estimation_id', $estimationId)->get();
+        $sensors = DB::table('estimation_products')
+        ->join('products', 'estimation_products.product_id', '=', 'products.id')
+        ->where('estimation_products.estimation_id', $estimationId)
+        ->select('estimation_products.*', 'products.image as product_image')
+        ->get();
+    
 
         // Group rooms
         $rooms = [];
@@ -142,10 +147,10 @@ class EstimationController extends Controller
         file_put_contents($pdfPath, $pdf->output());
 
         // // Mail::to('zafaraliab@gmail.com')
-        // Mail::to($user->email)
-        //     ->cc('dott.izzo@mydomotics.it')
-        //     ->cc('preventivi@mydomotics.it')
-        //     ->send(new SendEstimation($pdfFileName));
+        Mail::to($user->email)
+            ->cc('dott.izzo@mydomotics.it')
+            ->cc('preventivi@mydomotics.it')
+            ->send(new SendEstimation($pdfFileName));
 
         if ($productData) {
 

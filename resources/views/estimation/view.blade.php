@@ -94,8 +94,8 @@
                         <thead>
                             <tr>
                                 <th>Sr. No</th>
-                                <th>Sensor Name</th>
                                 <th>Image</th>
+                                <th>Sensor Name</th>
                                 <th>Installation Notes</th>
                                 <th>Room</th>
                                 <th>Price</th>
@@ -217,14 +217,6 @@
                     return;
                 }
                 apiData = responseData.data;
-                console.log('apiData', apiData);
-
-                // Debug sensor data structure
-                if (apiData.sensorsData && apiData.sensorsData.length > 0) {
-                    console.log('First sensor data structure:', apiData.sensorsData[0]);
-                    console.log('Sensor image property:', apiData.sensorsData[0].image || apiData.sensorsData[0].sensorImage || 'Not found');
-                }
-
                 // Check for image existence
                 if (!apiData.image) {
                     console.error("No image URL provided in API data.");
@@ -261,11 +253,6 @@
             tdSrNo.textContent = index + 1;
             tr.appendChild(tdSrNo);
 
-            // Sensor Name
-            const tdSensorName = document.createElement("td");
-            tdSensorName.textContent = sensor.sensorName || sensor.name || "N/A";
-            tr.appendChild(tdSensorName);
-
             // Sensor Image - handle nested structure
             const tdSensorImage = document.createElement("td");
             // Handle different possible image property structures
@@ -296,6 +283,11 @@
                     `<div style="width:50px; height:50px; display:flex; align-items:center; justify-content:center; background-color:#f0f0f0; border-radius:4px; font-size:10px; color:#666;">No Image</div>`;
             }
             tr.appendChild(tdSensorImage);
+
+            // Sensor Name
+            const tdSensorName = document.createElement("td");
+            tdSensorName.textContent = sensor.sensorName || sensor.name || "N/A";
+            tr.appendChild(tdSensorName);
 
             // Sensor Description
             const tdSensorDescription = document.createElement("td");
@@ -336,39 +328,39 @@
             // Draw the background image
             ctx.drawImage(floorImage, 0, 0);
 
-            // Draw rooms as polygons
-            if (data.roomsData && data.roomsData.length > 0) {
-                data.roomsData.forEach(room => {
-                    drawRoomPolygon(ctx, room.coordinates);
-                });
-            } else {
-                console.warn("No room data available.");
-            }
+            // // Draw rooms as polygons
+            // if (data.roomsData && data.roomsData.length > 0) {
+            //     data.roomsData.forEach(room => {
+            //         drawRoomPolygon(ctx, room.coordinates);
+            //     });
+            // } else {
+            //     console.warn("No room data available.");
+            // }
 
-            // Draw sensor dots
-            sensorDots = []; // Reset sensor dots array
-            if (data.sensorsData && data.sensorsData.length > 0) {
-                data.sensorsData.forEach(sensor => {
-                    const x = parseFloat(sensor.sensorCoordinates.x);
-                    const y = parseFloat(sensor.sensorCoordinates.y);
+            // // Draw sensor dots
+            // sensorDots = []; // Reset sensor dots array
+            // if (data.sensorsData && data.sensorsData.length > 0) {
+            //     data.sensorsData.forEach(sensor => {
+            //         const x = parseFloat(sensor.sensorCoordinates.x);
+            //         const y = parseFloat(sensor.sensorCoordinates.y);
 
-                    // Save dot info for click detection
-                    sensorDots.push({
-                        x: x,
-                        y: y,
-                        radius: 5,
-                        sensorInfo: sensor
-                    });
+            //         // Save dot info for click detection
+            //         sensorDots.push({
+            //             x: x,
+            //             y: y,
+            //             radius: 5,
+            //             sensorInfo: sensor
+            //         });
 
-                    // Draw the sensor dot
-                    ctx.beginPath();
-                    ctx.arc(x, y, 5, 0, 2 * Math.PI);
-                    ctx.fillStyle = "red";
-                    ctx.fill();
-                });
-            } else {
-                console.warn("No sensor data available.");
-            }
+            //         // Draw the sensor dot
+            //         ctx.beginPath();
+            //         ctx.arc(x, y, 5, 0, 2 * Math.PI);
+            //         ctx.fillStyle = "red";
+            //         ctx.fill();
+            //     });
+            // } else {
+            //     console.warn("No sensor data available.");
+            // }
         };
 
         floorImage.onerror = function(err) {
