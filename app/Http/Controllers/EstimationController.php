@@ -257,6 +257,7 @@ class EstimationController extends Controller
         foreach ($sensorsRaw as $sensor) {
             $sensorsData[] = [
                 'sensorId' => $sensor->product_id,
+                'sensorImage' => $this->productImage($sensor->product_id),
                 'sensorName' => $sensor->name,
                 'sensorDescription' => $sensor->note,
                 'sensorPrice' => $sensor->price,
@@ -291,5 +292,11 @@ class EstimationController extends Controller
 
         return redirect()->route('estimations.index')
             ->withSuccess('Stime cancellato con successo.');
+    }
+
+    protected function productImage($id)
+    {
+        $image =  DB::table('products')->select('image')->where('id', $id)->first();
+        return $image;
     }
 }

@@ -17,14 +17,17 @@
         body {
             overflow-x: hidden !important;
         }
+
         canvas {
             border: 1px solid #ccc;
             max-width: 100%;
         }
+
         .floorplan {
             position: relative;
             width: 100%;
         }
+
         .floorplan img {
             width: 500px;
             margin: 20px auto;
@@ -36,37 +39,50 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-10  bg-white shadow rounded" style="padding: 40px">
                 <div class="floorplan">
-                    <img src="{{ asset('uploads/estimations/MyDomoticsInvoice.png') }}" width="100%" height="auto" alt="Header">
+                    <img src="{{ asset('uploads/estimations/MyDomoticsInvoice.png') }}" width="100%" height="auto"
+                        alt="Header">
                 </div>
                 <br>
                 <p>
-                    Oggetto :Offerta relativa alla DOMOTIZZAZIONE della vostra unita' immobiliare Palazzo Sanfelice<br><br>
-                    Su Sua cortese richiesta abbiamo predisposto la presente offerta per la fornitura di materiali e apparecchiature del nostro sistema domotico wireless con protocollo di comunicazione RF/Wi-Fi presso la sua unita' immobilare evidenziata in oggetto.<br><br><br>
-                    La vastissima quantità di connessioni possibili con dispositivi MydomoticS già pronti ci consente di tenere sotto controllo:<br>
+                    Oggetto :Offerta relativa alla DOMOTIZZAZIONE della vostra unita' immobiliare Palazzo
+                    Sanfelice<br><br>
+                    Su Sua cortese richiesta abbiamo predisposto la presente offerta per la fornitura di materiali e
+                    apparecchiature del nostro sistema domotico wireless con protocollo di comunicazione RF/Wi-Fi presso
+                    la sua unita' immobilare evidenziata in oggetto.<br><br><br>
+                    La vastissima quantità di connessioni possibili con dispositivi MydomoticS già pronti ci consente di
+                    tenere sotto controllo:<br>
                     Luci della casa<br>
                     Tapparelle oscuranti<br>
                     Finestre motorizzate<br>
                     Tende interne motorizzate<br>
-                    Tende per esterno motorizzate con sensore anti vento, anti-pioggia e crepuscolare abbinabile alle scene.<br>
+                    Tende per esterno motorizzate con sensore anti vento, anti-pioggia e crepuscolare abbinabile alle
+                    scene.<br>
                     Ogni Tipo e ogni Marca di Climatizzatore Split o Canalizzabile.<br>
-                    Controllo delle adduzioni di Acqua e Gas con Possibilità di apertura e chiusura delle erogazioni anche da remoto e chiaramente programmabili in scenari.<br>
+                    Controllo delle adduzioni di Acqua e Gas con Possibilità di apertura e chiusura delle erogazioni
+                    anche da remoto e chiaramente programmabili in scenari.<br>
                     Irrigazione Giardino e Balcone.<br>
-                    Sensori di Fuga di Gas. Questo dispositivo e’ spostabile e installabile in ogni ambiente e totalmente libero da connessioni elettriche essendo alimentato a Batteria.<br>
-                    Sensori di Fumo Questo dispositivo e’ spostabile e installabile in ogni ambiente e totalmente libero da connessioni elettriche essendo alimentato a Batteria.<br>
-                    Sensori di Allagamento. Questo dispositivo e’ spostabile e installabile in ogni ambiente e totalmente libero da connessioni elettriche essendo alimentato a Batteria.<br>
+                    Sensori di Fuga di Gas. Questo dispositivo e' spostabile e installabile in ogni ambiente e
+                    totalmente libero da connessioni elettriche essendo alimentato a Batteria.<br>
+                    Sensori di Fumo Questo dispositivo e' spostabile e installabile in ogni ambiente e totalmente libero
+                    da connessioni elettriche essendo alimentato a Batteria.<br>
+                    Sensori di Allagamento. Questo dispositivo e' spostabile e installabile in ogni ambiente e
+                    totalmente libero da connessioni elettriche essendo alimentato a Batteria.<br>
                     Qualsiasi TV sia esso del tipo Smart o privo di qualsiasi modulo intelligente od interfaccia<br>
                     Qualsiasi dispositivo HI-FI Audio sia esso Smart o senza interfacce intelligenti<br>
                     Qualsiasi Decoder TV per la gestione della visione via Satellite<br>
                     Qualsiasi Videoproiettore<br>
-                    Inserimento di dispositivi RGB per cromoterapia o effetti scenici in ambienti particolari come bar , discoteche…. o esterni di edifici che possono essere colorati in modi diversi .I nostri Controller WIFI RGB possono gestire sia Barre Led RGB che le lampade.<br>
+                    Inserimento di dispositivi RGB per cromoterapia o effetti scenici in ambienti particolari come bar ,
+                    discoteche…. o esterni di edifici che possono essere colorati in modi diversi .I nostri Controller
+                    WIFI RGB possono gestire sia Barre Led RGB che le lampade.<br>
                     Dimmer per regolazioni luci sia esse in led che ad incandescenza.<br>
-                    Bottone SOS per Docce o altri ambienti pericolosi. Questo dispositivo e’ spostabile e installabile in ogni ambiente e totalmente libero da connessioni elettriche essendo alimentato a Batteria.
+                    Bottone SOS per Docce o altri ambienti pericolosi. Questo dispositivo e' spostabile e installabile
+                    in ogni ambiente e totalmente libero da connessioni elettriche essendo alimentato a Batteria.
                 </p>
-            
+
                 <p><b>Qui di seguito le elenchiamo i dispositivi da lei richiesti</b></p>
-            
+
                 <p><b>Distinta della fornitura suddivisa per ambiente di installazione</b></p>
-                <br>            
+                <br>
                 <!-- Canvas Container -->
                 <div class="mb-4 text-center">
                     <canvas id="estimationCanvas"></canvas>
@@ -79,6 +95,7 @@
                             <tr>
                                 <th>Sr. No</th>
                                 <th>Sensor Name</th>
+                                <th>Image</th>
                                 <th>Installation Notes</th>
                                 <th>Room</th>
                                 <th>Price</th>
@@ -87,8 +104,22 @@
                         <tbody id="estimationTableBody"></tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="4" class="text-end fw-bold">Total Price</td>
-                                <td id="totalPrice"></td>
+                                <td colspan="5" class="text-end">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div><strong>Total Sensors</strong></div>
+                                        <div id="totalCount">0</div>
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" class="text-end">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div><strong>Total Price</strong></div>
+                                        <div id="totalPrice"></div>
+                                    </div>
+                                </td>
+                                <td></td>
                             </tr>
                         </tfoot>
                     </table>
@@ -98,39 +129,48 @@
 
                 <p>
                     <b>Tempistica arrivo fornitura e consegna in cantiere</b><br>
-                    • 20 gg lavorativi a partire dalla ricezione del pagamento relativo al primo acconto e Vostra conferma di ordine mediante restituzione del presente contratto firmato per accettazione - Arrivo fornitura presso sede di MydomoticS
+                    • 20 gg lavorativi a partire dalla ricezione del pagamento relativo al primo acconto e Vostra
+                    conferma di ordine mediante restituzione del presente contratto firmato per accettazione - Arrivo
+                    fornitura presso sede di MydomoticS
                 </p>
-            
+
                 <p>
                     <b>Consegna fornitura in cantiere</b><br>
-                    • 2 gg dalla avviso di consegna fornitura al cliente (contestuale all’arrivo della fornitura presso sede MyDomoticS) e contestuale ricezione pagamento relativo al II° acconto
+                    • 2 gg dalla avviso di consegna fornitura al cliente (contestuale all'arrivo della fornitura presso
+                    sede MyDomoticS) e contestuale ricezione pagamento relativo al II° acconto
                 </p>
-            
+
                 <p>
                     <b>Condizioni di pagamento</b><br>
                     • Primo Acconto pari al 40% oltre Iva alla conferma di ordine per avvio produzione fornitura<br>
-                    • Saldo pari al 60% oltre Iva alla consegna degli stessi prodotti che avverrà presso Vs cantiere/ufficio entro 48 ore dal ricevimento del pagamento
+                    • Saldo pari al 60% oltre Iva alla consegna degli stessi prodotti che avverrà presso Vs
+                    cantiere/ufficio entro 48 ore dal ricevimento del pagamento
                 </p>
-            
+
                 <p>
                     <b>Garanzie / Assistenza Post Vendita</b><br>
-                    • Garanzia su ciascun componente oggetto di fornitura pari a 2 anni per completa sostituzione in caso di malfunzionamento per causa imputabile al fornitore<br>
+                    • Garanzia su ciascun componente oggetto di fornitura pari a 2 anni per completa sostituzione in
+                    caso di malfunzionamento per causa imputabile al fornitore<br>
                     • Assistenza da remoto nelle 24 ore lavorative successive alla vs chiamata<br>
-                    • Assistenza Post vendita mediante intervento dedicato con presenza di ns operatore presso il vs immobile nelle 48 ore lavorative successive alla vs chiamata di pronto intervento al ns N. Verde dedicato
+                    • Assistenza Post vendita mediante intervento dedicato con presenza di ns operatore presso il vs
+                    immobile nelle 48 ore lavorative successive alla vs chiamata di pronto intervento al ns N. Verde
+                    dedicato
                 </p>
-            
+
                 <p>In attesa di vs. riscontro inviamo distinti saluti</p>
-            
+
                 <table style="width: 100%; margin-top: 30px;border:0 !important;">
                     <tr>
                         <td style="text-align: left; width: 50%; border:0 !important;">
-                            <img src="{{ asset('uploads/estimations/logos.png') }}" alt="Logos" style="width: 200px; height: auto;">
+                            <img src="{{ asset('uploads/estimations/logos.png') }}" alt="Logos"
+                                style="width: 200px; height: auto;">
                         </td>
                         <td style="text-align: right; width: 50%; border:0 !important;">
-                            <img src="{{ asset('uploads/estimations/sign.png') }}" alt="Sign" style="width: 200px; height: auto;">
+                            <img src="{{ asset('uploads/estimations/sign.png') }}" alt="Sign"
+                                style="width: 200px; height: auto;">
                         </td>
                     </tr>
-                </table>            
+                </table>
             </div>
         </div>
     </main>
@@ -157,10 +197,10 @@
 
 <script>
     // Global variables
-    let apiData = null;       // Holds the full API response data.data
-    let sensorDots = [];      // Sensor dots info for click detection
+    let apiData = null; // Holds the full API response data.data
+    let sensorDots = []; // Sensor dots info for click detection
 
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         fetchEstimations();
     });
 
@@ -177,6 +217,13 @@
                     return;
                 }
                 apiData = responseData.data;
+                console.log('apiData', apiData);
+
+                // Debug sensor data structure
+                if (apiData.sensorsData && apiData.sensorsData.length > 0) {
+                    console.log('First sensor data structure:', apiData.sensorsData[0]);
+                    console.log('Sensor image property:', apiData.sensorsData[0].image || apiData.sensorsData[0].sensorImage || 'Not found');
+                }
 
                 // Check for image existence
                 if (!apiData.image) {
@@ -196,10 +243,12 @@
     function buildEstimationTable(data) {
         const tableBody = document.getElementById("estimationTableBody");
         const totalPriceCell = document.getElementById("totalPrice");
-        tableBody.innerHTML = "";  // Clear any existing rows
+        const totalCountCell = document.getElementById("totalCount");
+        tableBody.innerHTML = ""; // Clear any existing rows
 
         if (!data.sensorsData || data.sensorsData.length === 0) {
             totalPriceCell.textContent = "$0.00";
+            totalCountCell.textContent = "0";
             console.warn("No sensor data available.");
             return;
         }
@@ -214,12 +263,43 @@
 
             // Sensor Name
             const tdSensorName = document.createElement("td");
-            tdSensorName.textContent = sensor.sensorName || "N/A";
+            tdSensorName.textContent = sensor.sensorName || sensor.name || "N/A";
             tr.appendChild(tdSensorName);
+
+            // Sensor Image - handle nested structure
+            const tdSensorImage = document.createElement("td");
+            // Handle different possible image property structures
+            let imagePath = null;
+            if (sensor.image) {
+                imagePath = sensor.image;
+            } else if (sensor.sensorImage) {
+                if (typeof sensor.sensorImage === 'object' && sensor.sensorImage.image) {
+                    // Handle nested object: {sensorImage: {image: 'path/to/image.jpg'}}
+                    imagePath = sensor.sensorImage.image;
+                } else {
+                    // Direct string: {sensorImage: 'path/to/image.jpg'}
+                    imagePath = sensor.sensorImage;
+                }
+            }
+
+            // Create proper image URL
+            let imageUrl = imagePath;
+            if (imagePath && !imagePath.startsWith('http')) {
+                imageUrl = "{{ asset('storage') }}/" + imagePath;
+            }
+
+            if (imageUrl) {
+                tdSensorImage.innerHTML =
+                    `<img src="${imageUrl}" alt="${sensor.sensorName || sensor.name}" style="width:50px; height:50px; object-fit:contain; border-radius:4px;" onerror="this.onerror=null; this.src='https://via.placeholder.com/50?text=No+Image';">`;
+            } else {
+                tdSensorImage.innerHTML =
+                    `<div style="width:50px; height:50px; display:flex; align-items:center; justify-content:center; background-color:#f0f0f0; border-radius:4px; font-size:10px; color:#666;">No Image</div>`;
+            }
+            tr.appendChild(tdSensorImage);
 
             // Sensor Description
             const tdSensorDescription = document.createElement("td");
-            tdSensorDescription.textContent = sensor.sensorDescription || "N/A";
+            tdSensorDescription.textContent = sensor.sensorDescription || sensor.note || "N/A";
             tr.appendChild(tdSensorDescription);
 
             // Room Name (matched by roomId)
@@ -230,14 +310,15 @@
 
             // Price
             const tdPrice = document.createElement("td");
-            tdPrice.textContent = "$" + (sensor.sensorPrice || "0.00");
+            tdPrice.textContent = "$" + (sensor.sensorPrice || sensor.price || "0.00");
             tr.appendChild(tdPrice);
 
             tableBody.appendChild(tr);
         });
 
-        // Set total price from API
+        // Set total price and count from API
         totalPriceCell.textContent = "$" + (data.totalPrice || "0.00");
+        totalCountCell.textContent = data.sensorsData ? data.sensorsData.length : "0";
     }
 
     // Draw the floor plan image, rooms (as polygons) and sensor dots on the canvas
@@ -248,7 +329,7 @@
         floorImage.crossOrigin = "Anonymous";
         floorImage.src = data.image;
 
-        floorImage.onload = function () {
+        floorImage.onload = function() {
             // Set canvas dimensions
             canvas.width = floorImage.width;
             canvas.height = floorImage.height;
@@ -265,9 +346,9 @@
             }
 
             // Draw sensor dots
-            sensorDots = [];  // Reset sensor dots array
+            sensorDots = []; // Reset sensor dots array
             if (data.sensorsData && data.sensorsData.length > 0) {
-                    data.sensorsData.forEach(sensor => {
+                data.sensorsData.forEach(sensor => {
                     const x = parseFloat(sensor.sensorCoordinates.x);
                     const y = parseFloat(sensor.sensorCoordinates.y);
 
@@ -354,11 +435,40 @@
             }
         }
 
+        // Handle different possible image property structures
+        let imagePath = null;
+        if (sensor.image) {
+            imagePath = sensor.image;
+        } else if (sensor.sensorImage) {
+            if (typeof sensor.sensorImage === 'object' && sensor.sensorImage.image) {
+                // Handle nested object: {sensorImage: {image: 'path/to/image.jpg'}}
+                imagePath = sensor.sensorImage.image;
+            } else {
+                // Direct string: {sensorImage: 'path/to/image.jpg'}
+                imagePath = sensor.sensorImage;
+            }
+        }
+
+        // Create proper image URL
+        let imageUrl = imagePath;
+        if (imagePath && !imagePath.startsWith('http')) {
+            imageUrl = "{{ asset('storage') }}/" + imagePath;
+        }
+
+        // Create image HTML
+        let imageHtml = '';
+        if (imageUrl) {
+            imageHtml = `<img src="${imageUrl}" alt="${sensor.sensorName || sensor.name}" style="width:100%; max-width:200px; height:auto; object-fit:contain; border-radius:4px; margin-bottom:15px;" onerror="this.onerror=null; this.src='https://via.placeholder.com/200?text=No+Image';">`;
+        } else {
+            imageHtml = `<div style="width:100%; max-width:200px; height:150px; display:flex; align-items:center; justify-content:center; background-color:#f0f0f0; border-radius:4px; margin-bottom:15px; font-size:14px; color:#666;">No Image</div>`;
+        }
+
         modalBody.innerHTML = `
-            <p><strong>Sensor Name:</strong> ${sensor.sensorName}</p>
-            <p><strong>Installation Notes:</strong> ${sensor.sensorDescription}</p>
+            ${imageHtml}
+            <p><strong>Sensor Name:</strong> ${sensor.sensorName || sensor.name}</p>
+            <p><strong>Installation Notes:</strong> ${sensor.sensorDescription || sensor.note}</p>
             <p><strong>Room:</strong> ${roomName}</p>
-            <p><strong>Price:</strong> $${sensor.sensorPrice}</p>
+            <p><strong>Price:</strong> $${sensor.sensorPrice || sensor.price}</p>
         `;
 
         const modalElement = document.getElementById("dotInfoModal");

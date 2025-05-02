@@ -7,150 +7,150 @@
 
     <!-- Custom CSS for modal and styling -->
     <style>
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.6);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 10000;
-    }
-
-    .modal-content {
-        background: #fff;
-        padding: 30px;
-        border-radius: 8px;
-        max-width: 400px;
-        width: 90%;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.1);
-        animation: fadeIn 0.3s ease;
-        position: relative;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
         }
 
-        to {
-            opacity: 1;
-            transform: translateY(0);
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease;
+            position: relative;
         }
-    }
 
-    .modal-header {
-        font-size: 20px;
-        margin-bottom: 15px;
-        font-weight: bold;
-        color: #333;
-    }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
 
-    .close-modal {
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        font-size: 24px;
-        color: #888;
-        cursor: pointer;
-        border: none;
-        background: transparent;
-        outline: none;
-    }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-    .modal-body {
-        margin-bottom: 20px;
-    }
+        .modal-header {
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #333;
+        }
 
-    .modal-body label {
-        font-weight: 500;
-        margin-bottom: 5px;
-        display: block;
-        color: #555;
-    }
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            color: #888;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            outline: none;
+        }
 
-    .modal-body input,
-    .modal-body select {
-        width: 100%;
-        padding: 8px 10px;
-        margin-top: 5px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
-    }
+        .modal-body {
+            margin-bottom: 20px;
+        }
 
-    .modal-footer {
-        text-align: right;
-    }
+        .modal-body label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            display: block;
+            color: #555;
+        }
 
-    .modal-footer button {
-        padding: 8px 16px;
-        font-size: 14px;
-        border-radius: 4px;
-        border: none;
-        cursor: pointer;
-        margin-left: 8px;
-    }
+        .modal-body input,
+        .modal-body select {
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
 
-    .modal-footer .btn-secondary {
-        background-color: #ccc;
-        color: #333;
-    }
+        .modal-footer {
+            text-align: right;
+        }
 
-    .modal-footer .btn-primary {
-        background-color: #007bff;
-        color: #fff;
-    }
+        .modal-footer button {
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            margin-left: 8px;
+        }
 
-    /* Table styling */
-    #sensorTable {
-        margin-top: 20px;
-        width: 100%;
-        border-collapse: collapse;
-    }
+        .modal-footer .btn-secondary {
+            background-color: #ccc;
+            color: #333;
+        }
 
-    #sensorTable th,
-    #sensorTable td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: center;
-    }
+        .modal-footer .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+        }
 
-    /* Loader style for Generate PDF Button */
-    .loading {
-        opacity: 0.7;
-        pointer-events: none;
-        position: relative;
-    }
+        /* Table styling */
+        #sensorTable {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-    .loading:after {
-        content: "Please wait...";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(0, 0, 0, 0.5);
-        color: white;
-        border-radius: 4px;
-    }
+        #sensorTable th,
+        #sensorTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
 
-    /* Hide mode buttons initially */
-    .mode-btn {
-        display: none;
-    }
+        /* Loader style for Generate PDF Button */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+            position: relative;
+        }
 
-    /* Active mode button styling */
-    .mode-active {
-        background-color: #007bff !important;
-    }
+        .loading:after {
+            content: "Please wait...";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border-radius: 4px;
+        }
+
+        /* Hide mode buttons initially */
+        .mode-btn {
+            display: none;
+        }
+
+        /* Active mode button styling */
+        .mode-active {
+            background-color: #007bff !important;
+        }
     </style>
 
     <!-- Mode Switching Buttons & Other UI -->
@@ -206,9 +206,22 @@
                     </thead>
                     <tbody></tbody>
                     <tfoot>
+                        <tr id="totalCountRow">
+                            <td colspan="7" class="text-end">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div><strong>Total Sensors:</strong></div>
+                                    <div id="totalCount">0</div>
+                                </div>
+                            </td>
+                            <td></td>
+                        </tr>
                         <tr id="totalRow">
-                            <td colspan="6">Total Price</td>
-                            <td>$<span id="totalPrice">0</span></td>
+                            <td colspan="7" class="text-end">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div><strong>Total Price:</strong></div>
+                                    <div>$<span id="totalPrice">0</span></div>
+                                </div>
+                            </td>
                             <td></td>
                         </tr>
                     </tfoot>
@@ -289,532 +302,532 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-    const {
-        jsPDF
-    } = window.jspdf;
-    // Global Variables
-    let cropper;
-    const imageUpload = document.getElementById('imageUpload');
-    const imageToCrop = document.getElementById('imageToCrop');
-    const cropContainer = document.getElementById('cropContainer');
-    const cropButton = document.getElementById('cropButton');
-    const finalImage = document.getElementById('finalImage');
-    const canvasContainer = document.getElementById('canvasContainer');
-    const svgOverlay = document.getElementById('svgOverlay');
-    const finishedGroup = document.getElementById("finishedPolygons");
-    const tempGroup = document.getElementById("tempDrawing");
-    const dotModal = document.getElementById('dotModal');
-    const closeModal = document.getElementById('closeModal');
-    const cancelModal = document.getElementById('cancelModal');
-    const sensorTableBody = document.querySelector('#sensorTable tbody');
-    const generatePDFBtn = document.getElementById('generatePDF');
-    const sensorListContainer = document.getElementById('sensorListContainer');
-    const pdfBtnContainer = document.getElementById('pdfBtnContainer');
-    const sensorSelectTag = document.getElementById('sensorSelect');
-    const floorNameInput = document.querySelector('.floor-name');
-    // Mode buttons (initially hidden; will be shown after picture upload)
-    const floorModeBtn = document.getElementById('floorModeBtn');
-    const deviceModeBtn = document.getElementById('deviceModeBtn');
-    const deleteModeBtn = document.getElementById('deleteModeBtn');
-    const modeButtons = document.getElementById('modeButtons');
-    // Polygon Modal elements
-    const polygonModal = document.getElementById('polygonModal');
-    const closePolygonModal = document.getElementById('closePolygonModal');
-    const cancelPolygonModal = document.getElementById('cancelPolygonModal');
-    const savePolygonBtn = document.getElementById('savePolygon');
-    const polygonNameInput = document.getElementById('polygonName');
-    // Data storage
-    let sensorPrices = {};
-    let productsData = []; // Array to hold sensor data
-    let totalPrice = 0;
-    let currentMode = 'floor'; // 'floor' or 'device'
-    let currentPolygon = null; // { id, vertices: [ {x, y} ], name }
-    const polygons = []; // Completed room polygons
-    let dotCount = 0;
-    let temporaryDotId = null;
+        const {
+            jsPDF
+        } = window.jspdf;
+        // Global Variables
+        let cropper;
+        const imageUpload = document.getElementById('imageUpload');
+        const imageToCrop = document.getElementById('imageToCrop');
+        const cropContainer = document.getElementById('cropContainer');
+        const cropButton = document.getElementById('cropButton');
+        const finalImage = document.getElementById('finalImage');
+        const canvasContainer = document.getElementById('canvasContainer');
+        const svgOverlay = document.getElementById('svgOverlay');
+        const finishedGroup = document.getElementById("finishedPolygons");
+        const tempGroup = document.getElementById("tempDrawing");
+        const dotModal = document.getElementById('dotModal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelModal = document.getElementById('cancelModal');
+        const sensorTableBody = document.querySelector('#sensorTable tbody');
+        const generatePDFBtn = document.getElementById('generatePDF');
+        const sensorListContainer = document.getElementById('sensorListContainer');
+        const pdfBtnContainer = document.getElementById('pdfBtnContainer');
+        const sensorSelectTag = document.getElementById('sensorSelect');
+        const floorNameInput = document.querySelector('.floor-name');
+        // Mode buttons (initially hidden; will be shown after picture upload)
+        const floorModeBtn = document.getElementById('floorModeBtn');
+        const deviceModeBtn = document.getElementById('deviceModeBtn');
+        const deleteModeBtn = document.getElementById('deleteModeBtn');
+        const modeButtons = document.getElementById('modeButtons');
+        // Polygon Modal elements
+        const polygonModal = document.getElementById('polygonModal');
+        const closePolygonModal = document.getElementById('closePolygonModal');
+        const cancelPolygonModal = document.getElementById('cancelPolygonModal');
+        const savePolygonBtn = document.getElementById('savePolygon');
+        const polygonNameInput = document.getElementById('polygonName');
+        // Data storage
+        let sensorPrices = {};
+        let productsData = []; // Array to hold sensor data
+        let totalPrice = 0;
+        let currentMode = 'floor'; // 'floor' or 'device'
+        let currentPolygon = null; // { id, vertices: [ {x, y} ], name }
+        const polygons = []; // Completed room polygons
+        let dotCount = 0;
+        let temporaryDotId = null;
 
-    // Helper functions for responsive coordinates
-    function toRelativeCoords(absX, absY) {
-        const imgWidth = finalImage.width;
-        const imgHeight = finalImage.height;
-        return {
-            x: (absX / imgWidth) * 100,
-            y: (absY / imgHeight) * 100
-        };
-    }
-
-    function toAbsoluteCoords(relX, relY) {
-        const imgWidth = finalImage.width;
-        const imgHeight = finalImage.height;
-        return {
-            x: (relX * imgWidth) / 100,
-            y: (relY * imgHeight) / 100
-        };
-    }
-
-    // UI Mode Switching
-    function setMode(mode) {
-        currentMode = mode;
-
-        floorModeBtn.classList.remove('mode-active');
-        deviceModeBtn.classList.remove('mode-active');
-        deleteModeBtn.classList.remove('mode-active');
-
-        if (mode === 'floor') {
-            floorModeBtn.classList.add('mode-active');
-        } else if (mode === 'device') {
-            deviceModeBtn.classList.add('mode-active');
-        } else if (mode === 'delete') {
-            deleteModeBtn.classList.add('mode-active');
-        }
-    }
-    // Default is Floor Mode
-    setMode('floor');
-    floorModeBtn.addEventListener('click', () => setMode('floor'));
-    deviceModeBtn.addEventListener('click', () => setMode('device'));
-    deleteModeBtn.addEventListener('click', () => setMode('delete'));
-    // Fetch sensor data
-    const fetchSensors = async () => {
-        try {
-            const res = await fetch("{{ route('estimations.sensor') }}");
-            if (!res.ok) {
-                throw new Error("Error while fetching sensors");
-            }
-            const data = await res.json();
-            console.log('data', data)
-            if (data?.sensors?.length > 0) {
-                sensorPrices = {};
-                data.sensors.forEach((sensor) => {
-                    const {
-                        name: sensorName,
-                        price,
-                        id,
-                        image = '', // Default to empty string if image doesn't exist
-                    } = sensor;
-
-                    // Create proper image URL from the relative path
-                    const imageUrl = image ? "{{ asset('storage') }}/" + image : '';
-
-                    sensorPrices[sensorName] = price;
-                    // Store sensor data including image
-                    sensorSelectTag.innerHTML +=
-                        `<option data-id="${id}" data-image="${imageUrl}" value="${sensorName}">${sensorName}</option>`;
-                });
-            }
-        } catch (error) {
-            console.error("Error while fetching sensors", error.message);
-        }
-    }
-    fetchSensors();
-
-    const fetchRooms = async () => {
-        try {
-            const result = await fetch("{{ route('estimations.room') }}");
-            if (!result.ok) {
-                throw new Error("Error while fetching rooms");
-            }
-            const data = await result.json();
-            const rooms = data.rooms.map((room) => room.name);
-
-            const select = document.getElementById('polygonName');
-            rooms.forEach((roomName) => {
-                const option = document.createElement('option');
-                option.value = roomName;
-                option.textContent = roomName;
-                select.appendChild(option);
-            });
-        } catch (error) {
-            console.error("Error while fetching rooms", error.message);
-        }
-    };
-    fetchRooms();
-
-    // Close handlers for sensor modal
-    function hideDotModal({
-        keepDot = false
-    }) {
-        if (!keepDot && temporaryDotId) {
-            const tempDot = document.getElementById(temporaryDotId);
-            if (tempDot) {
-                tempDot.remove();
-            }
+        // Helper functions for responsive coordinates
+        function toRelativeCoords(absX, absY) {
+            const imgWidth = finalImage.width;
+            const imgHeight = finalImage.height;
+            return {
+                x: (absX / imgWidth) * 100,
+                y: (absY / imgHeight) * 100
+            };
         }
 
-        temporaryDotId = null;
-        dotModal.style.display = 'none';
-        document.getElementById('dotForm').reset();
-    }
-    closeModal.addEventListener('click', hideDotModal);
-    cancelModal.addEventListener('click', hideDotModal);
-    // Close Polygon Modal
-    function hidePolygonModal() {
-        polygonModal.style.display = 'none';
-        document.getElementById('polygonForm').reset();
-        clearTemporaryPolygon();
-        currentPolygon = null;
-    }
-    closePolygonModal.addEventListener('click', hidePolygonModal);
-    cancelPolygonModal.addEventListener('click', hidePolygonModal);
-    // Image upload & Cropper initialization
-    imageUpload.addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                imageToCrop.onload = function() {
-                    if (file.size > 2 * 1024 * 1024) {
-                        alert('Image must be less than 2MB.');
-                        event.target.value = '';
-                        return;
-                    }
-                    const naturalWidth = imageToCrop.naturalWidth;
-                    const naturalHeight = imageToCrop.naturalHeight;
-                    const dynamicAspectRatio = naturalWidth / naturalHeight;
+        function toAbsoluteCoords(relX, relY) {
+            const imgWidth = finalImage.width;
+            const imgHeight = finalImage.height;
+            return {
+                x: (relX * imgWidth) / 100,
+                y: (relY * imgHeight) / 100
+            };
+        }
 
-                    cropContainer.style.display = 'block';
+        // UI Mode Switching
+        function setMode(mode) {
+            currentMode = mode;
 
-                    if (cropper) {
-                        cropper.destroy();
-                    }
+            floorModeBtn.classList.remove('mode-active');
+            deviceModeBtn.classList.remove('mode-active');
+            deleteModeBtn.classList.remove('mode-active');
 
-                    cropper = new Cropper(imageToCrop, {
-                        aspectRatio: dynamicAspectRatio,
-                        viewMode: 1
+            if (mode === 'floor') {
+                floorModeBtn.classList.add('mode-active');
+            } else if (mode === 'device') {
+                deviceModeBtn.classList.add('mode-active');
+            } else if (mode === 'delete') {
+                deleteModeBtn.classList.add('mode-active');
+            }
+        }
+        // Default is Floor Mode
+        setMode('floor');
+        floorModeBtn.addEventListener('click', () => setMode('floor'));
+        deviceModeBtn.addEventListener('click', () => setMode('device'));
+        deleteModeBtn.addEventListener('click', () => setMode('delete'));
+        // Fetch sensor data
+        const fetchSensors = async () => {
+            try {
+                const res = await fetch("{{ route('estimations.sensor') }}");
+                if (!res.ok) {
+                    throw new Error("Error while fetching sensors");
+                }
+                const data = await res.json();
+                console.log('data', data)
+                if (data?.sensors?.length > 0) {
+                    sensorPrices = {};
+                    data.sensors.forEach((sensor) => {
+                        const {
+                            name: sensorName,
+                            price,
+                            id,
+                            image = '', // Default to empty string if image doesn't exist
+                        } = sensor;
+
+                        // Create proper image URL from the relative path
+                        const imageUrl = image ? "{{ asset('storage') }}/" + image : '';
+
+                        sensorPrices[sensorName] = price;
+                        // Store sensor data including image
+                        sensorSelectTag.innerHTML +=
+                            `<option data-id="${id}" data-image="${imageUrl}" value="${sensorName}">${sensorName}</option>`;
                     });
+                }
+            } catch (error) {
+                console.error("Error while fetching sensors", error.message);
+            }
+        }
+        fetchSensors();
+
+        const fetchRooms = async () => {
+            try {
+                const result = await fetch("{{ route('estimations.room') }}");
+                if (!result.ok) {
+                    throw new Error("Error while fetching rooms");
+                }
+                const data = await result.json();
+                const rooms = data.rooms.map((room) => room.name);
+
+                const select = document.getElementById('polygonName');
+                rooms.forEach((roomName) => {
+                    const option = document.createElement('option');
+                    option.value = roomName;
+                    option.textContent = roomName;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error while fetching rooms", error.message);
+            }
+        };
+        fetchRooms();
+
+        // Close handlers for sensor modal
+        function hideDotModal({
+            keepDot = false
+        }) {
+            if (!keepDot && temporaryDotId) {
+                const tempDot = document.getElementById(temporaryDotId);
+                if (tempDot) {
+                    tempDot.remove();
+                }
+            }
+
+            temporaryDotId = null;
+            dotModal.style.display = 'none';
+            document.getElementById('dotForm').reset();
+        }
+        closeModal.addEventListener('click', hideDotModal);
+        cancelModal.addEventListener('click', hideDotModal);
+        // Close Polygon Modal
+        function hidePolygonModal() {
+            polygonModal.style.display = 'none';
+            document.getElementById('polygonForm').reset();
+            clearTemporaryPolygon();
+            currentPolygon = null;
+        }
+        closePolygonModal.addEventListener('click', hidePolygonModal);
+        cancelPolygonModal.addEventListener('click', hidePolygonModal);
+        // Image upload & Cropper initialization
+        imageUpload.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imageToCrop.onload = function() {
+                        if (file.size > 2 * 1024 * 1024) {
+                            alert('Image must be less than 2MB.');
+                            event.target.value = '';
+                            return;
+                        }
+                        const naturalWidth = imageToCrop.naturalWidth;
+                        const naturalHeight = imageToCrop.naturalHeight;
+                        const dynamicAspectRatio = naturalWidth / naturalHeight;
+
+                        cropContainer.style.display = 'block';
+
+                        if (cropper) {
+                            cropper.destroy();
+                        }
+
+                        cropper = new Cropper(imageToCrop, {
+                            aspectRatio: dynamicAspectRatio,
+                            viewMode: 1
+                        });
+                    };
+
+                    imageToCrop.src = e.target.result;
                 };
 
-                imageToCrop.src = e.target.result;
+                reader.readAsDataURL(file);
+            }
+        });
+        // Crop image and show final image; also display mode buttons now.
+        cropButton.addEventListener('click', function() {
+            if (cropper) {
+                cropper.getCroppedCanvas().toBlob(function(blob) {
+                    finalImage.src = URL.createObjectURL(blob);
+                    finalImage.style.display = 'block';
+                    finalImage.blob = blob;
+                    cropContainer.style.display = 'none';
+                    sensorListContainer.style.display = 'block';
+                    pdfBtnContainer.style.display = 'block';
+                    // Show mode buttons now:
+                    floorModeBtn.style.display = 'block';
+                    deviceModeBtn.style.display = 'block';
+                    deleteModeBtn.style.display = 'block';
+                    modeButtons.style.display = 'flex';
+                }, 'image/png');
+            }
+        });
+        // Helper: Calculate distance between two points
+        function distance(p1, p2) {
+            return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+        }
+        // Helper: Check if point is inside polygon (ray-casting)
+        function pointInPolygon(point, vertices) {
+            let inside = false;
+            for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
+                const xi = vertices[i].x,
+                    yi = vertices[i].y;
+                const xj = vertices[j].x,
+                    yj = vertices[j].y;
+                const intersect = ((yi > point.y) !== (yj > point.y)) &&
+                    (point.x < (xj - xi) * (point.y - yi) / (yj - yi + 0.0001) + xi);
+                if (intersect) inside = !inside;
+            }
+            return inside;
+        }
+        // Draw temporary polygon in Floor Mode (only clear temp group)
+        function drawTemporaryPolygon() {
+            tempGroup.innerHTML = ""; // clear temporary drawings
+            if (!currentPolygon) return;
+
+            // Convert relative coordinates to absolute for drawing
+            const vertices = currentPolygon.vertices.map(v => toAbsoluteCoords(v.x, v.y));
+            const pointsStr = vertices.map(v => `${v.x},${v.y}`).join(" ");
+
+            // Draw dashed polyline
+            const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+            polyline.setAttribute("points", pointsStr);
+            polyline.setAttribute("fill", "none");
+            polyline.setAttribute("stroke", "blue");
+            polyline.setAttribute("stroke-dasharray", "4");
+            polyline.setAttribute("stroke-width", "2");
+            tempGroup.appendChild(polyline);
+            // Draw vertices as circles
+            vertices.forEach(v => {
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", v.x);
+                circle.setAttribute("cy", v.y);
+                circle.setAttribute("r", "3");
+                circle.setAttribute("fill", "blue");
+                tempGroup.appendChild(circle);
+            });
+        }
+        // Final image click handler: different behavior for floor vs device mode
+        finalImage.addEventListener('click', function(e) {
+            const rect = finalImage.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const clickPoint = {
+                x,
+                y
             };
 
-            reader.readAsDataURL(file);
-        }
-    });
-    // Crop image and show final image; also display mode buttons now.
-    cropButton.addEventListener('click', function() {
-        if (cropper) {
-            cropper.getCroppedCanvas().toBlob(function(blob) {
-                finalImage.src = URL.createObjectURL(blob);
-                finalImage.style.display = 'block';
-                finalImage.blob = blob;
-                cropContainer.style.display = 'none';
-                sensorListContainer.style.display = 'block';
-                pdfBtnContainer.style.display = 'block';
-                // Show mode buttons now:
-                floorModeBtn.style.display = 'block';
-                deviceModeBtn.style.display = 'block';
-                deleteModeBtn.style.display = 'block';
-                modeButtons.style.display = 'flex';
-            }, 'image/png');
-        }
-    });
-    // Helper: Calculate distance between two points
-    function distance(p1, p2) {
-        return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
-    }
-    // Helper: Check if point is inside polygon (ray-casting)
-    function pointInPolygon(point, vertices) {
-        let inside = false;
-        for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
-            const xi = vertices[i].x,
-                yi = vertices[i].y;
-            const xj = vertices[j].x,
-                yj = vertices[j].y;
-            const intersect = ((yi > point.y) !== (yj > point.y)) &&
-                (point.x < (xj - xi) * (point.y - yi) / (yj - yi + 0.0001) + xi);
-            if (intersect) inside = !inside;
-        }
-        return inside;
-    }
-    // Draw temporary polygon in Floor Mode (only clear temp group)
-    function drawTemporaryPolygon() {
-        tempGroup.innerHTML = ""; // clear temporary drawings
-        if (!currentPolygon) return;
+            // Create relative coordinates for storage
+            const relativePoint = toRelativeCoords(x, y);
 
-        // Convert relative coordinates to absolute for drawing
-        const vertices = currentPolygon.vertices.map(v => toAbsoluteCoords(v.x, v.y));
-        const pointsStr = vertices.map(v => `${v.x},${v.y}`).join(" ");
-
-        // Draw dashed polyline
-        const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-        polyline.setAttribute("points", pointsStr);
-        polyline.setAttribute("fill", "none");
-        polyline.setAttribute("stroke", "blue");
-        polyline.setAttribute("stroke-dasharray", "4");
-        polyline.setAttribute("stroke-width", "2");
-        tempGroup.appendChild(polyline);
-        // Draw vertices as circles
-        vertices.forEach(v => {
-            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            circle.setAttribute("cx", v.x);
-            circle.setAttribute("cy", v.y);
-            circle.setAttribute("r", "3");
-            circle.setAttribute("fill", "blue");
-            tempGroup.appendChild(circle);
-        });
-    }
-    // Final image click handler: different behavior for floor vs device mode
-    finalImage.addEventListener('click', function(e) {
-        const rect = finalImage.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const clickPoint = {
-            x,
-            y
-        };
-
-        // Create relative coordinates for storage
-        const relativePoint = toRelativeCoords(x, y);
-
-        if (currentMode === 'floor') {
-            // Existing floor mode code…
-            if (!currentPolygon) {
-                currentPolygon = {
-                    id: 'room-' + Date.now(),
-                    vertices: [relativePoint], // Store relative coordinates
-                    name: ''
-                };
-            } else {
-                // Convert first vertex to absolute for distance calculation
-                const firstVertexAbs = toAbsoluteCoords(currentPolygon.vertices[0].x, currentPolygon.vertices[0]
-                    .y);
-
-                // Auto-complete if close to the first vertex and at least 3 vertices exist
-                if (currentPolygon.vertices.length >= 3 && distance(clickPoint, firstVertexAbs) < 10) {
-                    // Close polygon with a copy of first point (for complete loop)
-                    currentPolygon.vertices.push({
-                        ...currentPolygon.vertices[0]
-                    });
-                    drawTemporaryPolygon();
-                    polygonModal.style.display = 'flex';
-                    return;
+            if (currentMode === 'floor') {
+                // Existing floor mode code…
+                if (!currentPolygon) {
+                    currentPolygon = {
+                        id: 'room-' + Date.now(),
+                        vertices: [relativePoint], // Store relative coordinates
+                        name: ''
+                    };
                 } else {
-                    currentPolygon.vertices.push(relativePoint); // Store relative coordinates
+                    // Convert first vertex to absolute for distance calculation
+                    const firstVertexAbs = toAbsoluteCoords(currentPolygon.vertices[0].x, currentPolygon.vertices[0]
+                        .y);
+
+                    // Auto-complete if close to the first vertex and at least 3 vertices exist
+                    if (currentPolygon.vertices.length >= 3 && distance(clickPoint, firstVertexAbs) < 10) {
+                        // Close polygon with a copy of first point (for complete loop)
+                        currentPolygon.vertices.push({
+                            ...currentPolygon.vertices[0]
+                        });
+                        drawTemporaryPolygon();
+                        polygonModal.style.display = 'flex';
+                        return;
+                    } else {
+                        currentPolygon.vertices.push(relativePoint); // Store relative coordinates
+                    }
+                }
+                drawTemporaryPolygon();
+            } else if (currentMode === 'device') {
+                // Existing device mode code…
+                let selectedPolygon = null;
+
+                // Check if click is inside any polygon (using absolute coordinates for the check)
+                for (let poly of polygons) {
+                    // Convert polygon vertices to absolute for point-in-polygon check
+                    const absVertices = poly.vertices.map(v => toAbsoluteCoords(v.x, v.y));
+                    if (pointInPolygon(clickPoint, absVertices)) {
+                        selectedPolygon = poly;
+                        break;
+                    }
+                }
+
+                if (!selectedPolygon) {
+                    alert("Please mark a room first before adding sensors");
+                    return;
+                }
+
+                document.getElementById('dotRoomId').value = selectedPolygon.id;
+                document.getElementById('dotX').value = relativePoint.x; // Store relative X
+                document.getElementById('dotY').value = relativePoint.y; // Store relative Y
+
+                // Add a small red dot for visual cue (using absolute coordinates for display)
+                const dot = document.createElement('div');
+                dot.style.position = 'absolute';
+                dot.style.width = '5px';
+                dot.style.height = '5px';
+                dot.style.background = 'red';
+                dot.style.borderRadius = '50%';
+                dot.style.left = (x - 2.5) + 'px';
+                dot.style.top = (y - 2.5) + 'px';
+                const dotId = 'dot-' + dotCount;
+                dot.setAttribute('id', dotId);
+                canvasContainer.appendChild(dot);
+                temporaryDotId = dotId;
+                dotModal.style.display = 'flex';
+            } else if (currentMode === 'delete') {
+                // New delete mode branch: check if click is inside a room polygon
+                let selectedPolygon = null;
+                for (let poly of polygons) {
+                    // Convert polygon vertices to absolute for point-in-polygon check
+                    const absVertices = poly.vertices.map(v => toAbsoluteCoords(v.x, v.y));
+                    if (pointInPolygon(clickPoint, absVertices)) {
+                        selectedPolygon = poly;
+                        break;
+                    }
+                }
+
+                if (!selectedPolygon) {
+                    alert("No room selected for deletion. Please click inside a room.");
+                    return;
+                }
+                if (confirm("Are you sure you want to delete this room and all its sensors?")) {
+                    deletePolygon(selectedPolygon.id);
                 }
             }
-            drawTemporaryPolygon();
-        } else if (currentMode === 'device') {
-            // Existing device mode code…
-            let selectedPolygon = null;
+        });
 
-            // Check if click is inside any polygon (using absolute coordinates for the check)
-            for (let poly of polygons) {
-                // Convert polygon vertices to absolute for point-in-polygon check
-                const absVertices = poly.vertices.map(v => toAbsoluteCoords(v.x, v.y));
-                if (pointInPolygon(clickPoint, absVertices)) {
-                    selectedPolygon = poly;
-                    break;
-                }
+        // Save Polygon (Room) details from modal
+        savePolygonBtn.addEventListener('click', function() {
+            const roomName = polygonNameInput.value.trim();
+            if (!roomName) {
+                alert("Please add room name");
+                return;
             }
+            currentPolygon.name = roomName;
+            polygons.push(currentPolygon);
+            drawFinalPolygon(currentPolygon);
+            hidePolygonModal();
+            currentPolygon = null;
+        });
+        // Draw final polygon with a white label at (approximately) top-left of the room
+        function drawFinalPolygon(polygon) {
+            // Convert relative coordinates to absolute for drawing
+            const vertices = polygon.vertices.map(v => toAbsoluteCoords(v.x, v.y));
+            const pointsStr = vertices.map(v => `${v.x},${v.y}`).join(" ");
 
-            if (!selectedPolygon) {
-                alert("Please mark a room first before adding sensors");
+            // Create polygon element with fill opacity 40%
+            const polyElem = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+            polyElem.setAttribute("points", pointsStr);
+            polyElem.setAttribute("fill", "rgba(0, 123, 255, 0.1)");
+            polyElem.setAttribute("stroke", "blue");
+            polyElem.setAttribute("stroke-width", "2");
+            polyElem.setAttribute("data-id", polygon.id);
+            finishedGroup.appendChild(polyElem);
+            // Determine label position.
+            const firstVertex = vertices[0];
+            // Adjust these offsets as needed – for example, +5 for x and -5 for y so the label sits just above the vertex.
+            const labelX = firstVertex.x + 5;
+            const labelY = firstVertex.y - 5;
+
+            // Create a group for the label elements (a background rect and text)
+            const labelGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            // Background rectangle
+            const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            // Width/height can be adjusted based on your needs
+            rect.setAttribute("x", labelX - 5);
+            rect.setAttribute("y", labelY - 15);
+            rect.setAttribute("width", "100");
+            rect.setAttribute("height", "20");
+            rect.setAttribute("fill", "white");
+            labelGroup.appendChild(rect);
+            // Text label (room name)
+            const textElem = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            textElem.setAttribute("x", labelX);
+            textElem.setAttribute("y", labelY);
+            textElem.setAttribute("fill", "black");
+            textElem.setAttribute("font-size", "12");
+            textElem.setAttribute("data-id", polygon.id);
+            textElem.textContent = polygon.name;
+            labelGroup.appendChild(textElem);
+            finishedGroup.appendChild(labelGroup);
+        }
+        // Clear temporary drawing group only (not finished polygons)
+        function clearTemporaryPolygon() {
+            tempGroup.innerHTML = "";
+        }
+        // Delete polygon (room) and its associated sensors
+        function deletePolygon(polyId) {
+            const index = polygons.findIndex(p => p.id === polyId);
+            if (index !== -1) {
+                polygons.splice(index, 1);
+            }
+            // Remove associated sensors from productsData, their dots, and table rows
+            productsData = productsData.filter(sensor => {
+                if (sensor.roomId === polyId) {
+                    const dotElem = document.getElementById(sensor.id);
+                    if (dotElem) dotElem.remove();
+                    const labelElem = document.getElementById('label-' + sensor.id);
+                    if (labelElem) labelElem.remove();
+
+                    const row = document.getElementById('row-' + sensor.id);
+                    if (row) row.remove();
+                    return false;
+                }
+                return true;
+            });
+            updateTotalPrice();
+            // Redraw finished group: clear and draw all finished polygons from polygons array
+            finishedGroup.innerHTML = "";
+            polygons.forEach(p => drawFinalPolygon(p));
+        }
+        // Save sensor (device) details from sensor modal
+        document.getElementById('saveDot').addEventListener('click', function() {
+            const name = document.getElementById('dotName').value.trim();
+            const description = document.getElementById('dotNote').value.trim();
+            const sensor = document.getElementById('sensorSelect').value;
+            const selectedOption = sensorSelectTag.options[sensorSelectTag.selectedIndex];
+            const sensorIdVal = selectedOption ? selectedOption.getAttribute("data-id") : "";
+            const sensorImage = selectedOption ? selectedOption.getAttribute("data-image") : "";
+
+            if (!name || !sensor || !description) {
+                alert('Please enter a name, note and select a sensor.');
                 return;
             }
 
-            document.getElementById('dotRoomId').value = selectedPolygon.id;
-            document.getElementById('dotX').value = relativePoint.x; // Store relative X
-            document.getElementById('dotY').value = relativePoint.y; // Store relative Y
+            // Get relative coordinates from hidden fields
+            const relX = parseFloat(document.getElementById('dotX').value);
+            const relY = parseFloat(document.getElementById('dotY').value);
 
-            // Add a small red dot for visual cue (using absolute coordinates for display)
-            const dot = document.createElement('div');
-            dot.style.position = 'absolute';
-            dot.style.width = '5px';
-            dot.style.height = '5px';
-            dot.style.background = 'red';
-            dot.style.borderRadius = '50%';
-            dot.style.left = (x - 2.5) + 'px';
-            dot.style.top = (y - 2.5) + 'px';
-            const dotId = 'dot-' + dotCount;
-            dot.setAttribute('id', dotId);
-            canvasContainer.appendChild(dot);
-            temporaryDotId = dotId;
-            dotModal.style.display = 'flex';
-        } else if (currentMode === 'delete') {
-            // New delete mode branch: check if click is inside a room polygon
-            let selectedPolygon = null;
-            for (let poly of polygons) {
-                // Convert polygon vertices to absolute for point-in-polygon check
-                const absVertices = poly.vertices.map(v => toAbsoluteCoords(v.x, v.y));
-                if (pointInPolygon(clickPoint, absVertices)) {
-                    selectedPolygon = poly;
-                    break;
-                }
+            // Convert to absolute for display
+            const {
+                x,
+                y
+            } = toAbsoluteCoords(relX, relY);
+
+            const price = sensorPrices[sensor] || "0";
+            const roomId = document.getElementById('dotRoomId').value;
+            const currentDotId = 'dot-' + dotCount;
+
+            // Store using relative coordinates
+            productsData.push({
+                id: currentDotId,
+                name, // sensor name from modal input
+                description, // description name from modal input
+                sensor, // sensor type/attached sensor name
+                sensorId: sensorIdVal,
+                sensorImage,
+                price,
+                x: relX, // store relative X
+                y: relY, // store relative Y
+                roomId
+            });
+
+            // Update dot element tooltip
+            const dot = document.getElementById(currentDotId);
+            if (dot) {
+                dot.dataset.name = name;
+                dot.dataset.description = description;
+                dot.dataset.sensor = sensor;
+                dot.title = `Name: ${name}, Sensor: ${sensor}`;
             }
 
-            if (!selectedPolygon) {
-                alert("No room selected for deletion. Please click inside a room.");
-                return;
-            }
-            if (confirm("Are you sure you want to delete this room and all its sensors?")) {
-                deletePolygon(selectedPolygon.id);
-            }
-        }
-    });
+            // Create a sensor label element that displays the sensor name
+            // This label will be positioned relative to the dot
+            const sensorLabel = document.createElement('span');
+            sensorLabel.setAttribute('id', 'label-' + currentDotId);
+            sensorLabel.innerText = (dotCount + 1) + ". " + name; // Add count number before name, starting from 1
+            sensorLabel.style.position = 'absolute';
+            sensorLabel.style.fontSize = '12px';
+            sensorLabel.style.background = "white";
+            sensorLabel.style.padding = '2px 4px';
+            sensorLabel.style.color = 'black';
+            sensorLabel.style.left = (x - 10) + 'px';
+            sensorLabel.style.top = (y - 25) + 'px';
+            canvasContainer.appendChild(sensorLabel);
 
-    // Save Polygon (Room) details from modal
-    savePolygonBtn.addEventListener('click', function() {
-        const roomName = polygonNameInput.value.trim();
-        if (!roomName) {
-            alert("Please add room name");
-            return;
-        }
-        currentPolygon.name = roomName;
-        polygons.push(currentPolygon);
-        drawFinalPolygon(currentPolygon);
-        hidePolygonModal();
-        currentPolygon = null;
-    });
-    // Draw final polygon with a white label at (approximately) top-left of the room
-    function drawFinalPolygon(polygon) {
-        // Convert relative coordinates to absolute for drawing
-        const vertices = polygon.vertices.map(v => toAbsoluteCoords(v.x, v.y));
-        const pointsStr = vertices.map(v => `${v.x},${v.y}`).join(" ");
+            // Increment dot count after creating the label (so first one is 1)
+            dotCount++;
 
-        // Create polygon element with fill opacity 40%
-        const polyElem = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-        polyElem.setAttribute("points", pointsStr);
-        polyElem.setAttribute("fill", "rgba(0, 123, 255, 0.1)");
-        polyElem.setAttribute("stroke", "blue");
-        polyElem.setAttribute("stroke-width", "2");
-        polyElem.setAttribute("data-id", polygon.id);
-        finishedGroup.appendChild(polyElem);
-        // Determine label position.
-        const firstVertex = vertices[0];
-        // Adjust these offsets as needed – for example, +5 for x and -5 for y so the label sits just above the vertex.
-        const labelX = firstVertex.x + 5;
-        const labelY = firstVertex.y - 5;
+            // Create sensor table row with room name
+            const room = polygons.find(p => p.id === roomId);
+            const roomName = room ? room.name : "";
 
-        // Create a group for the label elements (a background rect and text)
-        const labelGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        // Background rectangle
-        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        // Width/height can be adjusted based on your needs
-        rect.setAttribute("x", labelX - 5);
-        rect.setAttribute("y", labelY - 15);
-        rect.setAttribute("width", "100");
-        rect.setAttribute("height", "20");
-        rect.setAttribute("fill", "white");
-        labelGroup.appendChild(rect);
-        // Text label (room name)
-        const textElem = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        textElem.setAttribute("x", labelX);
-        textElem.setAttribute("y", labelY);
-        textElem.setAttribute("fill", "black");
-        textElem.setAttribute("font-size", "12");
-        textElem.setAttribute("data-id", polygon.id);
-        textElem.textContent = polygon.name;
-        labelGroup.appendChild(textElem);
-        finishedGroup.appendChild(labelGroup);
-    }
-    // Clear temporary drawing group only (not finished polygons)
-    function clearTemporaryPolygon() {
-        tempGroup.innerHTML = "";
-    }
-    // Delete polygon (room) and its associated sensors
-    function deletePolygon(polyId) {
-        const index = polygons.findIndex(p => p.id === polyId);
-        if (index !== -1) {
-            polygons.splice(index, 1);
-        }
-        // Remove associated sensors from productsData, their dots, and table rows
-        productsData = productsData.filter(sensor => {
-            if (sensor.roomId === polyId) {
-                const dotElem = document.getElementById(sensor.id);
-                if (dotElem) dotElem.remove();
-                const labelElem = document.getElementById('label-' + sensor.id);
-                if (labelElem) labelElem.remove();
+            // Create image HTML with proper error handling and styling
+            const imageHtml = sensorImage ?
+                `<img src="${sensorImage}" alt="${sensor}" style="width:50px; height:50px; object-fit:contain; border-radius:4px;" onerror="this.onerror=null; this.src='https://via.placeholder.com/50?text=No+Image';">` :
+                `<div style="width:50px; height:50px; display:flex; align-items:center; justify-content:center; background-color:#f0f0f0; border-radius:4px; font-size:10px; color:#666;">No Image</div>`;
 
-                const row = document.getElementById('row-' + sensor.id);
-                if (row) row.remove();
-                return false;
-            }
-            return true;
-        });
-        updateTotalPrice();
-        // Redraw finished group: clear and draw all finished polygons from polygons array
-        finishedGroup.innerHTML = "";
-        polygons.forEach(p => drawFinalPolygon(p));
-    }
-    // Save sensor (device) details from sensor modal
-    document.getElementById('saveDot').addEventListener('click', function() {
-        const name = document.getElementById('dotName').value.trim();
-        const description = document.getElementById('dotNote').value.trim();
-        const sensor = document.getElementById('sensorSelect').value;
-        const selectedOption = sensorSelectTag.options[sensorSelectTag.selectedIndex];
-        const sensorIdVal = selectedOption ? selectedOption.getAttribute("data-id") : "";
-        const sensorImage = selectedOption ? selectedOption.getAttribute("data-image") : "";
-
-        if (!name || !sensor || !description) {
-            alert('Please enter a name, note and select a sensor.');
-            return;
-        }
-
-        // Get relative coordinates from hidden fields
-        const relX = parseFloat(document.getElementById('dotX').value);
-        const relY = parseFloat(document.getElementById('dotY').value);
-
-        // Convert to absolute for display
-        const {
-            x,
-            y
-        } = toAbsoluteCoords(relX, relY);
-
-        const price = sensorPrices[sensor] || "0";
-        const roomId = document.getElementById('dotRoomId').value;
-        const currentDotId = 'dot-' + dotCount;
-
-        // Store using relative coordinates
-        productsData.push({
-            id: currentDotId,
-            name, // sensor name from modal input
-            description, // description name from modal input
-            sensor, // sensor type/attached sensor name
-            sensorId: sensorIdVal,
-            sensorImage,
-            price,
-            x: relX, // store relative X
-            y: relY, // store relative Y
-            roomId
-        });
-
-        // Update dot element tooltip
-        const dot = document.getElementById(currentDotId);
-        if (dot) {
-            dot.dataset.name = name;
-            dot.dataset.description = description;
-            dot.dataset.sensor = sensor;
-            dot.title = `Name: ${name}, Sensor: ${sensor}`;
-        }
-
-        // Create a sensor label element that displays the sensor name
-        // This label will be positioned relative to the dot
-        const sensorLabel = document.createElement('span');
-        sensorLabel.setAttribute('id', 'label-' + currentDotId);
-        sensorLabel.innerText = (dotCount + 1) + ". " + name; // Add count number before name, starting from 1
-        sensorLabel.style.position = 'absolute';
-        sensorLabel.style.fontSize = '12px';
-        sensorLabel.style.background = "white";
-        sensorLabel.style.padding = '2px 4px';
-        sensorLabel.style.color = 'black';
-        sensorLabel.style.left = (x - 10) + 'px';
-        sensorLabel.style.top = (y - 25) + 'px';
-        canvasContainer.appendChild(sensorLabel);
-
-        // Increment dot count after creating the label (so first one is 1)
-        dotCount++;
-
-        // Create sensor table row with room name
-        const room = polygons.find(p => p.id === roomId);
-        const roomName = room ? room.name : "";
-
-        // Create image HTML with proper error handling and styling
-        const imageHtml = sensorImage ?
-            `<img src="${sensorImage}" alt="${sensor}" style="width:50px; height:50px; object-fit:contain; border-radius:4px;" onerror="this.onerror=null; this.src='https://via.placeholder.com/50?text=No+Image';">` :
-            `<div style="width:50px; height:50px; display:flex; align-items:center; justify-content:center; background-color:#f0f0f0; border-radius:4px; font-size:10px; color:#666;">No Image</div>`;
-
-        const tr = document.createElement('tr');
-        tr.setAttribute('id', 'row-' + currentDotId);
-        tr.innerHTML = `<td>${dotCount}</td>
+            const tr = document.createElement('tr');
+            tr.setAttribute('id', 'row-' + currentDotId);
+            tr.innerHTML = `<td>${dotCount}</td>
                       <td>${name}</td>
                       <td>${imageHtml}</td>
                       <td>${description}</td>
@@ -822,344 +835,367 @@
                       <td>${roomName}</td>
                       <td>$${price}</td>
                       <td><button class="delete-btn" data-dotid="${currentDotId}">✕</button></td>`;
-        sensorTableBody.appendChild(tr);
-        // Sensor row delete handler
-        tr.querySelector('.delete-btn').addEventListener('click', function() {
-            const dotId = this.getAttribute('data-dotid');
-            const dotElem = document.getElementById(dotId);
-            if (dotElem) dotElem.remove();
-            const labelElem = document.getElementById('label-' + dotId);
-            if (labelElem) labelElem.remove();
-            const row = document.getElementById('row-' + dotId);
-            if (row) row.remove();
-            productsData = productsData.filter(item => item.id !== dotId);
+            sensorTableBody.appendChild(tr);
+            // Sensor row delete handler
+            tr.querySelector('.delete-btn').addEventListener('click', function() {
+                const dotId = this.getAttribute('data-dotid');
+                const dotElem = document.getElementById(dotId);
+                if (dotElem) dotElem.remove();
+                const labelElem = document.getElementById('label-' + dotId);
+                if (labelElem) labelElem.remove();
+                const row = document.getElementById('row-' + dotId);
+                if (row) row.remove();
+                productsData = productsData.filter(item => item.id !== dotId);
+                updateTotalPrice();
+            });
+            hideDotModal({
+                keepDot: true
+            });
             updateTotalPrice();
         });
-        hideDotModal({
-            keepDot: true
-        });
-        updateTotalPrice();
-    });
-    // Update total price display
-    function updateTotalPrice() {
-        const total = productsData.reduce((acc, item) => acc + Number(item.price), 0);
-        document.getElementById('totalPrice').textContent = total;
-        totalPrice = total;
-    }
-    // Generate PDF using jsPDF and prepare data in the desired format
-    generatePDFBtn.addEventListener('click', function() {
-
-        floorNameInput.value = floorNameInput.value.trim();
-        if (!floorNameInput.value) {
-            alert("Please enter a floor name.");
-            return;
+        // Update total price display and sensor count
+        function updateTotalPrice() {
+            const total = productsData.reduce((acc, item) => acc + Number(item.price), 0);
+            document.getElementById('totalPrice').textContent = total;
+            document.getElementById('totalCount').textContent = productsData.length;
+            totalPrice = total;
         }
+        // Generate PDF using jsPDF and prepare data in the desired format
+        generatePDFBtn.addEventListener('click', function() {
 
-        // Show loading state
-        generatePDFBtn.disabled = true;
-        generatePDFBtn.classList.add('loading');
+            floorNameInput.value = floorNameInput.value.trim();
+            if (!floorNameInput.value) {
+                alert("Please enter a floor name.");
+                return;
+            }
 
-        const offscreenCanvas = document.createElement('canvas');
-        const ctx = offscreenCanvas.getContext('2d');
-        const baseImg = new Image();
+            // Show loading state
+            generatePDFBtn.disabled = true;
+            generatePDFBtn.classList.add('loading');
 
-        baseImg.onload = function() {
-            offscreenCanvas.width = baseImg.naturalWidth;
-            offscreenCanvas.height = baseImg.naturalHeight;
-            const scaleFactor = offscreenCanvas.width / finalImage.width;
+            const offscreenCanvas = document.createElement('canvas');
+            const ctx = offscreenCanvas.getContext('2d');
+            const baseImg = new Image();
 
-            // Draw base image (floorplan)
-            ctx.drawImage(baseImg, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
+            baseImg.onload = function() {
+                offscreenCanvas.width = baseImg.naturalWidth;
+                offscreenCanvas.height = baseImg.naturalHeight;
+                const scaleFactor = offscreenCanvas.width / finalImage.width;
 
-            // Instead of converting SVG, manually draw polygons on canvas
-            // Draw polygons directly to match PDF dimensions
-            polygons.forEach(polygon => {
-                // Draw polygon
-                ctx.beginPath();
-                const vertices = polygon.vertices.map(v => ({
-                    x: (v.x / 100) * offscreenCanvas.width,
-                    y: (v.y / 100) * offscreenCanvas.height
-                }));
+                // Draw base image (floorplan)
+                ctx.drawImage(baseImg, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
-                if (vertices.length > 0) {
-                    ctx.moveTo(vertices[0].x, vertices[0].y);
-                    for (let i = 1; i < vertices.length; i++) {
-                        ctx.lineTo(vertices[i].x, vertices[i].y);
+                // Instead of converting SVG, manually draw polygons on canvas
+                // Draw polygons directly to match PDF dimensions
+                polygons.forEach(polygon => {
+                    // Draw polygon
+                    ctx.beginPath();
+                    const vertices = polygon.vertices.map(v => ({
+                        x: (v.x / 100) * offscreenCanvas.width,
+                        y: (v.y / 100) * offscreenCanvas.height
+                    }));
+
+                    if (vertices.length > 0) {
+                        ctx.moveTo(vertices[0].x, vertices[0].y);
+                        for (let i = 1; i < vertices.length; i++) {
+                            ctx.lineTo(vertices[i].x, vertices[i].y);
+                        }
+                        ctx.closePath();
+                        ctx.fillStyle = "rgba(0, 123, 255, 0.1)";
+                        ctx.fill();
+                        ctx.strokeStyle = "blue";
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+
+                        // Add room label
+                        const labelX = vertices[0].x + 5;
+                        const labelY = vertices[0].y - 5;
+
+                        // Label background
+                        ctx.fillStyle = "white";
+                        ctx.fillRect(labelX - 5, labelY - 15, 100, 20);
+
+                        // Label text
+                        ctx.fillStyle = "black";
+                        ctx.font = "12px Arial";
+                        ctx.fillText(polygon.name, labelX, labelY);
                     }
-                    ctx.closePath();
-                    ctx.fillStyle = "rgba(0, 123, 255, 0.1)";
-                    ctx.fill();
-                    ctx.strokeStyle = "blue";
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
+                });
 
-                    // Add room label
-                    const labelX = vertices[0].x + 5;
-                    const labelY = vertices[0].y - 5;
+                // Draw sensor red dots
+                productsData.forEach((sensor, index) => {
+                    // Convert relative coordinates to canvas absolute coordinates
+                    const dotX = (sensor.x / 100) * offscreenCanvas.width;
+                    const dotY = (sensor.y / 100) * offscreenCanvas.height;
+                    const radius = 2.5 * scaleFactor;
+                    const sensorNumber = index + 1; // Get sensor number (1-based index)
+
+                    ctx.beginPath();
+                    ctx.arc(dotX, dotY, radius, 0, Math.PI * 2);
+                    ctx.fillStyle = 'red';
+                    ctx.fill();
+
+                    // Draw sensor label
+                    ctx.font = "12px Arial";
+                    const text = sensorNumber + ". " + sensor.name; // Add number before name
+                    const textMetrics = ctx.measureText(text);
+                    const textWidth = textMetrics.width;
+                    const textHeight = 12;
+                    const padding = 2;
 
                     // Label background
                     ctx.fillStyle = "white";
-                    ctx.fillRect(labelX - 5, labelY - 15, 100, 20);
+                    ctx.fillRect(dotX - 10, dotY - 25, textWidth + padding * 2, textHeight + padding *
+                        2);
 
                     // Label text
                     ctx.fillStyle = "black";
-                    ctx.font = "12px Arial";
-                    ctx.fillText(polygon.name, labelX, labelY);
-                }
-            });
-
-            // Draw sensor red dots
-            productsData.forEach((sensor, index) => {
-                // Convert relative coordinates to canvas absolute coordinates
-                const dotX = (sensor.x / 100) * offscreenCanvas.width;
-                const dotY = (sensor.y / 100) * offscreenCanvas.height;
-                const radius = 2.5 * scaleFactor;
-                const sensorNumber = index + 1; // Get sensor number (1-based index)
-
-                ctx.beginPath();
-                ctx.arc(dotX, dotY, radius, 0, Math.PI * 2);
-                ctx.fillStyle = 'red';
-                ctx.fill();
-
-                // Draw sensor label
-                ctx.font = "12px Arial";
-                const text = sensorNumber + ". " + sensor.name; // Add number before name
-                const textMetrics = ctx.measureText(text);
-                const textWidth = textMetrics.width;
-                const textHeight = 12;
-                const padding = 2;
-
-                // Label background
-                ctx.fillStyle = "white";
-                ctx.fillRect(dotX - 10, dotY - 25, textWidth + padding * 2, textHeight + padding *
-                    2);
-
-                // Label text
-                ctx.fillStyle = "black";
-                ctx.fillText(text, dotX - 10 + padding, dotY - 25 + textHeight);
-            });
-
-            // ✅ Create final image from canvas
-            offscreenCanvas.toBlob(function(blob) {
-                const imageFile = new File([blob], 'canvas-image.png', {
-                    type: 'image/png'
+                    ctx.fillText(text, dotX - 10 + padding, dotY - 25 + textHeight);
                 });
 
-                // ✅ Send image & data to server
-                const roomsData = polygons.map(room => ({
-                    id: room.id,
-                    roomName: room.name,
-                    coordinates: room.vertices // Already stored as relative coordinates
-                }));
+                // ✅ Create final image from canvas
+                offscreenCanvas.toBlob(function(blob) {
+                    if (!blob) {
+                        console.error("Failed to create image blob from canvas");
+                        alert("Error: Failed to create image from canvas. Please try again.");
+                        generatePDFBtn.disabled = false;
+                        generatePDFBtn.classList.remove('loading');
+                        return;
+                    }
 
-                const sensorsData = productsData.map(sensor => {
-                    const roomObj = polygons.find(p => p.id === sensor.roomId);
-                    return {
-                        sensorName: sensor.name,
-                        sensorDescription: sensor.description,
-                        sensorType: sensor.sensor,
-                        sensorPrice: sensor.price,
-                        sensorId: sensor.sensorId,
-                        sensorImage: sensor.sensorImage,
-                        roomName: roomObj ? roomObj.name : '',
-                        sensorCoordinates: {
-                            x: sensor.x, // Already stored as relative coordinates
-                            y: sensor.y
-                        },
-                        roomId: sensor.roomId
-                    };
-                });
+                    // Create a proper file from the blob with a filename
+                    const imageFile = new File([blob], 'canvas-image.png', {
+                        type: 'image/png',
+                        lastModified: new Date().getTime()
+                    });
 
-                const formData = new FormData();
-                formData.append('roomsData', JSON.stringify(roomsData));
-                formData.append('sensorsData', JSON.stringify(sensorsData));
-                formData.append('totalPrice', totalPrice);
-                formData.append('image', imageFile);
-                formData.append('floorName', floorNameInput.value);
+                    // ✅ Send image & data to server
+                    const roomsData = polygons.map(room => ({
+                        id: room.id,
+                        roomName: room.name,
+                        coordinates: room.vertices // Already stored as relative coordinates
+                    }));
 
-                $.ajax({
-                    url: `{{ route('estimations.store') }}`,
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    success: function(data) {
-                        if (data.success) {
-                            var link = document.createElement('a');
-                            link.href = data.download_url;
-                            link.download = '';
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                            alert(data.message);
-                            setTimeout(function() {
-                                window.location.href =
-                                    `{{ route('estimations.index') }}`;
-                            }, 1000);
+                    const sensorsData = productsData.map(sensor => {
+                        const roomObj = polygons.find(p => p.id === sensor.roomId);
+
+                        // Extract image path from sensorImage (could be object or string)
+                        let imagePath = null;
+                        if (typeof sensor.sensorImage === 'object' && sensor.sensorImage) {
+                            imagePath = sensor.sensorImage.image || '';
+                        } else {
+                            imagePath = sensor.sensorImage || '';
                         }
 
-                        // Remove loading state
+                        // Trim any URL parts to get just the relative path
+                        if (imagePath && imagePath.includes('/storage/')) {
+                            const parts = imagePath.split('/storage/');
+                            imagePath = parts[parts.length -
+                                1]; // Get the last part after '/storage/'
+                        }
+
+                        return {
+                            // Properties for backend/PHP template
+                            name: sensor.name,
+                            note: sensor.description,
+                            price: sensor.price,
+                            room_id: sensor.roomId,
+                            type: sensor.sensor,
+                            sensor_id: sensor.sensorId,
+                            image: imagePath, // Plain path for storage
+                            raw_image_path: imagePath, // Path without processing
+                            image_url: "{{ asset('storage') }}/" +
+                                imagePath, // Full URL for browser
+                            coordinates: {
+                                x: sensor.x,
+                                y: sensor.y
+                            },
+
+                            // Properties for frontend/JavaScript
+                            sensorName: sensor.name,
+                            sensorDescription: sensor.description,
+                            sensorType: sensor.sensor,
+                            sensorPrice: sensor.price,
+                            sensorId: sensor.sensorId,
+                            sensorImage: imagePath, // Pass the actual image path string
+                            roomName: roomObj ? roomObj.name : '',
+                            sensorCoordinates: {
+                                x: sensor.x,
+                                y: sensor.y
+                            },
+                            roomId: sensor.roomId
+                        };
+                    });
+
+                    const formData = new FormData();
+
+                    // Debug the data being sent
+                    console.log("Sending data to server:");
+                    console.log("Rooms:", roomsData);
+                    console.log("Sensors:", sensorsData);
+                    console.log("Total Price:", totalPrice);
+                    console.log("Floor Name:", floorNameInput.value);
+
+                    // Convert object data to strings for FormData
+                    formData.append('roomsData', JSON.stringify(roomsData));
+                    formData.append('sensorsData', JSON.stringify(sensorsData));
+                    formData.append('totalPrice', totalPrice);
+                    formData.append('floorName', floorNameInput.value);
+
+                    // Make sure the image blob is valid before sending
+                    if (imageFile instanceof Blob) {
+                        formData.append('image', imageFile, 'canvas-image.png');
+                    } else {
+                        console.error("Invalid image file:", imageFile);
+                        alert(
+                            "Error: Cannot create PDF because the image is invalid. Please try again."
+                        );
                         generatePDFBtn.disabled = false;
                         generatePDFBtn.classList.remove('loading');
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("AJAX error:", error);
-                        // Remove loading state even on error
-                        generatePDFBtn.disabled = false;
-                        generatePDFBtn.classList.remove('loading');
+                        return;
+                    }
+
+                    // Debug FormData (limited since it's not directly inspectable)
+                    console.log("FormData entries:");
+                    for (let pair of formData.entries()) {
+                        console.log(pair[0], pair[1] instanceof Blob ? "Blob data" : pair[1]);
+                    }
+
+                    // When handling the server response
+                    $.ajax({
+                        url: `{{ route('estimations.store') }}`,
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        success: function(data) {
+                            // Remove loading state
+                            generatePDFBtn.disabled = false;
+                            generatePDFBtn.classList.remove('loading');
+
+                            console.log("Server response:", data);
+
+                            if (data && data.success) {
+                                if (data.download_url) {
+                                    try {
+                                        // Create download link
+                                        var link = document.createElement('a');
+                                        link.href = data.download_url;
+                                        link.download = data.filename || 'estimation.pdf';
+                                        link.target =
+                                            '_blank'; // Fallback to open in new tab
+
+                                        // Append to document and trigger click
+                                        document.body.appendChild(link);
+                                        link.click();
+
+                                        // Clean up
+                                        setTimeout(function() {
+                                            document.body.removeChild(link);
+
+                                            // Show success message with fallback option
+                                            alert(data.message ||
+                                                "PDF generated successfully!" +
+                                                "\n\nIf download doesn't start automatically, click OK to open in a new tab."
+                                            );
+
+                                            // Open in new tab as fallback
+                                            window.open(data.download_url,
+                                                '_blank');
+
+                                            // Redirect with delay to ensure download starts
+                                            setTimeout(function() {
+                                                window.location.href =
+                                                    `{{ route('estimations.index') }}`;
+                                            }, 2000);
+                                        }, 500);
+                                    } catch (e) {
+                                        console.error("Download error:", e);
+                                        alert(
+                                            "Error automatically downloading the PDF. Click OK to open it in a new tab."
+                                        );
+                                        window.open(data.download_url, '_blank');
+                                    }
+                                } else {
+                                    alert(
+                                        "PDF generation succeeded but no download URL was provided."
+                                    );
+                                    console.error("Missing download_url in response:",
+                                        data);
+                                }
+                            } else {
+                                alert("Failed to generate PDF. See console for details.");
+                                console.error("Server returned error or invalid response:",
+                                    data);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            // Remove loading state on error
+                            generatePDFBtn.disabled = false;
+                            generatePDFBtn.classList.remove('loading');
+
+                            console.error("AJAX error:", error);
+                            console.error("Response status:", status);
+                            console.error("Response text:", xhr.responseText);
+
+                            try {
+                                const errorData = JSON.parse(xhr.responseText);
+                                alert("Error: " + (errorData.message ||
+                                    "Failed to generate PDF"));
+                            } catch (e) {
+                                alert(
+                                    "Error: Failed to generate PDF. See console for details."
+                                );
+                            }
+                        }
+                    });
+
+                }, 'image/png', 0.95); // Specify format and quality
+            };
+
+            baseImg.src = finalImage.src;
+        });
+
+        // Responsive handling: update polygon and dot positions when window resized
+        window.addEventListener('resize', function() {
+            // Redraw all polygons when window size changes
+            if (polygons.length > 0) {
+                finishedGroup.innerHTML = "";
+                polygons.forEach(p => drawFinalPolygon(p));
+            }
+
+            // Update all sensor dots and their labels
+            if (productsData.length > 0) {
+                productsData.forEach((sensor, index) => {
+                    const dot = document.getElementById(sensor.id);
+                    const label = document.getElementById('label-' + sensor.id);
+                    const sensorNumber = index + 1; // Get 1-based index
+
+                    if (dot && label) {
+                        // Convert relative to absolute coordinates
+                        const {
+                            x,
+                            y
+                        } = toAbsoluteCoords(sensor.x, sensor.y);
+
+                        // Update dot position
+                        dot.style.left = (x - 2.5) + 'px';
+                        dot.style.top = (y - 2.5) + 'px';
+
+                        // Update label position and ensure it has the number prefix
+                        label.style.left = (x - 10) + 'px';
+                        label.style.top = (y - 25) + 'px';
+
+                        // Make sure the label text includes the number
+                        if (!label.innerText.startsWith(sensorNumber + ".")) {
+                            label.innerText = sensorNumber + ". " + sensor.name;
+                        }
                     }
                 });
-
-                // ✅ Also download PDF locally (but don't send to backend)
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const margin = 10;
-                const pdfImgWidth = pageWidth - (2 * margin);
-                const pdfImgHeight = (offscreenCanvas.height * pdfImgWidth) /
-                    offscreenCanvas.width;
-
-                const reader = new FileReader();
-                reader.onloadend = function() {
-                    const imgData = reader.result;
-                    pdf.addImage(imgData, 'PNG', margin, margin, pdfImgWidth,
-                        pdfImgHeight);
-
-                    // Prepare to load sensor images
-                    const loadImages = () => {
-                        return Promise.all(productsData.map(sensor => {
-                            if (!sensor.sensorImage) return Promise.resolve(
-                                null);
-
-                            return new Promise((resolve) => {
-                                const img = new Image();
-                                img.crossOrigin = "Anonymous";
-                                img.onload = () => resolve(img);
-                                img.onerror = () => resolve(null);
-                                img.src = sensor.sensorImage;
-                            });
-                        }));
-                    };
-
-                    loadImages().then(sensorImages => {
-                        // Add table with images
-                        let tableData = [];
-                        sensorTableBody.querySelectorAll('tr').forEach((row, index) => {
-                            const cols = row.querySelectorAll('td');
-
-                            // For rows with sensor data
-                            if (index < productsData.length) {
-                                tableData.push([
-                                    cols[0].innerText,
-                                    cols[1].innerText,
-                                    sensorImages[index] ? sensorImages[
-                                        index] : 'No Image',
-                                    cols[3].innerText,
-                                    cols[4].innerText,
-                                    cols[5].innerText,
-                                    cols[6].innerText,
-                                ]);
-                            }
-                        });
-
-                        const total = document.getElementById('totalPrice').innerText;
-                        tableData.push(["", "", "", "", "", "Total Price", "$" +
-                            total
-                        ]);
-
-                        pdf.autoTable({
-                            startY: pdfImgHeight + margin + 5,
-                            head: [
-                                ['Sr. No', 'Name', 'Image',
-                                    'Installation Notes',
-                                    'Sensor', 'Room', 'Price'
-                                ]
-                            ],
-                            body: tableData,
-                            theme: 'grid',
-                            styles: {
-                                fontSize: 10
-                            },
-                            didDrawCell: (data) => {
-                                // If this is an image cell (column index 2) and contains an image
-                                if (data.column.index === 2 && data.cell
-                                    .raw instanceof HTMLImageElement) {
-                                    const img = data.cell.raw;
-
-                                    // Calculate dimensions to fit the cell
-                                    const dim = data.cell.height - 5;
-                                    const textPos = data.cell.textPos;
-
-                                    // Add the image to the cell
-                                    try {
-                                        pdf.addImage(
-                                            img,
-                                            'JPEG',
-                                            textPos.x,
-                                            textPos.y - (dim / 2),
-                                            dim,
-                                            dim
-                                        );
-                                    } catch (e) {
-                                        console.error(
-                                            "Error adding image to PDF:",
-                                            e);
-                                    }
-                                }
-                            }
-                        });
-                    }).catch(err => {
-                        console.error("Error loading images:", err);
-                    }).finally(() => {
-                        // pdf.save('estimation.pdf');
-                    });
-                };
-                reader.readAsDataURL(blob);
-            }, 'image/png');
-        };
-
-        baseImg.src = finalImage.src;
-    });
-
-    // Responsive handling: update polygon and dot positions when window resized
-    window.addEventListener('resize', function() {
-        // Redraw all polygons when window size changes
-        if (polygons.length > 0) {
-            finishedGroup.innerHTML = "";
-            polygons.forEach(p => drawFinalPolygon(p));
-        }
-
-        // Update all sensor dots and their labels
-        if (productsData.length > 0) {
-            productsData.forEach((sensor, index) => {
-                const dot = document.getElementById(sensor.id);
-                const label = document.getElementById('label-' + sensor.id);
-                const sensorNumber = index + 1; // Get 1-based index
-
-                if (dot && label) {
-                    // Convert relative to absolute coordinates
-                    const {
-                        x,
-                        y
-                    } = toAbsoluteCoords(sensor.x, sensor.y);
-
-                    // Update dot position
-                    dot.style.left = (x - 2.5) + 'px';
-                    dot.style.top = (y - 2.5) + 'px';
-
-                    // Update label position and ensure it has the number prefix
-                    label.style.left = (x - 10) + 'px';
-                    label.style.top = (y - 25) + 'px';
-
-                    // Make sure the label text includes the number
-                    if (!label.innerText.startsWith(sensorNumber + ".")) {
-                        label.innerText = sensorNumber + ". " + sensor.name;
-                    }
-                }
-            });
-        }
-    });
+            }
+        });
     </script>
 </x-app-layout>
