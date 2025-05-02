@@ -322,8 +322,6 @@
                     return;
                 }
                 apiData = responseData.data;
-                console.log('apiData', apiData);
-
                 // Check for image existence
                 if (!apiData.clean_image) {
                     console.error("No image URL provided in API data.");
@@ -1352,10 +1350,13 @@
                 cleanCanvas.toBlob(function(cleanBlob) {
                     if (cleanBlob) {
                         formData.append('image_clean', cleanBlob, 'canvas-image-clean.png');
-
+ 
+                        const estimationInput = document.getElementById("estimationId");
+                        const estimate = document.getElementById("estimationId")?.value ?? "";
+                        const updateurl = `{{ url('/estimations') }}/${estimate}/update`;
                         // Now send the AJAX request after clean image is ready
                         $.ajax({
-                            url: `{{ route('estimations.store') }}`,
+                            url: updateurl,
                             type: 'POST',
                             data: formData,
                             processData: false,
