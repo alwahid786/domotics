@@ -344,6 +344,7 @@
         let currentPolygon = null; // { id, vertices: [ {x, y} ], name }
         const polygons = []; // Completed room polygons
         let dotCount = 0;
+        let nextSensorNumber = 1; // Global counter for sensor numbering
         let temporaryDotId = null;
 
         // Helper functions for responsive coordinates
@@ -742,10 +743,44 @@
                 }
                 return true;
             });
+
+            // Renumber all remaining sensors starting from 1
+            renumberSensors();
+
             updateTotalPrice();
             // Redraw finished group: clear and draw all finished polygons from polygons array
             finishedGroup.innerHTML = "";
             polygons.forEach(p => drawFinalPolygon(p));
+        }
+
+        // Function to renumber all sensors sequentially from 1
+        function renumberSensors() {
+            // Reset the global counter
+            nextSensorNumber = 1;
+
+            // Update each sensor in productsData array with new display number
+            productsData.forEach((sensor, index) => {
+                const displayNumber = index + 1;
+                sensor.displayNumber = displayNumber;
+
+                // Update the label text
+                const labelElem = document.getElementById('label-' + sensor.id);
+                if (labelElem) {
+                    labelElem.innerText = displayNumber + ". " + sensor.name;
+                }
+
+                // Update the table row
+                const row = document.getElementById('row-' + sensor.id);
+                if (row) {
+                    const firstCell = row.querySelector('td:first-child');
+                    if (firstCell) {
+                        firstCell.textContent = displayNumber;
+                    }
+                }
+            });
+
+            // Set nextSensorNumber to next available number
+            nextSensorNumber = productsData.length + 1;
         }
         // Save sensor (device) details from sensor modal
         document.getElementById('saveDot').addEventListener('click', function() {
@@ -775,6 +810,9 @@
             const roomId = document.getElementById('dotRoomId').value;
             const currentDotId = 'dot-' + dotCount;
 
+            // Use the global counter for display number
+            const displayNumber = nextSensorNumber;
+
             // Store using relative coordinates
             productsData.push({
                 id: currentDotId,
@@ -786,7 +824,8 @@
                 price,
                 x: relX, // store relative X
                 y: relY, // store relative Y
-                roomId
+                roomId,
+                displayNumber // Store the display number
             });
 
             // Update dot element tooltip
@@ -798,11 +837,10 @@
                 dot.title = `Name: ${name}, Sensor: ${sensor}`;
             }
 
-            // Create a sensor label element that displays the sensor name
-            // This label will be positioned relative to the dot
+            // Create a sensor label element that displays the sensor name with display number
             const sensorLabel = document.createElement('span');
             sensorLabel.setAttribute('id', 'label-' + currentDotId);
-            sensorLabel.innerText = (dotCount + 1) + ". " + name; // Add count number before name, starting from 1
+            sensorLabel.innerText = displayNumber + ". " + name; // Add display number before name
             sensorLabel.style.position = 'absolute';
             sensorLabel.style.fontSize = '12px';
             sensorLabel.style.background = "white";
@@ -812,8 +850,9 @@
             sensorLabel.style.top = (y - 25) + 'px';
             canvasContainer.appendChild(sensorLabel);
 
-            // Increment dot count after creating the label (so first one is 1)
+            // Increment dot count and next sensor number
             dotCount++;
+            nextSensorNumber++;
 
             // Create sensor table row with room name
             const room = polygons.find(p => p.id === roomId);
@@ -826,7 +865,7 @@
 
             const tr = document.createElement('tr');
             tr.setAttribute('id', 'row-' + currentDotId);
-            tr.innerHTML = `<td>${dotCount}</td>
+            tr.innerHTML = `<td>${displayNumber}</td>
                       <td>${name}</td>
                       <td>${imageHtml}</td>
                       <td>${description}</td>
@@ -845,6 +884,10 @@
                 const row = document.getElementById('row-' + dotId);
                 if (row) row.remove();
                 productsData = productsData.filter(item => item.id !== dotId);
+
+                // Renumber all remaining sensors after deletion
+                renumberSensors();
+
                 updateTotalPrice();
             });
             hideDotModal({
@@ -1078,37 +1121,56 @@
                                     if (data && data.success) {
                                         if (data.download_url) {
                                             try {
-                                                var link = document.createElement('a');
+                                                var link = document.createElement(
+                                                    'a');
                                                 link.href = data.download_url;
-                                                link.download = data.filename || 'estimation.pdf';
+                                                link.download = data.filename ||
+                                                    'estimation.pdf';
                                                 link.target = '_blank';
 
                                                 document.body.appendChild(link);
                                                 link.click();
 
                                                 setTimeout(function() {
-                                                    document.body.removeChild(link);
+                                                    document.body
+                                                        .removeChild(link);
                                                     alert(data.message ||
                                                         "PDF generated successfully!" +
                                                         "\n\nIf download doesn't start automatically, click OK to open in a new tab."
                                                     );
-                                                    window.open(data.download_url, '_blank');
+                                                    window.open(data
+                                                        .download_url,
+                                                        '_blank');
                                                     setTimeout(function() {
-                                                        window.location.href = `{{ route('estimations.index') }}`;
+                                                        window
+                                                            .location
+                                                            .href =
+                                                            `{{ route('estimations.index') }}`;
                                                     }, 2000);
                                                 }, 500);
                                             } catch (e) {
                                                 console.error("Download error:", e);
-                                                alert("Error automatically downloading the PDF. Click OK to open it in a new tab.");
-                                                window.open(data.download_url, '_blank');
+                                                alert(
+                                                    "Error automatically downloading the PDF. Click OK to open it in a new tab."
+                                                );
+                                                window.open(data.download_url,
+                                                    '_blank');
                                             }
                                         } else {
-                                            alert("PDF generation succeeded but no download URL was provided.");
-                                            console.error("Missing download_url in response:", data);
+                                            alert(
+                                                "PDF generation succeeded but no download URL was provided."
+                                            );
+                                            console.error(
+                                                "Missing download_url in response:",
+                                                data);
                                         }
                                     } else {
-                                        alert("Failed to generate PDF. See console for details.");
-                                        console.error("Server returned error or invalid response:", data);
+                                        alert(
+                                            "Failed to generate PDF. See console for details."
+                                        );
+                                        console.error(
+                                            "Server returned error or invalid response:",
+                                            data);
                                     }
                                 },
                                 error: function(xhr, status, error) {
@@ -1117,13 +1179,18 @@
 
                                     console.error("AJAX error:", error);
                                     console.error("Response status:", status);
-                                    console.error("Response text:", xhr.responseText);
+                                    console.error("Response text:", xhr
+                                        .responseText);
 
                                     try {
-                                        const errorData = JSON.parse(xhr.responseText);
-                                        alert("Error: " + (errorData.message || "Failed to generate PDF"));
+                                        const errorData = JSON.parse(xhr
+                                            .responseText);
+                                        alert("Error: " + (errorData.message ||
+                                            "Failed to generate PDF"));
                                     } catch (e) {
-                                        alert("Error: Failed to generate PDF. See console for details.");
+                                        alert(
+                                            "Error: Failed to generate PDF. See console for details."
+                                        );
                                     }
                                 }
                             });
