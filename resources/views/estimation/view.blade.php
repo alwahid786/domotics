@@ -7,25 +7,85 @@
         </div>
     </x-slot>
 
+    <!-- Hidden input for estimate value -->
     <input type="hidden" id="estimate" value="{{ $estimate }}">
 
-    <!-- Bootstrap CSS (if not already included) -->
-    <!-- If you're using Laravel Mix or another bundler, make sure Bootstrap is properly imported -->
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
 
     <style>
         body {
             overflow-x: hidden !important;
         }
+
+        canvas {
+            border: 1px solid #ccc;
+            max-width: 100%;
+        }
+
+        .floorplan {
+            position: relative;
+            width: 100%;
+        }
+
+        .floorplan img {
+            width: 500px;
+            margin: 20px auto;
+            display: block;
+        }
     </style>
 
-    <main class="mt-6">
+    <main class="p-2">
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6 bg-white shadow p-4 rounded">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-10  bg-white shadow rounded" style="padding: 40px">
+                <div class="floorplan">
+                    <img src="{{ asset('uploads/estimations/MyDomoticsInvoice.png') }}" width="100%" height="auto"
+                        alt="Header">
+                </div>
+                <br>
+                <p>
+                    Oggetto :Offerta relativa alla DOMOTIZZAZIONE della vostra unita' immobiliare Palazzo
+                    Sanfelice<br><br>
+                    Su Sua cortese richiesta abbiamo predisposto la presente offerta per la fornitura di materiali e
+                    apparecchiature del nostro sistema domotico wireless con protocollo di comunicazione RF/Wi-Fi presso
+                    la sua unita' immobilare evidenziata in oggetto.<br><br><br>
+                    La vastissima quantità di connessioni possibili con dispositivi MydomoticS già pronti ci consente di
+                    tenere sotto controllo:<br>
+                    Luci della casa<br>
+                    Tapparelle oscuranti<br>
+                    Finestre motorizzate<br>
+                    Tende interne motorizzate<br>
+                    Tende per esterno motorizzate con sensore anti vento, anti-pioggia e crepuscolare abbinabile alle
+                    scene.<br>
+                    Ogni Tipo e ogni Marca di Climatizzatore Split o Canalizzabile.<br>
+                    Controllo delle adduzioni di Acqua e Gas con Possibilità di apertura e chiusura delle erogazioni
+                    anche da remoto e chiaramente programmabili in scenari.<br>
+                    Irrigazione Giardino e Balcone.<br>
+                    Sensori di Fuga di Gas. Questo dispositivo e' spostabile e installabile in ogni ambiente e
+                    totalmente libero da connessioni elettriche essendo alimentato a Batteria.<br>
+                    Sensori di Fumo Questo dispositivo e' spostabile e installabile in ogni ambiente e totalmente libero
+                    da connessioni elettriche essendo alimentato a Batteria.<br>
+                    Sensori di Allagamento. Questo dispositivo e' spostabile e installabile in ogni ambiente e
+                    totalmente libero da connessioni elettriche essendo alimentato a Batteria.<br>
+                    Qualsiasi TV sia esso del tipo Smart o privo di qualsiasi modulo intelligente od interfaccia<br>
+                    Qualsiasi dispositivo HI-FI Audio sia esso Smart o senza interfacce intelligenti<br>
+                    Qualsiasi Decoder TV per la gestione della visione via Satellite<br>
+                    Qualsiasi Videoproiettore<br>
+                    Inserimento di dispositivi RGB per cromoterapia o effetti scenici in ambienti particolari come bar ,
+                    discoteche…. o esterni di edifici che possono essere colorati in modi diversi .I nostri Controller
+                    WIFI RGB possono gestire sia Barre Led RGB che le lampade.<br>
+                    Dimmer per regolazioni luci sia esse in led che ad incandescenza.<br>
+                    Bottone SOS per Docce o altri ambienti pericolosi. Questo dispositivo e' spostabile e installabile
+                    in ogni ambiente e totalmente libero da connessioni elettriche essendo alimentato a Batteria.
+                </p>
 
+                <p><b>Qui di seguito le elenchiamo i dispositivi da lei richiesti</b></p>
+
+                <p><b>Distinta della fornitura suddivisa per ambiente di installazione</b></p>
+                <br>
                 <!-- Canvas Container -->
                 <div class="mb-4 text-center">
-                    <canvas id="estimationCanvas" style="border:1px solid #ccc; max-width: 100%;"></canvas>
+                    <canvas id="estimationCanvas"></canvas>
                 </div>
 
                 <!-- Table Container -->
@@ -34,28 +94,88 @@
                         <thead>
                             <tr>
                                 <th>Sr. No</th>
-                                <th>Name</th>
-                                <th>Sensor</th>
+                                <th>Room</th>
+                                <th>Image</th>
+                                <th>Sensor Name</th>
+                                <th>Installation Notes</th>
                                 <th>Price</th>
                             </tr>
                         </thead>
-                        <tbody id="estimationTableBody">
-                            <!-- Rows will be appended by JS -->
-                        </tbody>
+                        <tbody id="estimationTableBody"></tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="3" class="text-end fw-bold">Total Price</td>
-                                <td id="totalPrice"></td>
+                                <td colspan="5" class="text-end">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div><strong>Total Sensors</strong></div>
+                                        <div id="totalCount">0</div>
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" class="text-end">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div><strong>Total Price</strong></div>
+                                        <div id="totalPrice"></div>
+                                    </div>
+                                </td>
+                                <td></td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
 
+                <p><b>Tempistica di fornitura</b></p>
+
+                <p>
+                    <b>Tempistica arrivo fornitura e consegna in cantiere</b><br>
+                    • 20 gg lavorativi a partire dalla ricezione del pagamento relativo al primo acconto e Vostra
+                    conferma di ordine mediante restituzione del presente contratto firmato per accettazione - Arrivo
+                    fornitura presso sede di MydomoticS
+                </p>
+
+                <p>
+                    <b>Consegna fornitura in cantiere</b><br>
+                    • 2 gg dalla avviso di consegna fornitura al cliente (contestuale all'arrivo della fornitura presso
+                    sede MyDomoticS) e contestuale ricezione pagamento relativo al II° acconto
+                </p>
+
+                <p>
+                    <b>Condizioni di pagamento</b><br>
+                    • Primo Acconto pari al 40% oltre Iva alla conferma di ordine per avvio produzione fornitura<br>
+                    • Saldo pari al 60% oltre Iva alla consegna degli stessi prodotti che avverrà presso Vs
+                    cantiere/ufficio entro 48 ore dal ricevimento del pagamento
+                </p>
+
+                <p>
+                    <b>Garanzie / Assistenza Post Vendita</b><br>
+                    • Garanzia su ciascun componente oggetto di fornitura pari a 2 anni per completa sostituzione in
+                    caso di malfunzionamento per causa imputabile al fornitore<br>
+                    • Assistenza da remoto nelle 24 ore lavorative successive alla vs chiamata<br>
+                    • Assistenza Post vendita mediante intervento dedicato con presenza di ns operatore presso il vs
+                    immobile nelle 48 ore lavorative successive alla vs chiamata di pronto intervento al ns N. Verde
+                    dedicato
+                </p>
+
+                <p>In attesa di vs. riscontro inviamo distinti saluti</p>
+
+                <table style="width: 100%; margin-top: 30px;border:0 !important;">
+                    <tr>
+                        <td style="text-align: left; width: 50%; border:0 !important;">
+                            <img src="{{ asset('uploads/estimations/logos.png') }}" alt="Logos"
+                                style="width: 200px; height: auto;">
+                        </td>
+                        <td style="text-align: right; width: 50%; border:0 !important;">
+                            <img src="{{ asset('uploads/estimations/sign.png') }}" alt="Sign"
+                                style="width: 200px; height: auto;">
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
     </main>
 
-    <!-- Bootstrap Modal for Dot Click -->
+    <!-- Bootstrap Modal for Sensor Details -->
     <div class="modal fade" id="dotInfoModal" tabindex="-1" aria-labelledby="dotInfoModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -64,7 +184,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="dotInfoContent">
-                    <!-- Dot data will be dynamically inserted here -->
+                    <!-- Sensor info will be loaded here -->
                 </div>
             </div>
         </div>
@@ -72,146 +192,280 @@
 
 </x-app-layout>
 
-<!-- Bootstrap JS (if not already included) -->
+<!-- Bootstrap Bundle JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    let estimationData = []; // Will hold the fetched data
-    let dots = []; // Will hold the dot positions for click detection
+    // Global variables
+    let apiData = null; // Holds the full API response data.data
+    let sensorDots = []; // Sensor dots info for click detection
 
     document.addEventListener("DOMContentLoaded", function() {
         fetchEstimations();
     });
 
     function fetchEstimations() {
-        var estimateInput = document.getElementById("estimate");
-        var estimate = estimateInput ? estimateInput.value : "";
-
-        fetch("/estimations/fetch?estimate=" + encodeURIComponent(estimate))
+        const estimateInput = document.getElementById("estimate");
+        const estimate = estimateInput ? estimateInput.value : "";
+        const url = "{{ route('estimations.fetch') }}?estimate=" + encodeURIComponent(estimate);
+        fetch(url)
             .then(response => response.json())
-            .then(data => {
-                estimationData = data; // store globally
-                // Build the table
-                buildEstimationTable(data);
-                // Draw the canvas (image + dots)
-                drawCanvas(data);
+            .then(responseData => {
+                // Update: our required data is nested in responseData.data
+                if (!responseData.data) {
+                    console.error("API response missing 'data' property.");
+                    return;
+                }
+                apiData = responseData.data;
+                // Check for image existence
+                if (!apiData.image) {
+                    console.error("No image URL provided in API data.");
+                    return;
+                }
+
+                buildEstimationTable(apiData);
+                drawFloorPlan(apiData);
             })
-            .catch(error => console.error("Error fetching estimations:", error));
+            .catch(error => {
+                console.error("Error fetching estimations:", error);
+            });
     }
 
+    // Builds the table with sensor details and total price
     function buildEstimationTable(data) {
         const tableBody = document.getElementById("estimationTableBody");
         const totalPriceCell = document.getElementById("totalPrice");
-        tableBody.innerHTML = ""; // clear existing rows
+        const totalCountCell = document.getElementById("totalCount");
+        tableBody.innerHTML = ""; // Clear any existing rows
 
-        let totalPrice = 0;
-        data.forEach((item, index) => {
+        if (!data.sensorsData || data.sensorsData.length === 0) {
+            totalPriceCell.textContent = "$0.00";
+            totalCountCell.textContent = "0";
+            console.warn("No sensor data available.");
+            return;
+        }
+
+        data.sensorsData.forEach((sensor, index) => {
             const tr = document.createElement("tr");
 
-            // Sr. No
+            // Serial Number
             const tdSrNo = document.createElement("td");
             tdSrNo.textContent = index + 1;
             tr.appendChild(tdSrNo);
 
-            // Name
-            const tdName = document.createElement("td");
-            tdName.textContent = item.product_name || "N/A";
-            tr.appendChild(tdName);
+            // Room Name (matched by roomId)
+            const tdRoom = document.createElement("td");
+            const room = data.roomsData.find(r => r.roomId === sensor.roomId);
+            tdRoom.textContent = room ? room.roomName : "Unknown Room";
+            tr.appendChild(tdRoom);
 
-            // Sensor (hard-coded or from item if available)
-            const tdSensor = document.createElement("td");
-            // If you have item.sensor, replace "product.one" with item.sensor
-            tdSensor.textContent = "product.one";
-            tr.appendChild(tdSensor);
+            // Sensor Image - handle nested structure
+            const tdSensorImage = document.createElement("td");
+            // Handle different possible image property structures
+            let imagePath = null;
+            if (sensor.image) {
+                imagePath = sensor.image;
+            } else if (sensor.sensorImage) {
+                if (typeof sensor.sensorImage === 'object' && sensor.sensorImage.image) {
+                    // Handle nested object: {sensorImage: {image: 'path/to/image.jpg'}}
+                    imagePath = sensor.sensorImage.image;
+                } else {
+                    // Direct string: {sensorImage: 'path/to/image.jpg'}
+                    imagePath = sensor.sensorImage;
+                }
+            }
+
+            // Create proper image URL
+            let imageUrl = imagePath;
+            if (imagePath && !imagePath.startsWith('http')) {
+                imageUrl = "{{ asset('storage') }}/" + imagePath;
+            }
+
+            if (imageUrl) {
+                tdSensorImage.innerHTML =
+                    `<img src="${imageUrl}" alt="${sensor.sensorName || sensor.name}" style="width:50px; height:50px; object-fit:contain; border-radius:4px;" onerror="this.onerror=null; this.src='https://via.placeholder.com/50?text=No+Image';">`;
+            } else {
+                tdSensorImage.innerHTML =
+                    `<div style="width:50px; height:50px; display:flex; align-items:center; justify-content:center; background-color:#f0f0f0; border-radius:4px; font-size:10px; color:#666;">No Image</div>`;
+            }
+            tr.appendChild(tdSensorImage);
+
+            // Sensor Name
+            const tdSensorName = document.createElement("td");
+            tdSensorName.textContent = sensor.sensorName || sensor.name || "N/A";
+            tr.appendChild(tdSensorName);
+
+            // Sensor Description
+            const tdSensorDescription = document.createElement("td");
+            tdSensorDescription.textContent = sensor.sensorDescription || sensor.note || "N/A";
+            tr.appendChild(tdSensorDescription);
+
 
             // Price
             const tdPrice = document.createElement("td");
-            tdPrice.textContent = "$" + (item.product_price || "0.00");
+            tdPrice.textContent = "$" + (sensor.sensorPrice || sensor.price || "0.00");
             tr.appendChild(tdPrice);
 
             tableBody.appendChild(tr);
-
-            // Accumulate total price
-            if (item.product_price) {
-                totalPrice += parseFloat(item.product_price);
-            }
         });
 
-        // Show total price (or use data[0].total if each set has a single total)
-        totalPriceCell.textContent = "$" + totalPrice.toFixed(2);
+        // Set total price and count from API
+        totalPriceCell.textContent = "$" + (data.totalPrice || "0.00");
+        totalCountCell.textContent = data.sensorsData ? data.sensorsData.length : "0";
     }
 
-    function drawCanvas(data) {
+    // Draw the floor plan image, rooms (as polygons) and sensor dots on the canvas
+    function drawFloorPlan(data) {
         const canvas = document.getElementById("estimationCanvas");
         const ctx = canvas.getContext("2d");
+        const floorImage = new Image();
+        floorImage.crossOrigin = "Anonymous";
+        floorImage.src = data.image;
 
-        if (!data || data.length === 0) return;
+        floorImage.onload = function() {
+            // Set canvas dimensions
+            canvas.width = floorImage.width;
+            canvas.height = floorImage.height;
+            // Draw the background image
+            ctx.drawImage(floorImage, 0, 0);
 
-        // Load the background image from the first item (adjust as needed)
-        const backgroundImage = new Image();
-        backgroundImage.src = "/" + data[0].image;
-        backgroundImage.onload = function() {
-            // Set canvas size to the image size (you can adjust to fit container)
-            canvas.width = backgroundImage.width;
-            canvas.height = backgroundImage.height;
-            ctx.drawImage(backgroundImage, 0, 0);
+            // // Draw rooms as polygons
+            // if (data.roomsData && data.roomsData.length > 0) {
+            //     data.roomsData.forEach(room => {
+            //         drawRoomPolygon(ctx, room.coordinates);
+            //     });
+            // } else {
+            //     console.warn("No room data available.");
+            // }
 
-            // Now place dots
-            dots = [];
-            data.forEach((item, index) => {
-                // Convert the stored x_position / y_position to float
-                // If they are percentages, you may need: 
-                //   let x = parseFloat(item.x_position) * canvas.width / 100;
-                //   let y = parseFloat(item.y_position) * canvas.height / 100;
-                let x = parseFloat(item.x_position);
-                let y = parseFloat(item.y_position);
+            // // Draw sensor dots
+            // sensorDots = []; // Reset sensor dots array
+            // if (data.sensorsData && data.sensorsData.length > 0) {
+            //     data.sensorsData.forEach(sensor => {
+            //         const x = parseFloat(sensor.sensorCoordinates.x);
+            //         const y = parseFloat(sensor.sensorCoordinates.y);
 
-                // Save dot info for click detection
-                dots.push({
-                    x: x,
-                    y: y,
-                    radius: 5,
-                    data: item
-                });
+            //         // Save dot info for click detection
+            //         sensorDots.push({
+            //             x: x,
+            //             y: y,
+            //             radius: 5,
+            //             sensorInfo: sensor
+            //         });
 
-                // Draw the dot
-                ctx.beginPath();
-                ctx.arc(x, y, 5, 0, 2 * Math.PI);
-                ctx.fillStyle = "red";
-                ctx.fill();
-            });
+            //         // Draw the sensor dot
+            //         ctx.beginPath();
+            //         ctx.arc(x, y, 5, 0, 2 * Math.PI);
+            //         ctx.fillStyle = "red";
+            //         ctx.fill();
+            //     });
+            // } else {
+            //     console.warn("No sensor data available.");
+            // }
         };
 
-        // Add event listener for clicks
-        canvas.addEventListener("click", function(e) {
-            const rect = canvas.getBoundingClientRect();
-            // Mouse position in canvas coordinates
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
+        floorImage.onerror = function(err) {
+            console.error("Error loading floor image:", err);
+        };
 
-            // Check if user clicked any dot
-            dots.forEach(dot => {
-                const dx = mouseX - dot.x;
-                const dy = mouseY - dot.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                if (distance <= dot.radius) {
-                    // Show the Bootstrap modal with this dot's info
-                    showDotInfo(dot.data);
-                }
-            });
+        // Listen for canvas clicks to detect sensor dot interaction
+        canvas.addEventListener("click", onCanvasClick);
+    }
+
+    // Draw a polygon for a room based on provided coordinates
+    function drawRoomPolygon(ctx, coordinates) {
+        if (!coordinates || coordinates.length === 0) {
+            console.warn("No coordinates to draw room polygon.");
+            return;
+        }
+
+        ctx.beginPath();
+        coordinates.forEach((coord, idx) => {
+            const x = parseFloat(coord.x);
+            const y = parseFloat(coord.y);
+            if (idx === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        });
+        ctx.closePath();
+
+        ctx.fillStyle = "rgba(0, 123, 255, 0.1)"; // semi-transparent blue fill
+        ctx.fill();
+        ctx.strokeStyle = "blue";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+
+    // Handle canvas click events to detect if a sensor dot is clicked
+    function onCanvasClick(e) {
+        const canvas = e.target;
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        sensorDots.forEach(dot => {
+            const dx = mouseX - dot.x;
+            const dy = mouseY - dot.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance <= dot.radius) {
+                showSensorModal(dot.sensorInfo);
+            }
         });
     }
 
-    function showDotInfo(dotData) {
+    // Show sensor details in the Bootstrap modal
+    function showSensorModal(sensor) {
         const modalBody = document.getElementById("dotInfoContent");
+
+        // Find the room name based on roomId
+        let roomName = "Unknown Room";
+        if (apiData && apiData.roomsData) {
+            const room = apiData.roomsData.find(r => r.roomId === sensor.roomId);
+            if (room) {
+                roomName = room.roomName;
+            }
+        }
+
+        // Handle different possible image property structures
+        let imagePath = null;
+        if (sensor.image) {
+            imagePath = sensor.image;
+        } else if (sensor.sensorImage) {
+            if (typeof sensor.sensorImage === 'object' && sensor.sensorImage.image) {
+                // Handle nested object: {sensorImage: {image: 'path/to/image.jpg'}}
+                imagePath = sensor.sensorImage.image;
+            } else {
+                // Direct string: {sensorImage: 'path/to/image.jpg'}
+                imagePath = sensor.sensorImage;
+            }
+        }
+
+        // Create proper image URL
+        let imageUrl = imagePath;
+        if (imagePath && !imagePath.startsWith('http')) {
+            imageUrl = "{{ asset('storage') }}/" + imagePath;
+        }
+
+        // Create image HTML
+        let imageHtml = '';
+        if (imageUrl) {
+            imageHtml = `<img src="${imageUrl}" alt="${sensor.sensorName || sensor.name}" style="width:100%; max-width:200px; height:auto; object-fit:contain; border-radius:4px; margin-bottom:15px;" onerror="this.onerror=null; this.src='https://via.placeholder.com/200?text=No+Image';">`;
+        } else {
+            imageHtml = `<div style="width:100%; max-width:200px; height:150px; display:flex; align-items:center; justify-content:center; background-color:#f0f0f0; border-radius:4px; margin-bottom:15px; font-size:14px; color:#666;">No Image</div>`;
+        }
+
         modalBody.innerHTML = `
-            <p><strong>Name:</strong> ${dotData.product_name}</p>
-            <p><strong>Sensor:</strong> product.one</p>
-            <p><strong>Price:</strong> $${dotData.product_price}</p>
+            ${imageHtml}
+            <p><strong>Sensor Name:</strong> ${sensor.sensorName || sensor.name}</p>
+            <p><strong>Installation Notes:</strong> ${sensor.sensorDescription || sensor.note}</p>
+            <p><strong>Room:</strong> ${roomName}</p>
+            <p><strong>Price:</strong> $${sensor.sensorPrice || sensor.price}</p>
         `;
 
-        // Show the modal (Bootstrap 5)
-        const dotInfoModal = new bootstrap.Modal(document.getElementById("dotInfoModal"), {});
-        dotInfoModal.show();
+        const modalElement = document.getElementById("dotInfoModal");
+        const sensorModal = new bootstrap.Modal(modalElement, {});
+        sensorModal.show();
     }
 </script>

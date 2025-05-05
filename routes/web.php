@@ -81,10 +81,24 @@ Route::middleware('auth')->group(function () {
     Route::get('/estimations/create', [EstimationController::class, 'create'])->name('estimations.create');
     Route::post('/estimations/store', [EstimationController::class, 'store'])->name('estimations.store');
     Route::get('/estimations/{estimate}/edit', [EstimationController::class, 'edit'])->name('estimations.edit');
+    Route::post('/estimations/{estimate}/update', [EstimationController::class, 'update'])->name('estimations.update');
     Route::get('/estimations/{estimate}/show', [EstimationController::class, 'show'])->name('estimations.show');
     Route::put('/estimations/{estimate}', [EstimationController::class, 'update'])->name('estimations.update');
     Route::delete('/estimations/{estimate}/delete', [EstimationController::class, 'destroy'])->name('estimations.destroy');
     Route::get('/estimations/fetch', [EstimationController::class, 'fetch'])->name('estimations.fetch');
+
+    Route::get('/estimations/download/{file}', function ($file) {
+        $path = storage_path("app/private/estimations/{$file}");
+    
+        if (file_exists($path)) {
+            return response()->download($path);
+        } else {
+            abort(404);
+        }
+    })->name('estimations.download');
+
+    
+    Route::get('/rooms', [EstimationController::class, 'rooms'])->name('estimations.room');    
 
 // Quotation update
     Route::put('/quotations/{quotation}', [QuotationController::class, 'update'])->name('quotations.update');
