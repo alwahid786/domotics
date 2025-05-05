@@ -91,10 +91,10 @@
         <thead>
             <tr>
                 <th>#</th>
+                <th>Room</th>
                 <th>Image</th>
                 <th>Sensor Name</th>
                 <th>Installation Notes</th>
-                <th>Room</th>
                 <th>Price</th>
             </tr>
         </thead>
@@ -106,6 +106,7 @@
                 @endphp
             <tr>
                 <td>{{ $index + 1 }}</td>
+                <td>{{ $roomName }}</td>
                 <td>
                     @if ($sensor->product_image)
                         <img src="{{ public_path('storage/'.$sensor->product_image) }}" 
@@ -123,7 +124,6 @@
                 </td>
                 <td>{{ $sensor->name ?? $sensor->sensorName }}</td>
                 <td>{{ $sensor->note ?? $sensor->sensorDescription }}</td>
-                <td>{{ $roomName }}</td>
                 <td>{{ number_format($sensor->price ?? $sensor->sensorPrice, 2) }}</td>
             </tr>
         @endforeach

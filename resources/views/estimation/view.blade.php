@@ -94,10 +94,10 @@
                         <thead>
                             <tr>
                                 <th>Sr. No</th>
+                                <th>Room</th>
                                 <th>Image</th>
                                 <th>Sensor Name</th>
                                 <th>Installation Notes</th>
-                                <th>Room</th>
                                 <th>Price</th>
                             </tr>
                         </thead>
@@ -253,6 +253,12 @@
             tdSrNo.textContent = index + 1;
             tr.appendChild(tdSrNo);
 
+            // Room Name (matched by roomId)
+            const tdRoom = document.createElement("td");
+            const room = data.roomsData.find(r => r.roomId === sensor.roomId);
+            tdRoom.textContent = room ? room.roomName : "Unknown Room";
+            tr.appendChild(tdRoom);
+
             // Sensor Image - handle nested structure
             const tdSensorImage = document.createElement("td");
             // Handle different possible image property structures
@@ -294,11 +300,6 @@
             tdSensorDescription.textContent = sensor.sensorDescription || sensor.note || "N/A";
             tr.appendChild(tdSensorDescription);
 
-            // Room Name (matched by roomId)
-            const tdRoom = document.createElement("td");
-            const room = data.roomsData.find(r => r.roomId === sensor.roomId);
-            tdRoom.textContent = room ? room.roomName : "Unknown Room";
-            tr.appendChild(tdRoom);
 
             // Price
             const tdPrice = document.createElement("td");

@@ -195,11 +195,11 @@
                     <thead>
                         <tr>
                             <th>Sr. No</th>
+                            <th>Room</th>
                             <th>Name</th>
                             <th>Image</th>
                             <th>Installation Notes</th>
                             <th>Sensor</th>
-                            <th>Room</th>
                             <th>Price</th>
                             <th>Action</th>
                         </tr>
@@ -866,11 +866,11 @@
             const tr = document.createElement('tr');
             tr.setAttribute('id', 'row-' + currentDotId);
             tr.innerHTML = `<td>${displayNumber}</td>
+                      <td>${roomName}</td>
                       <td>${name}</td>
                       <td>${imageHtml}</td>
                       <td>${description}</td>
                       <td>${sensor}</td>
-                      <td>${roomName}</td>
                       <td>$${price}</td>
                       <td><button class="delete-btn" data-dotid="${currentDotId}">✕</button></td>`;
             sensorTableBody.appendChild(tr);
