@@ -159,8 +159,17 @@
             <input type="hidden" id="estimationId" value="{{ $estimation->id }}">
             <!-- Image Upload -->
             <div class="mb-2 mt-4 flex items-center gap-4">
-                <input type="text" value="{{ $estimation->floor_name }}" class="form-control border p-2 floor-name"
-                    placeholder="Floor name" required />
+                <input type="text" value="{{ $estimation->floor_name }}" class="form-control border p-2 floor-name" placeholder="Floor name" required />
+               
+                @if($roleId == 1 || $roleId == 2)
+                <select class="form-control border p-2" name="user_id" id="user_id">
+                    <option value="">Select User</option>
+                    @foreach ($users as $user)
+                        <option value="{{ $user->id }}" {{ $user->id == $estimation->user_id ? 'selected' : '' }}>{{ $user->name }} - {{ $user->email }}</option>
+                    @endforeach
+                </select>
+                @endif
+               
                 <input type="file" id="imageUpload" accept="image/*" class="form-control border p-2 w-full">
             </div>
             <!-- Mode buttons: initially hidden, will be shown after picture upload -->
@@ -321,7 +330,7 @@
                     console.error("API response missing 'data' property.");
                     return;
                 }
-                apiData = responseData.data;
+                apiData = responseData.data;                
                 // Check for image existence
                 if (!apiData.clean_image) {
                     console.error("No image URL provided in API data.");
@@ -385,7 +394,7 @@
                           <td>${sensor.sensorName}</td>
                           <td>${imageHtml}</td>
                           <td>${sensor.sensorDescription}</td>
-                          <td>${sensor.sensorType || sensor.type || ''}</td>
+                          <td style="width: 200px">${sensor.productName}</td>
                           <td>${roomName}</td>
                           <td>$${sensor.sensorPrice}</td>
                           <td><button class="delete-btn" data-dotid="${dotId}">✕</button></td>`;
@@ -567,6 +576,7 @@
     const pdfBtnContainer = document.getElementById('pdfBtnContainer');
     const sensorSelectTag = document.getElementById('sensorSelect');
     const floorNameInput = document.querySelector('.floor-name');
+    const user_id = document.querySelector('#user_id');
     // Mode buttons (initially hidden; will be shown after picture upload)
     const floorModeBtn = document.getElementById('floorModeBtn');
     const deviceModeBtn = document.getElementById('deviceModeBtn');
@@ -1318,6 +1328,11 @@
                 formData.append('sensorsData', JSON.stringify(sensorsData));
                 formData.append('totalPrice', totalPrice);
                 formData.append('floorName', floorNameInput.value);
+                if(user_id){
+                    formData.append('user_id', user_id.value);
+                }else{
+                    formData.append('user_id', '');
+                }
 
                 // Add the estimation ID for the update request
                 const estimationId = document.getElementById('estimationId').value;

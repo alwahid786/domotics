@@ -159,6 +159,16 @@
             <!-- Image Upload -->
             <div class="mb-2 mt-4 flex items-center gap-4">
                 <input type="text" class="form-control border p-2 floor-name" placeholder="Floor name" required />
+
+                @if($roleId == 1 || $roleId == 2)
+                <select class="form-control border p-2" name="user_id" id="user_id">
+                    <option value="" selected>Select User</option>
+                    @foreach ($users as $user)
+                        <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->email }}</option>
+                    @endforeach
+                </select>
+                @endif
+
                 <input type="file" id="imageUpload" accept="image/*" class="form-control border p-2 w-full">
             </div>
             <!-- Mode buttons: initially hidden, will be shown after picture upload -->
@@ -325,6 +335,7 @@
         const pdfBtnContainer = document.getElementById('pdfBtnContainer');
         const sensorSelectTag = document.getElementById('sensorSelect');
         const floorNameInput = document.querySelector('.floor-name');
+        const user_id = document.querySelector('#user_id');
         // Mode buttons (initially hidden; will be shown after picture upload)
         const floorModeBtn = document.getElementById('floorModeBtn');
         const deviceModeBtn = document.getElementById('deviceModeBtn');
@@ -1076,6 +1087,11 @@
                     formData.append('sensorsData', JSON.stringify(sensorsData));
                     formData.append('totalPrice', totalPrice);
                     formData.append('floorName', floorNameInput.value);
+                    if(user_id){
+                        formData.append('user_id', user_id.value);
+                    }else{
+                        formData.append('user_id', '');
+                    }
 
                     // Make sure the image blob is valid before sending
                     if (imageFile instanceof Blob) {
