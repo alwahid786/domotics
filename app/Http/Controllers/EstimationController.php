@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Mail\SendEstimation;
 use App\Models\Product;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,23 +18,22 @@ class EstimationController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $role = DB::table('roles')
-            ->join('model_has_roles', 'roles.id', '=', 'model_has_roles.role_id')
-            ->where('model_has_roles.model_id', $user->id)
-            ->select('roles.id')
-            ->first();
 
-        if ($role->id == 1 || $role->id == 2) {
-            $estimations = DB::table('estimations')->orderby('id')->latest()->paginate(25);
+        $estimations = DB::table('estimations')
+            ->join('estimation_permission', 'estimations.id', '=', 'estimation_permission.estimation_id')
+            ->where(function ($query) use ($user) {
+                $query->where('estimation_permission.user_id', $user->id);
+            })
+            ->orderBy('estimations.id', 'desc')
+            ->paginate(25);
             return view('estimation.index', compact('estimations'));
-        } else {
-            $estimations = DB::table('estimations')->where('user_id', $role->id)->orderby('id')->latest()->paginate(25);
-            return view('estimation.index', compact('estimations'));
-        }
+
+
     }
     public function create()
     {
-        return view('estimation.create');
+        $users = User::where('id', '!=', Auth::user()->id)->get();
+        return view('estimation.create', compact('users'));
     }
 
     public function store(Request $request)
@@ -43,7 +43,6 @@ class EstimationController extends Controller
             'sensorsData' => 'required|string',
             'totalPrice' => 'required|numeric',
             'floorName' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
         ]);
 
         // Handle image upload
@@ -81,6 +80,28 @@ class EstimationController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+        DB::table('estimation_permission')->insert([
+            'estimation_id' => $estimationId,
+            'user_id' => $user->id,
+            'user_role_id' => $role->id,
+        ]);
+
+        foreach($request->permissionUserIds as $permissionUserId) {
+            $permissionRole = DB::table('roles')
+            ->join('model_has_roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->where('model_has_roles.model_id', $permissionUserId)
+            ->select('roles.id')
+            ->first();
+
+            if ($permissionRole) {
+                DB::table('estimation_permission')->insert([
+                    'estimation_id' => $estimationId,
+                    'user_id' => $permissionUserId,
+                    'user_role_id' => $permissionRole->id,
+                ]);
+            }
+        }
 
         // Store room coordinates
         $rooms = json_decode($validatedData['roomsData'], true);
@@ -156,10 +177,10 @@ class EstimationController extends Controller
         file_put_contents($pdfPath, $pdf->output());
 
         // Mail::to('zafaraliab@gmail.com')
-        Mail::to($user->email)
-            ->cc('dott.izzo@mydomotics.it')
-            ->cc('preventivi@mydomotics.it')
-            ->send(new SendEstimation($pdfFileName));
+        // Mail::to($user->email)
+        //     ->cc('dott.izzo@mydomotics.it')
+        //     ->cc('preventivi@mydomotics.it')
+        //     ->send(new SendEstimation($pdfFileName));
 
         if ($productData) {
 
@@ -272,6 +293,7 @@ class EstimationController extends Controller
             $sensorsData[] = [
                 'sensorId' => $sensor->product_id,
                 'sensorImage' => $this->productImage($sensor->product_id),
+                'productName' => $this->productName($sensor->product_id),
                 'sensorName' => $sensor->name,
                 'sensorDescription' => $sensor->note,
                 'sensorPrice' => $sensor->price,
@@ -304,6 +326,7 @@ class EstimationController extends Controller
         DB::table('estimations')->where('id', $estimate)->delete();
         DB::table('estimation_products')->where('estimation_id', $estimate)->delete();
         DB::table('estimation_room')->where('estimation_id', $estimate)->delete();
+        DB::table('estimation_permission')->where('estimation_id', $estimate)->delete();
 
         return redirect()->route('estimations.index')
             ->withSuccess('Stime cancellato con successo.');
@@ -315,16 +338,26 @@ class EstimationController extends Controller
         return $image;
     }
 
+    protected function productName($id)
+    {
+        $data =  DB::table('products')->select('name')->where('id', $id)->first();
+        return $data->name;
+    }
+
+
     public function Edit($estimate)
     {
 
         $id = $estimate;
         $estimation = DB::table('estimations')->select('id', 'user_id', 'total', 'floor_name', 'clean_image')->where('id', $id)->first();
+        $selectedPermission = DB::table('estimation_permission')->select('*')->where('estimation_id', $id)->get();
+
+        $users = User::where('id', '!=', Auth::user()->id)->get();
         if (!$estimation) {
             return redirect()->route('estimations.index')->with('error', 'Estimation not found.');
         }
 
-        return view('estimation.edit', compact('estimation'));
+        return view('estimation.edit', compact('estimation','users','selectedPermission'));
     }
 
 
@@ -335,7 +368,6 @@ class EstimationController extends Controller
             'sensorsData' => 'required|string',
             'totalPrice' => 'required|numeric',
             'floorName' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
         ]);
 
         // Handle image upload
@@ -377,6 +409,29 @@ class EstimationController extends Controller
         
         DB::table('estimation_products')->where('estimation_id', $estimationId)->delete();
         DB::table('estimation_room')->where('estimation_id', $estimationId)->delete();
+        DB::table('estimation_permission')->where('estimation_id', $estimationId)->delete();
+
+        DB::table('estimation_permission')->insert([
+            'estimation_id' => $estimationId,
+            'user_id' => $user->id,
+            'user_role_id' => $role->id,
+        ]);
+
+        foreach($request->permissionUserIds as $permissionUserId) {
+            $permissionRole = DB::table('roles')
+            ->join('model_has_roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->where('model_has_roles.model_id', $permissionUserId)
+            ->select('roles.id')
+            ->first();
+        
+            if ($permissionRole) {
+                DB::table('estimation_permission')->insert([
+                    'estimation_id' => $estimationId,
+                    'user_id' => $permissionUserId,
+                    'user_role_id' => $permissionRole->id,
+                ]);
+            }
+        }
 
         // Store room coordinates
         $rooms = json_decode($validatedData['roomsData'], true);
@@ -452,10 +507,10 @@ class EstimationController extends Controller
         file_put_contents($pdfPath, $pdf->output());
 
         // Mail::to('zafaraliab@gmail.com')
-        Mail::to($user->email)
-            ->cc('dott.izzo@mydomotics.it')
-            ->cc('preventivi@mydomotics.it')
-            ->send(new SendEstimation($pdfFileName));
+        // Mail::to($user->email)
+        //     ->cc('dott.izzo@mydomotics.it')
+        //     ->cc('preventivi@mydomotics.it')
+        //     ->send(new SendEstimation($pdfFileName));
 
         if ($productData) {
 
