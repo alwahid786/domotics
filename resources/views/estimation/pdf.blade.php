@@ -39,9 +39,11 @@
     <div class="floorplan">
         <img src="{{ public_path('uploads/estimations/MyDomoticsInvoice.png') }}" alt="Header">
     </div>
-
-    <h2>{{ $floorName }} - Estimation Report</h2>
-
+    <div>
+        <h4 class="text-center"> Gentile {{ $user_name }}</h4>
+    </div>
+    <br>
+    <h5>{{ $floorName }} - Estimation Report</h5>
     <br>
     <p>
         Oggetto :Offerta relativa alla DOMOTIZZAZIONE della vostra unita' immobiliare Palazzo
