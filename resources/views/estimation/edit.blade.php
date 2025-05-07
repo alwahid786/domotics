@@ -160,7 +160,26 @@
             <!-- Image Upload -->
             <div class="mb-2 mt-4 flex items-center gap-4">
                 <input type="text" value="{{ $estimation->floor_name }}" class="form-control border p-2 floor-name"
-                    placeholder="Floor name" required />
+                placeholder="Floor name" required />
+                
+                @php
+                $selectedUserIds = collect($selectedPermission)->pluck('user_id')->toArray();
+            @endphp
+            
+            <select name="permission_user_id[]" id="permission_user_id" class="form-control select2" multiple>
+                @foreach($users as $user)
+                    <option value="{{ $user->id }}"
+                        @if(is_array(old('permission_user_id')))
+                            {{ in_array($user->id, old('permission_user_id')) ? 'selected' : '' }}
+                        @elseif(in_array($user->id, $selectedUserIds))
+                            selected
+                        @endif
+                    >
+                        {{ $user->name . ' (' . $user->email . ')' }}
+                    </option>
+                @endforeach
+            </select>
+
                 <input type="file" id="imageUpload" accept="image/*" class="form-control border p-2 w-full">
             </div>
             <!-- Mode buttons: initially hidden, will be shown after picture upload -->
@@ -321,7 +340,7 @@
                     console.error("API response missing 'data' property.");
                     return;
                 }
-                apiData = responseData.data;
+                apiData = responseData.data;                
                 // Check for image existence
                 if (!apiData.clean_image) {
                     console.error("No image URL provided in API data.");
@@ -385,7 +404,7 @@
                           <td>${sensor.sensorName}</td>
                           <td>${imageHtml}</td>
                           <td>${sensor.sensorDescription}</td>
-                          <td>${sensor.sensorType || sensor.type || ''}</td>
+                          <td style="width: 200px">${sensor.productName}</td>
                           <td>${roomName}</td>
                           <td>$${sensor.sensorPrice}</td>
                           <td><button class="delete-btn" data-dotid="${dotId}">✕</button></td>`;
@@ -567,6 +586,7 @@
     const pdfBtnContainer = document.getElementById('pdfBtnContainer');
     const sensorSelectTag = document.getElementById('sensorSelect');
     const floorNameInput = document.querySelector('.floor-name');
+    const permissionUserIds = document.querySelector('#permission_user_id');
     // Mode buttons (initially hidden; will be shown after picture upload)
     const floorModeBtn = document.getElementById('floorModeBtn');
     const deviceModeBtn = document.getElementById('deviceModeBtn');
@@ -1153,6 +1173,13 @@
             return;
         }
 
+        const permissionUserId = document.getElementById('permission_user_id').value;            
+        if (!permissionUserId) {
+            alert("Please select users who can view this floor.");
+            return;
+        }
+
+
         // Show loading state
         generatePDFBtn.disabled = true;
         generatePDFBtn.classList.add('loading');
@@ -1318,6 +1345,13 @@
                 formData.append('sensorsData', JSON.stringify(sensorsData));
                 formData.append('totalPrice', totalPrice);
                 formData.append('floorName', floorNameInput.value);
+
+                const permissionUserIds = document.querySelector('#permission_user_id');
+                    const selectedValues = Array.from(permissionUserIds.selectedOptions).map(option => option.value);
+                    // Append as multiple values
+                    selectedValues.forEach(id => {
+                        formData.append('permissionUserIds[]', id);
+                    });
 
                 // Add the estimation ID for the update request
                 const estimationId = document.getElementById('estimationId').value;

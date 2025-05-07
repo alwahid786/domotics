@@ -83,7 +83,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/estimations/{estimate}/edit', [EstimationController::class, 'edit'])->name('estimations.edit');
     Route::post('/estimations/{estimate}/update', [EstimationController::class, 'update'])->name('estimations.update');
     Route::get('/estimations/{estimate}/show', [EstimationController::class, 'show'])->name('estimations.show');
-    Route::put('/estimations/{estimate}', [EstimationController::class, 'update'])->name('estimations.update');
+    // Route::put('/estimations/{estimate}', [EstimationController::class, 'update'])->name('estimations.update');
     Route::delete('/estimations/{estimate}/delete', [EstimationController::class, 'destroy'])->name('estimations.destroy');
     Route::get('/estimations/fetch', [EstimationController::class, 'fetch'])->name('estimations.fetch');
 
