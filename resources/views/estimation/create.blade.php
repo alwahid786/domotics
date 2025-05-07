@@ -160,17 +160,15 @@
             <div class="mb-2 mt-4 flex items-center gap-4">
                 <input type="text" class="form-control border p-2 floor-name" placeholder="Floor name" required />
 
-                <select name="permission_user_id[]" id="permission_user_id" class="form-control select2" multiple>
-                    @foreach($users as $user)
-                        <option value="{{ $user->id }}"
-                            @if(is_array(old('permission_user_id')) && in_array($user->id, old('permission_user_id'))) selected @endif
-                        >
-                            {{ $user->name . ' (' . $user->email . ')' }}
-                        </option>
+                @if($roleId == 1 || $roleId == 2)
+                <select class="form-control border p-2" name="user_id" id="user_id">
+                    <option value="" selected>Select User</option>
+                    @foreach ($users as $user)
+                        <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->email }}</option>
                     @endforeach
-                </select>                
+                </select>
+                @endif
 
-                                
                 <input type="file" id="imageUpload" accept="image/*" class="form-control border p-2 w-full">
             </div>
             <!-- Mode buttons: initially hidden, will be shown after picture upload -->
@@ -337,7 +335,7 @@
         const pdfBtnContainer = document.getElementById('pdfBtnContainer');
         const sensorSelectTag = document.getElementById('sensorSelect');
         const floorNameInput = document.querySelector('.floor-name');
-        const permissionUserIds = document.querySelector('#permission_user_id');
+        const user_id = document.querySelector('#user_id');
         // Mode buttons (initially hidden; will be shown after picture upload)
         const floorModeBtn = document.getElementById('floorModeBtn');
         const deviceModeBtn = document.getElementById('deviceModeBtn');
@@ -924,12 +922,6 @@
                 return;
             }
 
-            const permissionUserId = document.getElementById('permission_user_id').value;            
-            if (!permissionUserId) {
-                alert("Please select users who can view this floor.");
-                return;
-            }
-
             // Show loading state
             generatePDFBtn.disabled = true;
             generatePDFBtn.classList.add('loading');
@@ -1095,13 +1087,11 @@
                     formData.append('sensorsData', JSON.stringify(sensorsData));
                     formData.append('totalPrice', totalPrice);
                     formData.append('floorName', floorNameInput.value);
-
-                    const permissionUserIds = document.querySelector('#permission_user_id');
-                    const selectedValues = Array.from(permissionUserIds.selectedOptions).map(option => option.value);
-                    // Append as multiple values
-                    selectedValues.forEach(id => {
-                        formData.append('permissionUserIds[]', id);
-                    });
+                    if(user_id){
+                        formData.append('user_id', user_id.value);
+                    }else{
+                        formData.append('user_id', '');
+                    }
 
                     // Make sure the image blob is valid before sending
                     if (imageFile instanceof Blob) {

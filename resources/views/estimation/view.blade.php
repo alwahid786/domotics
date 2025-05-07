@@ -42,6 +42,9 @@
                     <img src="{{ asset('uploads/estimations/MyDomoticsInvoice.png') }}" width="100%" height="auto"
                         alt="Header">
                 </div>
+                <div>
+                    <h4 class="text-center"> Gentile {{ $user_name }}</h4>
+                </div>
                 <br>
                 <p>
                     Oggetto :Offerta relativa alla DOMOTIZZAZIONE della vostra unita' immobiliare Palazzo

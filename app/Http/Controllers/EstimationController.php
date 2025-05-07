@@ -18,22 +18,41 @@ class EstimationController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-
-        $estimations = DB::table('estimations')
-            ->join('estimation_permission', 'estimations.id', '=', 'estimation_permission.estimation_id')
-            ->where(function ($query) use ($user) {
-                $query->where('estimation_permission.user_id', $user->id);
-            })
-            ->orderBy('estimations.id', 'desc')
-            ->paginate(25);
-            return view('estimation.index', compact('estimations'));
-
-
-    }
+        $role = DB::table('roles')
+            ->join('model_has_roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->where('model_has_roles.model_id', $user->id)
+            ->select('roles.id')
+            ->first();
+    
+        if ($role->id == 1 || $role->id == 2) {
+            $estimations = DB::table('estimations')
+                ->join('users', 'users.id', '=', 'estimations.user_id')
+                ->select('estimations.*', 'users.name as user_name')
+                ->orderBy('estimations.id', 'desc')
+                ->paginate(25);
+        } else {
+            $estimations = DB::table('estimations')
+                ->join('users', 'users.id', '=', 'estimations.user_id')
+                ->select('estimations.*', 'users.name as user_name')
+                ->where('estimations.user_id', '=', $user->id)
+                ->orderBy('estimations.id', 'desc')
+                ->paginate(25);
+        }
+    
+        $roleId = $role->id;
+        return view('estimation.index', compact('estimations', 'roleId'));
+    }    
     public function create()
     {
-        $users = User::where('id', '!=', Auth::user()->id)->get();
-        return view('estimation.create', compact('users'));
+        $user = Auth::user();
+        $role = DB::table('roles')
+            ->join('model_has_roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->where('model_has_roles.model_id', $user->id)
+            ->select('roles.id')
+            ->first();
+        $roleId = $role->id;
+        $users = DB::table('users')->where('id', '!=', Auth::user()->id)->get();
+        return view('estimation.create', compact('users', 'roleId'));
     }
 
     public function store(Request $request)
@@ -62,17 +81,10 @@ class EstimationController extends Controller
             $cleanimagePath = 'uploads/estimations/' . $cleanimageName;
         }
 
-        // Get authenticated user and role
         $user = Auth::user();
-        $role = DB::table('roles')
-            ->join('model_has_roles', 'roles.id', '=', 'model_has_roles.role_id')
-            ->where('model_has_roles.model_id', $user->id)
-            ->select('roles.id')
-            ->first();
-
         // Create estimation entry
         $estimationId = DB::table('estimations')->insertGetId([
-            'user_id' => $role->id,
+            'user_id' => $request->user_id ? $request->user_id : $user->id,
             'image' => $imagePath,
             'clean_image' => $cleanimagePath,
             'total' => $validatedData['totalPrice'],
@@ -80,28 +92,6 @@ class EstimationController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-
-        DB::table('estimation_permission')->insert([
-            'estimation_id' => $estimationId,
-            'user_id' => $user->id,
-            'user_role_id' => $role->id,
-        ]);
-
-        foreach($request->permissionUserIds as $permissionUserId) {
-            $permissionRole = DB::table('roles')
-            ->join('model_has_roles', 'roles.id', '=', 'model_has_roles.role_id')
-            ->where('model_has_roles.model_id', $permissionUserId)
-            ->select('roles.id')
-            ->first();
-
-            if ($permissionRole) {
-                DB::table('estimation_permission')->insert([
-                    'estimation_id' => $estimationId,
-                    'user_id' => $permissionUserId,
-                    'user_role_id' => $permissionRole->id,
-                ]);
-            }
-        }
 
         // Store room coordinates
         $rooms = json_decode($validatedData['roomsData'], true);
@@ -166,6 +156,7 @@ class EstimationController extends Controller
         // Generate PDF
         $pdf = Pdf::loadView('estimation.pdf', [
             'imagePath' => $estimation->image,
+            'user_name' => $this->userName($estimation->user_id),
             'totalPrice' => $estimation->total,
             'floorName' => $estimation->floor_name,
             'roomsData' => $rooms,
@@ -176,7 +167,8 @@ class EstimationController extends Controller
         $pdfPath = storage_path("app/private/estimations/{$pdfFileName}");
         file_put_contents($pdfPath, $pdf->output());
 
-        // Mail::to('zafaraliab@gmail.com')
+        // $user_id = $request->user_id ? $request->user_id : $user->id;
+        // $user = DB::table('users')->where('id', $user_id)->first();
         // Mail::to($user->email)
         //     ->cc('dott.izzo@mydomotics.it')
         //     ->cc('preventivi@mydomotics.it')
@@ -245,7 +237,15 @@ class EstimationController extends Controller
     public function show($estimate)
     {
         $estimate;
-        return view('estimation.view', compact('estimate'));
+        $estimation = DB::table('estimations')->where('id', $estimate)->first();
+        $user_name = $this->userName($estimation->user_id);
+        return view('estimation.view', compact('estimate', 'user_name'));
+    }
+
+    protected function userName($user_id)
+    {
+        $user = DB::table('users')->where('id', $user_id)->first();
+        return $user->name;
     }
 
     public function fetch(Request $request)
@@ -321,16 +321,29 @@ class EstimationController extends Controller
             ],
         ]);
     }
-    public function destroy($estimate)
+    public function destroy($estimateId)
     {
-        DB::table('estimations')->where('id', $estimate)->delete();
-        DB::table('estimation_products')->where('estimation_id', $estimate)->delete();
-        DB::table('estimation_room')->where('estimation_id', $estimate)->delete();
-        DB::table('estimation_permission')->where('estimation_id', $estimate)->delete();
-
+        $estimation = DB::table('estimations')->where('id', $estimateId)->first();
+    
+        if ($estimation) {
+            if ($estimation->image && file_exists(public_path($estimation->image))) {
+                unlink(public_path($estimation->image));
+            }
+                if ($estimation->clean_image && file_exists(public_path($estimation->clean_image))) {
+                unlink(public_path($estimation->clean_image));
+            }
+            DB::table('estimations')->where('id', $estimateId)->delete();
+            DB::table('estimation_products')->where('estimation_id', $estimateId)->delete();
+            DB::table('estimation_room')->where('estimation_id', $estimateId)->delete();
+    
+            return redirect()->route('estimations.index')
+                ->withSuccess('Stime cancellato con successo.');
+        }
+    
         return redirect()->route('estimations.index')
-            ->withSuccess('Stime cancellato con successo.');
+            ->withErrors('Estimation not found.');
     }
+    
 
     protected function productImage($id)
     {
@@ -350,14 +363,23 @@ class EstimationController extends Controller
 
         $id = $estimate;
         $estimation = DB::table('estimations')->select('id', 'user_id', 'total', 'floor_name', 'clean_image')->where('id', $id)->first();
-        $selectedPermission = DB::table('estimation_permission')->select('*')->where('estimation_id', $id)->get();
 
-        $users = User::where('id', '!=', Auth::user()->id)->get();
+
+        $user = Auth::user();
+        $role = DB::table('roles')
+            ->join('model_has_roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->where('model_has_roles.model_id', $user->id)
+            ->select('roles.id')
+            ->first();
+        $roleId = $role->id;
+        $users = DB::table('users')->where('id', '!=', Auth::user()->id)->get();
+
+
         if (!$estimation) {
             return redirect()->route('estimations.index')->with('error', 'Estimation not found.');
         }
 
-        return view('estimation.edit', compact('estimation','users','selectedPermission'));
+        return view('estimation.edit', compact('estimation', 'users', 'roleId'));
     }
 
 
@@ -369,6 +391,20 @@ class EstimationController extends Controller
             'totalPrice' => 'required|numeric',
             'floorName' => 'required|string|max:255',
         ]);
+
+        $estimationId = $request->input('id');
+
+        $estimation = DB::table('estimations')->where('id', $estimationId)->first();
+        if ($estimation) {
+            if ($estimation->image && file_exists(public_path($estimation->image))) {
+                unlink(public_path($estimation->image));
+            }
+                if ($estimation->clean_image && file_exists(public_path($estimation->clean_image))) {
+                unlink(public_path($estimation->clean_image));
+            }
+            DB::table('estimation_products')->where('estimation_id', $estimationId)->delete();
+            DB::table('estimation_room')->where('estimation_id', $estimationId)->delete();
+        }
 
         // Handle image upload
         $imagePath = null;
@@ -387,52 +423,29 @@ class EstimationController extends Controller
             $cleanimagePath = 'uploads/estimations/' . $cleanimageName;
         }
 
-        // Get authenticated user and role
-        $user = Auth::user();
-        $role = DB::table('roles')
-            ->join('model_has_roles', 'roles.id', '=', 'model_has_roles.role_id')
-            ->where('model_has_roles.model_id', $user->id)
-            ->select('roles.id')
-            ->first();
-
-        $estimationId = $request->input('id');
-        DB::table('estimations')
-        ->where('id', $estimationId)
-        ->update([
-            'user_id' => $role->id,
-            'image' => $imagePath,
-            'clean_image' => $cleanimagePath,
-            'total' => $validatedData['totalPrice'],
-            'floor_name' => $validatedData['floorName'],
-            'updated_at' => now(),
-        ]);
-        
-        DB::table('estimation_products')->where('estimation_id', $estimationId)->delete();
-        DB::table('estimation_room')->where('estimation_id', $estimationId)->delete();
-        DB::table('estimation_permission')->where('estimation_id', $estimationId)->delete();
-
-        DB::table('estimation_permission')->insert([
-            'estimation_id' => $estimationId,
-            'user_id' => $user->id,
-            'user_role_id' => $role->id,
-        ]);
-
-        foreach($request->permissionUserIds as $permissionUserId) {
-            $permissionRole = DB::table('roles')
-            ->join('model_has_roles', 'roles.id', '=', 'model_has_roles.role_id')
-            ->where('model_has_roles.model_id', $permissionUserId)
-            ->select('roles.id')
-            ->first();
-        
-            if ($permissionRole) {
-                DB::table('estimation_permission')->insert([
-                    'estimation_id' => $estimationId,
-                    'user_id' => $permissionUserId,
-                    'user_role_id' => $permissionRole->id,
-                ]);
-            }
+        if($request->user_id){
+            DB::table('estimations')
+            ->where('id', $estimationId)
+            ->update([
+                'user_id' => $request->user_id,
+                'image' => $imagePath,
+                'clean_image' => $cleanimagePath,
+                'total' => $validatedData['totalPrice'],
+                'floor_name' => $validatedData['floorName'],
+                'updated_at' => now(),
+            ]);
+        }else{
+            DB::table('estimations')
+            ->where('id', $estimationId)
+            ->update([
+                'image' => $imagePath,
+                'clean_image' => $cleanimagePath,
+                'total' => $validatedData['totalPrice'],
+                'floor_name' => $validatedData['floorName'],
+                'updated_at' => now(),
+            ]);  
         }
-
+        
         // Store room coordinates
         $rooms = json_decode($validatedData['roomsData'], true);
         $roomData = [];
@@ -496,6 +509,7 @@ class EstimationController extends Controller
         // Generate PDF
         $pdf = Pdf::loadView('estimation.pdf', [
             'imagePath' => $estimation->image,
+            'user_name' => $this->userName($estimation->user_id),
             'totalPrice' => $estimation->total,
             'floorName' => $estimation->floor_name,
             'roomsData' => $rooms,
@@ -506,7 +520,9 @@ class EstimationController extends Controller
         $pdfPath = storage_path("app/private/estimations/{$pdfFileName}");
         file_put_contents($pdfPath, $pdf->output());
 
-        // Mail::to('zafaraliab@gmail.com')
+        // $user = Auth::user();
+        // $user_id = $request->user_id ? $request->user_id : $user->id;
+        // $user = DB::table('users')->where('id', $user_id)->first();
         // Mail::to($user->email)
         //     ->cc('dott.izzo@mydomotics.it')
         //     ->cc('preventivi@mydomotics.it')

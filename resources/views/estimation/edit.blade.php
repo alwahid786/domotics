@@ -159,27 +159,17 @@
             <input type="hidden" id="estimationId" value="{{ $estimation->id }}">
             <!-- Image Upload -->
             <div class="mb-2 mt-4 flex items-center gap-4">
-                <input type="text" value="{{ $estimation->floor_name }}" class="form-control border p-2 floor-name"
-                placeholder="Floor name" required />
-                
-                @php
-                $selectedUserIds = collect($selectedPermission)->pluck('user_id')->toArray();
-            @endphp
-            
-            <select name="permission_user_id[]" id="permission_user_id" class="form-control select2" multiple>
-                @foreach($users as $user)
-                    <option value="{{ $user->id }}"
-                        @if(is_array(old('permission_user_id')))
-                            {{ in_array($user->id, old('permission_user_id')) ? 'selected' : '' }}
-                        @elseif(in_array($user->id, $selectedUserIds))
-                            selected
-                        @endif
-                    >
-                        {{ $user->name . ' (' . $user->email . ')' }}
-                    </option>
-                @endforeach
-            </select>
-
+                <input type="text" value="{{ $estimation->floor_name }}" class="form-control border p-2 floor-name" placeholder="Floor name" required />
+               
+                @if($roleId == 1 || $roleId == 2)
+                <select class="form-control border p-2" name="user_id" id="user_id">
+                    <option value="">Select User</option>
+                    @foreach ($users as $user)
+                        <option value="{{ $user->id }}" {{ $user->id == $estimation->user_id ? 'selected' : '' }}>{{ $user->name }} - {{ $user->email }}</option>
+                    @endforeach
+                </select>
+                @endif
+               
                 <input type="file" id="imageUpload" accept="image/*" class="form-control border p-2 w-full">
             </div>
             <!-- Mode buttons: initially hidden, will be shown after picture upload -->
@@ -586,7 +576,7 @@
     const pdfBtnContainer = document.getElementById('pdfBtnContainer');
     const sensorSelectTag = document.getElementById('sensorSelect');
     const floorNameInput = document.querySelector('.floor-name');
-    const permissionUserIds = document.querySelector('#permission_user_id');
+    const user_id = document.querySelector('#user_id');
     // Mode buttons (initially hidden; will be shown after picture upload)
     const floorModeBtn = document.getElementById('floorModeBtn');
     const deviceModeBtn = document.getElementById('deviceModeBtn');
@@ -1173,13 +1163,6 @@
             return;
         }
 
-        const permissionUserId = document.getElementById('permission_user_id').value;            
-        if (!permissionUserId) {
-            alert("Please select users who can view this floor.");
-            return;
-        }
-
-
         // Show loading state
         generatePDFBtn.disabled = true;
         generatePDFBtn.classList.add('loading');
@@ -1345,13 +1328,11 @@
                 formData.append('sensorsData', JSON.stringify(sensorsData));
                 formData.append('totalPrice', totalPrice);
                 formData.append('floorName', floorNameInput.value);
-
-                const permissionUserIds = document.querySelector('#permission_user_id');
-                    const selectedValues = Array.from(permissionUserIds.selectedOptions).map(option => option.value);
-                    // Append as multiple values
-                    selectedValues.forEach(id => {
-                        formData.append('permissionUserIds[]', id);
-                    });
+                if(user_id){
+                    formData.append('user_id', user_id.value);
+                }else{
+                    formData.append('user_id', '');
+                }
 
                 // Add the estimation ID for the update request
                 const estimationId = document.getElementById('estimationId').value;
