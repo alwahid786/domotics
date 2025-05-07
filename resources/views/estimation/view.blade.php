@@ -97,6 +97,7 @@
                                 <th>Room</th>
                                 <th>Image</th>
                                 <th>Sensor Name</th>
+                                <th style="width: 200px">Sensor</th>
                                 <th>Installation Notes</th>
                                 <th>Price</th>
                             </tr>
@@ -104,7 +105,7 @@
                         <tbody id="estimationTableBody"></tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="5" class="text-end">
+                                <td colspan="6" class="text-end">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div><strong>Total Sensors</strong></div>
                                         <div id="totalCount">0</div>
@@ -113,7 +114,7 @@
                                 <td></td>
                             </tr>
                             <tr>
-                                <td colspan="5" class="text-end">
+                                <td colspan="6" class="text-end">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div><strong>Total Price</strong></div>
                                         <div id="totalPrice"></div>
@@ -232,7 +233,7 @@
     }
 
     // Builds the table with sensor details and total price
-    function buildEstimationTable(data) {
+    function buildEstimationTable(data) {        
         const tableBody = document.getElementById("estimationTableBody");
         const totalPriceCell = document.getElementById("totalPrice");
         const totalCountCell = document.getElementById("totalCount");
@@ -294,6 +295,11 @@
             const tdSensorName = document.createElement("td");
             tdSensorName.textContent = sensor.sensorName || sensor.name || "N/A";
             tr.appendChild(tdSensorName);
+
+            // Sensor Name
+            const tdProductName = document.createElement("td");
+            tdProductName.textContent = sensor.productName || sensor.productName || "N/A";
+            tr.appendChild(tdProductName);
 
             // Sensor Description
             const tdSensorDescription = document.createElement("td");
