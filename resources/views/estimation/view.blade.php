@@ -40,10 +40,11 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-10  bg-white shadow rounded" style="padding: 40px">
                 <div class="floorplan">
                     <div style="text-align: center; color: black !important;">
-                    <img src="{{ asset('uploads/estimations/invoice-header.png') }}" width="100%" height="auto"
-                        alt="Header">
-                            <p style="margin-top: -15px">COVERTEC Design: Via D.Fontana 53/A-80198 - Napoli Tel-0810491219 Cap. Soc. 10.000,00 int. versato p.i. 08218571217 </p>
-                        </div>
+                        <img src="{{ asset('uploads/estimations/invoice-header.png') }}" width="100%" height="auto"
+                            alt="Header">
+                        <p style="margin-top: -15px">COVERTEC Design: Via D.Fontana 53/A-80198 - Napoli Tel-0810491219
+                            Cap. Soc. 10.000,00 int. versato p.i. 08218571217 </p>
+                    </div>
                 </div>
                 <br>
                 <div style="max-width: 85%">
@@ -241,7 +242,7 @@
     }
 
     // Builds the table with sensor details and total price
-    function buildEstimationTable(data) {        
+    function buildEstimationTable(data) {
         const tableBody = document.getElementById("estimationTableBody");
         const totalPriceCell = document.getElementById("totalPrice");
         const totalCountCell = document.getElementById("totalCount");
@@ -465,9 +466,11 @@
         // Create image HTML
         let imageHtml = '';
         if (imageUrl) {
-            imageHtml = `<img src="${imageUrl}" alt="${sensor.sensorName || sensor.name}" style="width:100%; max-width:200px; height:auto; object-fit:contain; border-radius:4px; margin-bottom:15px;" onerror="this.onerror=null; this.src='https://via.placeholder.com/200?text=No+Image';">`;
+            imageHtml =
+                `<img src="${imageUrl}" alt="${sensor.sensorName || sensor.name}" style="width:100%; max-width:200px; height:auto; object-fit:contain; border-radius:4px; margin-bottom:15px;" onerror="this.onerror=null; this.src='https://via.placeholder.com/200?text=No+Image';">`;
         } else {
-            imageHtml = `<div style="width:100%; max-width:200px; height:150px; display:flex; align-items:center; justify-content:center; background-color:#f0f0f0; border-radius:4px; margin-bottom:15px; font-size:14px; color:#666;">No Image</div>`;
+            imageHtml =
+                `<div style="width:100%; max-width:200px; height:150px; display:flex; align-items:center; justify-content:center; background-color:#f0f0f0; border-radius:4px; margin-bottom:15px; font-size:14px; color:#666;">No Image</div>`;
         }
 
         modalBody.innerHTML = `
