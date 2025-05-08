@@ -4,8 +4,6 @@
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 @if (Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Manager'))
                     {{ __('Nuovo Preventivo') }}
-
-
                 @else
                     {{ __('Il tuo nuovo preventivo') }}
                 @endif
@@ -39,7 +37,8 @@
                         <form action="{{ route('quotation.store') }}" method="POST">
                             @csrf
                             <div class="mb-4">
-                                <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Titolo</label>
+                                <label for="title"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-200">Titolo</label>
                                 <input type="text" name="title" id="title" value="{{ old('title') }}"
                                     class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                             </div>
@@ -59,12 +58,10 @@
                     </div>
 
                     <div class="pt-3 sm:pt-5 mb-2 p-5">
-                        <h2 class="text-xl font-semibold text-black dark:text-white">Perchè scegliere Covertec</h2>
+                        <h2 class="text-xl font-semibold text-black dark:text-white">Perchè scegliere</h2>
 
                         <p class="mt-4 text-sm/relaxed">
-                            Da oggi e disponibile in Italia presso la Covertec srl questo incredibile nuovo strumento
-                            per coloro
-                            che si accingono a ristrutturare casa.
+                            Da oggi è disponibile in Italia un incredibile nuovo strumento.
                         </p>
 
 

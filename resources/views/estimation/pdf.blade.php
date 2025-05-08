@@ -62,8 +62,7 @@
         <h5>{{ $floorName }} - Estimation Report</h5>
         <br>
         <p>
-            Oggetto :Offerta relativa alla DOMOTIZZAZIONE della vostra unita' immobiliare Palazzo
-            Sanfelice<br><br>
+            Oggetto: Offerta relativa alla Automazione della vostra unità immobiliare<br><br>
             Su Sua cortese richiesta abbiamo predisposto la presente offerta per la fornitura di materiali e
             apparecchiature del nostro sistema domotico wireless con protocollo di comunicazione RF/Wi-Fi presso
             la sua unita' immobilare evidenziata in oggetto.<br><br><br>
@@ -112,6 +111,7 @@
                     <th>Room</th>
                     <th>Image</th>
                     <th>Sensor Name</th>
+                    <th>Sensor code</th>
                     <th>Installation Notes</th>
                     <th>Price</th>
                 </tr>
@@ -143,6 +143,7 @@
                         </td>
                         <td>{{ $sensor->name ?? $sensor->sensorName }}</td>
                         <td>{{ $sensor->note ?? $sensor->sensorDescription }}</td>
+                        <td>{{ $sensor->code ?? $sensor->code }}</td>
                         <td>{{ number_format($sensor->price ?? $sensor->sensorPrice, 2) }}</td>
                     </tr>
                 @endforeach
