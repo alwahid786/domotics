@@ -15,7 +15,7 @@ Homestead.json
 /.vagrant/
 /.idea/
 /.vscode/
-
+/bootstarp/cache/config.php
 # Laravel Mix / Vite
 /public/hot
 /public/build/
