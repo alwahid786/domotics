@@ -29,7 +29,7 @@
         }
 
         .floorplan img {
-            width: 500px;
+            width: 1200px;
             margin: 20px auto;
             display: block;
         }
@@ -39,19 +39,24 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-10  bg-white shadow rounded" style="padding: 40px">
                 <div class="floorplan">
-                    <img src="{{ asset('uploads/estimations/MyDomoticsInvoice.png') }}" width="100%" height="auto"
+                    <div style="text-align: center; color: black !important;">
+                    <img src="{{ asset('uploads/estimations/invoice-header.png') }}" width="100%" height="auto"
                         alt="Header">
+                            <p style="margin-top: -15px">COVERTEC Design: Via D.Fontana 53/A-80198 - Napoli Tel-0810491219 Cap. Soc. 10.000,00 int. versato p.i. 08218571217 </p>
+                        </div>
                 </div>
-                <div>
-                    <h4 class="text-center"> Gentile {{ $user_name }}</h4>
+                <br>
+                <div style="max-width: 85%">
+                    <h5 style="float: right"> Gentile {{ $user_name }}</h5>
                 </div>
+                <br>
                 <br>
                 <p>
                     Oggetto :Offerta relativa alla DOMOTIZZAZIONE della vostra unita' immobiliare Palazzo
                     Sanfelice<br><br>
                     Su Sua cortese richiesta abbiamo predisposto la presente offerta per la fornitura di materiali e
                     apparecchiature del nostro sistema domotico wireless con protocollo di comunicazione RF/Wi-Fi presso
-                    la sua unita' immobilare evidenziata in oggetto.<br><br><br>
+                    la sua unita' immobilare evidenziata in oggetto.<br><br>
                     La vastissima quantità di connessioni possibili con dispositivi MydomoticS già pronti ci consente di
                     tenere sotto controllo:<br>
                     Luci della casa<br>
