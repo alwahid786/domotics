@@ -26,7 +26,7 @@ class ProductController extends Controller
     public function index(): View
     {
         return view('products.index', [
-            'products' => Product::orderby('code')->latest()->paginate(25)
+            'products' => Product::orderByRaw('CAST(code AS UNSIGNED) ASC')->latest()->paginate(25)
         ]);
     }
 

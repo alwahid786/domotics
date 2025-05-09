@@ -14,7 +14,7 @@
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     @if (Auth::user()->hasRole('Admin'))
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                            {{ __('Dashboard') }}
+                            {{ __('Lista Ambienti') }}
                         </x-nav-link>
                         <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
                             {{ __('Prodotti') }}
@@ -23,9 +23,9 @@
                         <x-nav-link :href="route('room.index')" :active="request()->routeIs('categories.index')">
                             {{ __('Ambienti') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('quotations.index')" :active="request()->routeIs('quotations.index')">
+                        {{-- <x-nav-link :href="route('quotations.index')" :active="request()->routeIs('quotations.index')">
                             {{ __('Preventivi') }}
-                        </x-nav-link>
+                        </x-nav-link> --}}
                     @endif
                     <x-nav-link :href="route('estimations.index')" :active="request()->routeIs('estimations.index')">
                         {{ __('Preventivi') }}
@@ -97,7 +97,7 @@
         <div class="pt-2 pb-3 space-y-1">
             @if (Auth::user()->hasRole('Admin'))
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                    {{ __('Dashboard') }}
+                    {{ __('Lista Ambienti') }}
                 </x-responsive-nav-link>
 
                 <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
@@ -107,12 +107,12 @@
                 <x-responsive-nav-link :href="route('room.index')" :active="request()->routeIs('categories.index')">
                     {{ __('Ambienti') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('quotations.index')" :active="request()->routeIs('quotations.index')">
+                {{-- <x-responsive-nav-link :href="route('quotations.index')" :active="request()->routeIs('quotations.index')">
                     {{ __('Preventivi') }}
-                </x-responsive-nav-link>
+                </x-responsive-nav-link> --}}
             @endif
             <x-responsive-nav-link :href="route('estimations.index')" :active="request()->routeIs('estimations.index')">
-                {{ __('Stime') }}
+                {{ __('Preventivi') }}
             </x-responsive-nav-link>
             @if (Auth::user()->hasRole('Admin'))
                 <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">

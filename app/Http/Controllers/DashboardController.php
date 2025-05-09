@@ -15,7 +15,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $rooms = Room::orderby('code')->get();
+        $rooms = Room::orderByRaw('CAST(code AS UNSIGNED) ASC')->get();
         return view('dashboard', compact('rooms'));
     }
 }
