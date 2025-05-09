@@ -105,6 +105,7 @@
                                 <th>Sr. No</th>
                                 <th>Room</th>
                                 <th>Image</th>
+                                <th>code</th>
                                 <th>Sensor Name</th>
                                 <th style="width: 200px">Sensor</th>
                                 <th>Installation Notes</th>
@@ -299,7 +300,9 @@
                     `<div style="width:50px; height:50px; display:flex; align-items:center; justify-content:center; background-color:#f0f0f0; border-radius:4px; font-size:10px; color:#666;">No Image</div>`;
             }
             tr.appendChild(tdSensorImage);
-
+            const tdproductCode = document.createElement("td");
+            tdproductCode.textContent = sensor.productCode || sensor.productCode || "N/A";
+            tr.appendChild(tdproductCode);
             // Sensor Name
             const tdSensorName = document.createElement("td");
             tdSensorName.textContent = sensor.sensorName || sensor.name || "N/A";

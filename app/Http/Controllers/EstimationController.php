@@ -23,7 +23,7 @@ class EstimationController extends Controller
             ->where('model_has_roles.model_id', $user->id)
             ->select('roles.id')
             ->first();
-    
+
         if ($role->id == 1 || $role->id == 2) {
             $estimations = DB::table('estimations')
                 ->join('users', 'users.id', '=', 'estimations.user_id')
@@ -38,10 +38,10 @@ class EstimationController extends Controller
                 ->orderBy('estimations.id', 'desc')
                 ->paginate(25);
         }
-    
+
         $roleId = $role->id;
         return view('estimation.index', compact('estimations', 'roleId'));
-    }    
+    }
     public function create()
     {
         $user = Auth::user();
@@ -294,6 +294,7 @@ class EstimationController extends Controller
                 'sensorId' => $sensor->product_id,
                 'sensorImage' => $this->productImage($sensor->product_id),
                 'productName' => $this->productName($sensor->product_id),
+                'productCode' => $this->productCode($sensor->product_id),
                 'sensorName' => $sensor->name,
                 'sensorDescription' => $sensor->note,
                 'sensorPrice' => $sensor->price,
@@ -324,26 +325,26 @@ class EstimationController extends Controller
     public function destroy($estimateId)
     {
         $estimation = DB::table('estimations')->where('id', $estimateId)->first();
-    
+
         if ($estimation) {
             if ($estimation->image && file_exists(public_path($estimation->image))) {
                 unlink(public_path($estimation->image));
             }
-                if ($estimation->clean_image && file_exists(public_path($estimation->clean_image))) {
+            if ($estimation->clean_image && file_exists(public_path($estimation->clean_image))) {
                 unlink(public_path($estimation->clean_image));
             }
             DB::table('estimations')->where('id', $estimateId)->delete();
             DB::table('estimation_products')->where('estimation_id', $estimateId)->delete();
             DB::table('estimation_room')->where('estimation_id', $estimateId)->delete();
-    
+
             return redirect()->route('estimations.index')
                 ->withSuccess('Stime cancellato con successo.');
         }
-    
+
         return redirect()->route('estimations.index')
             ->withErrors('Estimation not found.');
     }
-    
+
 
     protected function productImage($id)
     {
@@ -355,6 +356,11 @@ class EstimationController extends Controller
     {
         $data =  DB::table('products')->select('name')->where('id', $id)->first();
         return $data->name;
+    }
+    protected function productCode($id)
+    {
+        $data =  DB::table('products')->select('code')->where('id', $id)->first();
+        return $data->code;
     }
 
 
@@ -399,7 +405,7 @@ class EstimationController extends Controller
             if ($estimation->image && file_exists(public_path($estimation->image))) {
                 unlink(public_path($estimation->image));
             }
-                if ($estimation->clean_image && file_exists(public_path($estimation->clean_image))) {
+            if ($estimation->clean_image && file_exists(public_path($estimation->clean_image))) {
                 unlink(public_path($estimation->clean_image));
             }
             DB::table('estimation_products')->where('estimation_id', $estimationId)->delete();
@@ -423,29 +429,29 @@ class EstimationController extends Controller
             $cleanimagePath = 'uploads/estimations/' . $cleanimageName;
         }
 
-        if($request->user_id){
+        if ($request->user_id) {
             DB::table('estimations')
-            ->where('id', $estimationId)
-            ->update([
-                'user_id' => $request->user_id,
-                'image' => $imagePath,
-                'clean_image' => $cleanimagePath,
-                'total' => $validatedData['totalPrice'],
-                'floor_name' => $validatedData['floorName'],
-                'updated_at' => now(),
-            ]);
-        }else{
+                ->where('id', $estimationId)
+                ->update([
+                    'user_id' => $request->user_id,
+                    'image' => $imagePath,
+                    'clean_image' => $cleanimagePath,
+                    'total' => $validatedData['totalPrice'],
+                    'floor_name' => $validatedData['floorName'],
+                    'updated_at' => now(),
+                ]);
+        } else {
             DB::table('estimations')
-            ->where('id', $estimationId)
-            ->update([
-                'image' => $imagePath,
-                'clean_image' => $cleanimagePath,
-                'total' => $validatedData['totalPrice'],
-                'floor_name' => $validatedData['floorName'],
-                'updated_at' => now(),
-            ]);  
+                ->where('id', $estimationId)
+                ->update([
+                    'image' => $imagePath,
+                    'clean_image' => $cleanimagePath,
+                    'total' => $validatedData['totalPrice'],
+                    'floor_name' => $validatedData['floorName'],
+                    'updated_at' => now(),
+                ]);
         }
-        
+
         // Store room coordinates
         $rooms = json_decode($validatedData['roomsData'], true);
         $roomData = [];
