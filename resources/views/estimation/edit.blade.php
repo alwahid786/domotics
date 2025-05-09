@@ -158,20 +158,23 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-white shadow p-2 rounded mt-4">
             <input type="hidden" id="estimationId" value="{{ $estimation->id }}">
             <!-- Image Upload -->
-            <div class="mb-2 mt-4 flex items-center gap-4">
-                <input type="text" value="{{ $estimation->floor_name }}" class="form-control border p-2 floor-name" placeholder="Floor name" required />
-               
+            <div class="mb-2 mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+                <input type="text" class="form-control border p-2 floor-name w-full" value="{{ $estimation->floor_name }}" placeholder="Nome della piantina" required />
+                <input type="text" class="form-control border p-2 w-full" id="forUserName" value="{{ $estimation->name }}" placeholder="Nome dell'utente" />
+                <input type="text" class="form-control border p-2 w-full" id="forUserAddress" value="{{ $estimation->address }}" placeholder="Indirizzo dell'utente" />
+                
                 @if($roleId == 1 || $roleId == 2)
-                <select class="form-control border p-2" name="user_id" id="user_id">
+                <select class="form-control border p-2 w-full" name="user_id" id="user_id">
                     <option value="">Select User</option>
                     @foreach ($users as $user)
                         <option value="{{ $user->id }}" {{ $user->id == $estimation->user_id ? 'selected' : '' }}>{{ $user->name }} - {{ $user->email }}</option>
                     @endforeach
                 </select>
                 @endif
-               
+
                 <input type="file" id="imageUpload" accept="image/*" class="form-control border p-2 w-full">
-            </div>
+            </div>  
             <!-- Mode buttons: initially hidden, will be shown after picture upload -->
             <div id="modeButtons" class="my-4 flex items-center gap-4">
                 <button id="floorModeBtn" class="mode-btn bg-dark rounded-md text-white font-medium px-4 py-2">Floor
@@ -209,6 +212,7 @@
                             <th>Name</th>
                             <th>Image</th>
                             <th>Installation Notes</th>
+                            <th>Code</th>
                             <th>Sensor</th>
                             <th>Room</th>
                             <th>Price</th>
@@ -218,7 +222,7 @@
                     <tbody></tbody>
                     <tfoot>
                         <tr id="totalCountRow">
-                            <td colspan="7" class="text-end">
+                            <td colspan="8" class="text-end">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div><strong>Total Sensors:</strong></div>
                                     <div id="totalCount">0</div>
@@ -227,7 +231,7 @@
                             <td></td>
                         </tr>
                         <tr id="totalRow">
-                            <td colspan="7" class="text-end">
+                            <td colspan="8" class="text-end">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div><strong>Total Price:</strong></div>
                                     <div>$<span id="totalPrice">0</span></div>
@@ -394,6 +398,7 @@
                           <td>${sensor.sensorName}</td>
                           <td>${imageHtml}</td>
                           <td>${sensor.sensorDescription}</td>
+                          <td>${sensor.productCode}</td>
                           <td style="width: 200px">${sensor.productName}</td>
                           <td>${roomName}</td>
                           <td>$${sensor.sensorPrice}</td>
@@ -577,6 +582,8 @@
     const sensorSelectTag = document.getElementById('sensorSelect');
     const floorNameInput = document.querySelector('.floor-name');
     const user_id = document.querySelector('#user_id');
+    const forUserName = document.querySelector('#forUserName');
+    const forUserAddress = document.querySelector('#forUserAddress');
     // Mode buttons (initially hidden; will be shown after picture upload)
     const floorModeBtn = document.getElementById('floorModeBtn');
     const deviceModeBtn = document.getElementById('deviceModeBtn');
@@ -653,6 +660,7 @@
                     const {
                         name: sensorName,
                         price,
+                        code,
                         id,
                         image = '', // Default to empty string if image doesn't exist
                     } = sensor;
@@ -663,7 +671,7 @@
                     sensorPrices[sensorName] = price;
                     // Store sensor data including image
                     sensorSelectTag.innerHTML +=
-                        `<option data-id="${id}" data-image="${imageUrl}" value="${sensorName}">${sensorName}</option>`;
+                        `<option data-id="${id}" data-code="${code}" data-image="${imageUrl}" value="${sensorName}">${sensorName}</option>`;
                 });
             }
         } catch (error) {
@@ -1042,6 +1050,7 @@
         const selectedOption = sensorSelectTag.options[sensorSelectTag.selectedIndex];
         const sensorIdVal = selectedOption ? selectedOption.getAttribute("data-id") : "";
         const sensorImage = selectedOption ? selectedOption.getAttribute("data-image") : "";
+        const sensorCode = selectedOption ? selectedOption.getAttribute("data-code") : "";
 
         if (!name || !sensor || !description) {
             alert('Please enter a name, note and select a sensor.');
@@ -1121,6 +1130,7 @@
                       <td>${name}</td>
                       <td>${imageHtml}</td>
                       <td>${description}</td>
+                      <td>${sensorCode}</td>
                       <td>${sensor}</td>
                       <td>${roomName}</td>
                       <td>$${price}</td>
@@ -1328,7 +1338,10 @@
                 formData.append('sensorsData', JSON.stringify(sensorsData));
                 formData.append('totalPrice', totalPrice);
                 formData.append('floorName', floorNameInput.value);
-                if(user_id){
+                formData.append('forUserName', forUserName.value);
+                formData.append('forUserAddress', forUserAddress.value);
+                
+                if(user_id.value){
                     formData.append('user_id', user_id.value);
                 }else{
                     formData.append('user_id', '');

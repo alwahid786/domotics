@@ -51,7 +51,7 @@
                                     <td class="px-4 py-2 space-x-2">
                                         <div class="flex flex-wrap gap-2">
                                             <a href="{{ route('products.edit', $product->id) }}"
-                                                class="inline-block px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs rounded">
+                                                class="inline-flex items-center px-3 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition">
                                                 Modifica
                                             </a>
                                             <a href="{{ route('products.destroy', $product->id) }}"

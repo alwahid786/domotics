@@ -55,17 +55,23 @@
                     Cap. Soc. 10.000,00 int. versato p.i. 08218571217 </p>
             </div>
         </div>
-        <div>
-            <h4 style="float: right"> Gentile {{ $user_name }}</h4>
+        <br>
+        <div style="max-width: 87%; text-align: right;">
+            <h5 style="margin: 0;">
+                {{ $estimation->name ? 'Gentile ' . $estimation->name : $user_name }}
+            </h5>
+            @if($estimation->address)
+            <h5 style="margin: 0;">
+                Indirizzo: {{ $estimation->address }}
+            </h5>
+            @endif
         </div>
-        <br>
-        <h5>{{ $floorName }} - Estimation Report</h5>
-        <br>
+        <h5>{{ $floorName }} - Rapporto dei Preventivi</h5>
         <p>
             Oggetto: Offerta relativa alla Automazione della vostra unità immobiliare<br><br>
             Su Sua cortese richiesta abbiamo predisposto la presente offerta per la fornitura di materiali e
             apparecchiature del nostro sistema domotico wireless con protocollo di comunicazione RF/Wi-Fi presso
-            la sua unita' immobilare evidenziata in oggetto.<br><br><br>
+            la sua unita' immobilare evidenziata in oggetto.<br><br>
             La vastissima quantità di connessioni possibili con dispositivi MydomoticS già pronti ci consente di
             tenere sotto controllo:<br>
             Luci della casa<br>
@@ -142,8 +148,8 @@
                             @endif
                         </td>
                         <td>{{ $sensor->name ?? $sensor->sensorName }}</td>
+                        <td>{{ $sensor->product_code ?? $sensor->product_code }}</td>
                         <td>{{ $sensor->note ?? $sensor->sensorDescription }}</td>
-                        <td>{{ $sensor->code ?? $sensor->code }}</td>
                         <td>{{ number_format($sensor->price ?? $sensor->sensorPrice, 2) }}</td>
                     </tr>
                 @endforeach
@@ -151,7 +157,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="5" style="text-align:left; padding-right:10px;">
+                    <td colspan="7" style="text-align:left; padding-right:10px;">
                         <table style="width:100%; border:none;">
                             <tr style="border:none;">
                                 <td style="border:none; text-align:left; width:50%;"><strong>Total Sensors</strong></td>
@@ -164,7 +170,7 @@
                     <td></td>
                 </tr>
                 <tr>
-                    <td colspan="5" style="text-align:left; padding-right:10px;">
+                    <td colspan="7" style="text-align:left; padding-right:10px;">
                         <table style="width:100%; border:none;">
                             <tr style="border:none;">
                                 <td style="border:none; text-align:left; width:50%;"><strong>Total Price</strong></td>
