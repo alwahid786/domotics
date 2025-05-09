@@ -58,7 +58,7 @@
                     </div>
 
                     <div class="pt-3 sm:pt-5 mb-2 p-5">
-                        <h2 class="text-xl font-semibold text-black dark:text-white">Perchè scegliere</h2>
+                        <h2 class="text-xl font-semibold text-black dark:text-white">Perchè scegliere Domotics</h2>
 
                         <p class="mt-4 text-sm/relaxed">
                             Da oggi è disponibile in Italia un incredibile nuovo strumento.

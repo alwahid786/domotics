@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-800 leading-tight">
-            {{ __('Room List') }}
+            {{ __('Lista Ambienti') }}
         </h2>
 
 
@@ -60,6 +60,7 @@
                 background-color: #fff;
                 background-color: rgba(255, 255, 255, var(--bg-opacity))
             }
+        }
     </style>
     <div class="py-12 bg-white">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-white shadow p-4 rounded">
@@ -68,14 +69,15 @@
                 <ul class="grid lg:grid-cols-4 sm:grid-cols-2 gap-4">
                     @foreach ($rooms as $room)
                         <li class="bg-white shadow p-4 rounded">
-                            <a href="{{ route('room.products', ['room' => $room->id]) }}">
+                            {{-- <a href="{{ route('room.products', ['room' => $room->id]) }}">
                                 <h2 class="text-2xl font-semibold">{{ $room->name }}</h2>
-                            </a>
+                            </a> --}}
+                            <h2 class="text-2xl font-semibold">{{ $room->name }}</h2>
                             <div class="">
-                                <a href="{{ route('room.products', ['room' => $room->id]) }}">
+                                {{-- <a href="{{ route('room.products', ['room' => $room->id]) }}"> --}}
                                     <img src="{{ asset('storage/' . $room->image) }}" alt="{{ $room->name }}"
                                         class="w-full h-64 object-cover">
-                                </a>
+                                {{-- </a> --}}
                             </div>
                         </li>
                     @endforeach
