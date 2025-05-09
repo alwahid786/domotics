@@ -47,8 +47,13 @@
                     </div>
                 </div>
                 <br>
-                <div style="max-width: 85%">
-                    <h5 style="float: right"> Gentile {{ $user_name }}</h5>
+                <div style="display: flex; flex-direction: column; max-width: 86%; text-align: end; align-items: end;">
+                    <div>
+                        <h5> {{ $estimation->name ? 'Gentile '. $estimation->name : $user_name }}</h5>
+                    </div>
+                    <div style="max-width: 16%;">
+                        <h5> {{ $estimation->address ? 'Indirizzo: '. $estimation->address : '' }}</h5>
+                    </div>
                 </div>
                 <br>
                 <br>

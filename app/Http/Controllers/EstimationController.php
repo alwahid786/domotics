@@ -86,6 +86,8 @@ class EstimationController extends Controller
         $estimationId = DB::table('estimations')->insertGetId([
             'user_id' => $request->user_id ? $request->user_id : $user->id,
             'image' => $imagePath,
+            'name' => $request->forUserName,
+            'address' => $request->forUserAddress,
             'clean_image' => $cleanimagePath,
             'total' => $validatedData['totalPrice'],
             'floor_name' => $validatedData['floorName'],
@@ -140,7 +142,7 @@ class EstimationController extends Controller
         $sensors = DB::table('estimation_products')
             ->join('products', 'estimation_products.product_id', '=', 'products.id')
             ->where('estimation_products.estimation_id', $estimationId)
-            ->select('estimation_products.*', 'products.image as product_image')
+            ->select('estimation_products.*', 'products.image as product_image', 'products.code as product_code')
             ->get();
 
 
@@ -156,6 +158,7 @@ class EstimationController extends Controller
         // Generate PDF
         $pdf = Pdf::loadView('estimation.pdf', [
             'imagePath' => $estimation->image,
+            'estimation' => $estimation,
             'user_name' => $this->userName($estimation->user_id),
             'totalPrice' => $estimation->total,
             'floorName' => $estimation->floor_name,
@@ -167,12 +170,12 @@ class EstimationController extends Controller
         $pdfPath = storage_path("app/private/estimations/{$pdfFileName}");
         file_put_contents($pdfPath, $pdf->output());
 
-        // $user_id = $request->user_id ? $request->user_id : $user->id;
-        // $user = DB::table('users')->where('id', $user_id)->first();
-        // Mail::to($user->email)
-        //     ->cc('dott.izzo@mydomotics.it')
-        //     ->cc('preventivi@mydomotics.it')
-        //     ->send(new SendEstimation($pdfFileName));
+        $user_id = $request->user_id ? $request->user_id : $user->id;
+        $user = DB::table('users')->where('id', $user_id)->first();
+        Mail::to($user->email)
+            ->cc('dott.izzo@mydomotics.it')
+            ->cc('preventivi@mydomotics.it')
+            ->send(new SendEstimation($pdfFileName));
 
         if ($productData) {
 
@@ -239,7 +242,7 @@ class EstimationController extends Controller
         $estimate;
         $estimation = DB::table('estimations')->where('id', $estimate)->first();
         $user_name = $this->userName($estimation->user_id);
-        return view('estimation.view', compact('estimate', 'user_name'));
+        return view('estimation.view', compact('estimate', 'estimation', 'user_name'));
     }
 
     protected function userName($user_id)
@@ -368,8 +371,7 @@ class EstimationController extends Controller
     {
 
         $id = $estimate;
-        $estimation = DB::table('estimations')->select('id', 'user_id', 'total', 'floor_name', 'clean_image')->where('id', $id)->first();
-
+        $estimation = DB::table('estimations')->select('id', 'user_id', 'total', 'floor_name', 'clean_image', 'name' , 'address')->where('id', $id)->first();
 
         $user = Auth::user();
         $role = DB::table('roles')
@@ -435,6 +437,8 @@ class EstimationController extends Controller
                 ->update([
                     'user_id' => $request->user_id,
                     'image' => $imagePath,
+                    'name' => $request->forUserName,
+                    'address' => $request->forUserAddress,
                     'clean_image' => $cleanimagePath,
                     'total' => $validatedData['totalPrice'],
                     'floor_name' => $validatedData['floorName'],
@@ -445,6 +449,8 @@ class EstimationController extends Controller
                 ->where('id', $estimationId)
                 ->update([
                     'image' => $imagePath,
+                    'name' => $request->forUserName,
+                    'address' => $request->forUserAddress,
                     'clean_image' => $cleanimagePath,
                     'total' => $validatedData['totalPrice'],
                     'floor_name' => $validatedData['floorName'],
@@ -499,7 +505,7 @@ class EstimationController extends Controller
         $sensors = DB::table('estimation_products')
             ->join('products', 'estimation_products.product_id', '=', 'products.id')
             ->where('estimation_products.estimation_id', $estimationId)
-            ->select('estimation_products.*', 'products.image as product_image')
+            ->select('estimation_products.*', 'products.image as product_image', 'products.code as product_code')
             ->get();
 
 
@@ -515,6 +521,7 @@ class EstimationController extends Controller
         // Generate PDF
         $pdf = Pdf::loadView('estimation.pdf', [
             'imagePath' => $estimation->image,
+            'estimation' => $estimation,
             'user_name' => $this->userName($estimation->user_id),
             'totalPrice' => $estimation->total,
             'floorName' => $estimation->floor_name,
@@ -526,13 +533,13 @@ class EstimationController extends Controller
         $pdfPath = storage_path("app/private/estimations/{$pdfFileName}");
         file_put_contents($pdfPath, $pdf->output());
 
-        // $user = Auth::user();
-        // $user_id = $request->user_id ? $request->user_id : $user->id;
-        // $user = DB::table('users')->where('id', $user_id)->first();
-        // Mail::to($user->email)
-        //     ->cc('dott.izzo@mydomotics.it')
-        //     ->cc('preventivi@mydomotics.it')
-        //     ->send(new SendEstimation($pdfFileName));
+        $user = Auth::user();
+        $user_id = $request->user_id ? $request->user_id : $user->id;
+        $user = DB::table('users')->where('id', $user_id)->first();
+        Mail::to($user->email)
+            ->cc('dott.izzo@mydomotics.it')
+            ->cc('preventivi@mydomotics.it')
+            ->send(new SendEstimation($pdfFileName));
 
         if ($productData) {
 
