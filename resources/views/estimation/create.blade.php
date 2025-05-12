@@ -158,20 +158,24 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-white shadow p-2 rounded mt-4">
             <!-- Image Upload -->
             <div class="mb-2 mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <input type="text" class="form-control border p-2 floor-name w-full" placeholder="Nome della piantina" required />
-                <input type="text" class="form-control border p-2 w-full" id="forUserName" placeholder="Nome dell'utente" />
-                <input type="text" class="form-control border p-2 w-full" id="forUserAddress" placeholder="Indirizzo dell'utente" />
+                <input type="text" class="form-control border p-2 floor-name w-full" placeholder="Nome della piantina"
+                    required />
+                <input type="text" class="form-control border p-2 w-full" id="forUserName"
+                    placeholder="Nome dell'utente" />
+                <input type="text" class="form-control border p-2 w-full" id="forUserAddress"
+                    placeholder="Indirizzo dell'utente" />
+                <input type="hidden" value="{{ $roleId }}" id="RoleId" />
                 @if($roleId == 1 || $roleId == 2)
                 <select class="form-control border p-2 w-full" name="user_id" id="user_id">
                     <option value="" selected>Select User</option>
                     @foreach ($users as $user)
-                        <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->email }}</option>
+                    <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->email }}</option>
                     @endforeach
                 </select>
                 @endif
 
                 <input type="file" id="imageUpload" accept="image/*" class="form-control border p-2 w-full">
-            </div>            
+            </div>
             <!-- Mode buttons: initially hidden, will be shown after picture upload -->
             <div id="modeButtons" class="my-4 flex items-center gap-4">
                 <button id="floorModeBtn" class="mode-btn bg-dark rounded-md text-white font-medium px-4 py-2">Floor
@@ -238,6 +242,32 @@
                         </tr>
                     </tfoot>
                 </table>
+
+                <!-- New Sensor Summary Table -->
+                <div class="mt-4">
+                    <h3 class="text-lg font-semibold mb-2">Sensor Summary</h3>
+                    <table id="sensorSummaryTable" class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="border p-2">Sensor Name</th>
+                                <th class="border p-2">Quantity</th>
+                                <th class="border p-2">Unit Price</th>
+                                <th class="border p-2">Total Price</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr class="bg-gray-50">
+                                <td colspan="2" class="border p-2 text-right font-bold">Total Sensors:</td>
+                                <td colspan="2" class="border p-2 font-bold" id="summaryTotalSensors">0</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td colspan="2" class="border p-2 text-right font-bold">Total Price:</td>
+                                <td colspan="2" class="border p-2 font-bold" id="summaryTotalPrice">$0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
 
             <!-- Generate PDF Button: initially hidden -->
@@ -802,6 +832,7 @@
         document.getElementById('saveDot').addEventListener('click', function() {
             const name = document.getElementById('dotName').value.trim();
             const description = document.getElementById('dotNote').value.trim();
+            const RoleId = document.getElementById('RoleId').value.trim();
             const sensor = document.getElementById('sensorSelect').value;
             const selectedOption = sensorSelectTag.options[sensorSelectTag.selectedIndex];
             const sensorIdVal = selectedOption ? selectedOption.getAttribute("data-id") : "";
@@ -888,8 +919,11 @@
                       <td>${imageHtml}</td>
                       <td>${description}</td>
                       <td>${sensorCode}</td>
-                      <td>${sensor}</td>
-                      <td>$${price}</td>
+                      <td>${sensor}</td>    
+                      <td>
+                        <input type="number" value="${price}" required ${RoleId===1 || RoleId===2 ? 'readonly' : '' } class="price-input"
+                            onchange="TotalPriceChanges(this)" />
+                    </td>
                       <td><button class="delete-btn" data-dotid="${currentDotId}">✕</button></td>`;
             sensorTableBody.appendChild(tr);
             // Sensor row delete handler
@@ -912,6 +946,7 @@
                 keepDot: true
             });
             updateTotalPrice();
+            updateSensorSummary();
         });
         // Update total price display and sensor count
         function updateTotalPrice() {
@@ -920,6 +955,99 @@
             document.getElementById('totalCount').textContent = productsData.length;
             totalPrice = total;
         }
+        function updateSensorSummary() {
+            const summaryTableBody = document.querySelector('#sensorSummaryTable tbody');
+            const sensorSummary = {};
+
+            // Group sensors by name and calculate quantities and totals
+            productsData.forEach(sensor => {
+                if (!sensorSummary[sensor.sensor]) {
+                    sensorSummary[sensor.sensor] = {
+                        name: sensor.sensor,
+                        quantity: 0,
+                        unitPrice: parseFloat(sensor.price) || 0,
+                        totalPrice: 0
+                    };
+                }
+                sensorSummary[sensor.sensor].quantity++;
+                sensorSummary[sensor.sensor].totalPrice = sensorSummary[sensor.sensor].quantity * sensorSummary[sensor.sensor].unitPrice;
+            });
+
+            // Clear existing rows
+            summaryTableBody.innerHTML = '';
+
+            // Add rows for each sensor type
+            Object.values(sensorSummary).forEach(sensor => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="border p-2">${sensor.name}</td>
+                    <td class="border p-2">${sensor.quantity}</td>
+                    <td class="border p-2">$${sensor.unitPrice.toFixed(2)}</td>
+                    <td class="border p-2">$${sensor.totalPrice.toFixed(2)}</td>
+                `;
+                summaryTableBody.appendChild(row);
+            });
+
+            // Update totals
+            const totalSensors = productsData.length;
+            const totalPrice = Object.values(sensorSummary).reduce((sum, sensor) => sum + sensor.totalPrice, 0);
+
+            document.getElementById('summaryTotalSensors').textContent = totalSensors;
+            document.getElementById('summaryTotalPrice').textContent = `$${totalPrice.toFixed(2)}`;
+        }
+        function TotalPriceChanges(element) {
+            var updatePrice = parseFloat(element.value) || 0;
+            var totalPrice = 0;
+            var DiscountedPrice = 0;
+            
+            // Get the sensor type from the row
+            const row = element.closest('tr');
+            const sensorType = row.querySelector('td:nth-child(7)').textContent;
+            
+            // Update all price inputs for the same sensor type
+            document.querySelectorAll('#sensorTable tbody tr').forEach(function(row) {
+                const rowSensorType = row.querySelector('td:nth-child(7)').textContent;
+                if (rowSensorType === sensorType) {
+                    const priceInput = row.querySelector('.price-input');
+                    if (priceInput) {
+                        priceInput.value = updatePrice;
+                    }
+                }
+            });
+            
+            // Calculate total from editable price inputs
+            document.querySelectorAll('.price-input').forEach(function(input) {
+                const price = parseFloat(input.value) || 0;
+                totalPrice += price;
+                DiscountedPrice += price; // Add to discounted price total
+            });
+            
+            // Update the total price display
+            document.getElementById('totalPrice').innerHTML = totalPrice;
+            
+            // Update the global totalPrice variable
+            totalPrice = totalPrice;
+            
+            // Update all prices in productsData array for the same sensor type
+            productsData.forEach((item, index) => {
+                if (item.sensor === sensorType) {
+                    productsData[index].price = updatePrice;
+                }
+            });
+
+            // Update the sensor summary table
+            updateSensorSummary();
+        }
+        // Add event listener for price input changes
+        document.addEventListener('DOMContentLoaded', function() {
+            // Delegate event listener for price inputs
+            document.querySelector('#sensorTable').addEventListener('change', function(e) {
+                if (e.target.classList.contains('price-input')) {
+                    TotalPriceChanges(e.target);
+                }
+            });
+            updateSensorSummary();
+        });
         // Generate PDF using jsPDF and prepare data in the desired format
         generatePDFBtn.addEventListener('click', function() {
 
@@ -1087,12 +1215,19 @@
                         };
                     });
 
+                    // Calculate final DiscountedPrice before sending
+                    let finalDiscountedPrice = 0;
+                    document.querySelectorAll('.price-input').forEach(function(input) {
+                        finalDiscountedPrice += parseFloat(input.value) || 0;
+                    });
+
                     const formData = new FormData();
 
                     // Convert object data to strings for FormData
                     formData.append('roomsData', JSON.stringify(roomsData));
                     formData.append('sensorsData', JSON.stringify(sensorsData));
-                    formData.append('totalPrice', totalPrice);
+                    formData.append('totalPrice', finalDiscountedPrice);
+                    // formData.append('discountedPrice', finalDiscountedPrice);
                     formData.append('floorName', floorNameInput.value);
                     formData.append('forUserName', forUserName.value);
                     formData.append('forUserAddress', forUserAddress.value);

@@ -4,6 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ __('Stime') }}
             </h2>
+            <button onclick="printMainContent()" class="btn btn-primary d-print-none">Print</button>
         </div>
     </x-slot>
 
@@ -33,9 +34,35 @@
             margin: 20px auto;
             display: block;
         }
-    </style>
 
-    <main class="p-2">
+        @media print {
+
+            /* Hide everything */
+            body * {
+                visibility: hidden;
+            }
+
+            /* Show only printMain and its children */
+            #printMain,
+            #printMain * {
+                visibility: visible;
+            }
+
+            /* Position section at top */
+            #printMain {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+            }
+
+            /* Hide print buttons */
+            .d-print-none {
+                display: none !important;
+            }
+        }
+    </style>
+    <main class="p-2" id="printMain">
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-10  bg-white shadow rounded" style="padding: 40px">
                 <div class="floorplan">
@@ -49,7 +76,7 @@
                 <br>
                 <div style="display: flex; flex-direction: column; max-width: 86%; text-align: end; align-items: end;">
                     <div>
-                        <h5> {{ $estimation->name ? 'Gentile '. $estimation->name : $user_name }}</h5>
+                        <h5> {{ $estimation->name ? 'Gentile ' . $estimation->name : $user_name }} </h5>
                     </div>
                     <div style="max-width: 16%;">
                         <h5> {{ $estimation->address ? 'Indirizzo: '. $estimation->address : '' }}</h5>
@@ -110,32 +137,58 @@
                                 <th>Sr. No</th>
                                 <th>Room</th>
                                 <th>Image</th>
-                                <th>code</th>
+                                <th>Code</th>
                                 <th>Sensor Name</th>
-                                <th style="width: 200px">Sensor</th>
+                                <th>Sensor</th>
                                 <th>Installation Notes</th>
                                 <th>Price</th>
                             </tr>
                         </thead>
                         <tbody id="estimationTableBody"></tbody>
                         <tfoot>
-                            <tr>
-                                <td colspan="6" class="text-end">
+                            <tr id="totalCountRow">
+                                <td colspan="7" class="text-end">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <div><strong>Total Sensors</strong></div>
+                                        <div><strong>Total Sensors:</strong></div>
                                         <div id="totalCount">0</div>
                                     </div>
                                 </td>
                                 <td></td>
                             </tr>
-                            <tr>
-                                <td colspan="6" class="text-end">
+                            <tr id="totalRow">
+                                <td colspan="7" class="text-end">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <div><strong>Total Price</strong></div>
-                                        <div id="totalPrice"></div>
+                                        <div><strong>Total Price:</strong></div>
+                                        <div>$<span id="totalPrice">0</span></div>
                                     </div>
                                 </td>
                                 <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Sensor Summary Table -->
+                <div class="mt-4">
+                    <h3 class="text-lg font-semibold mb-2">Sensor Summary</h3>
+                    <table id="sensorSummaryTable" class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="border p-2">Sensor Name</th>
+                                <th class="border p-2">Quantity</th>
+                                <th class="border p-2">Unit Price</th>
+                                <th class="border p-2">Total Price</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr class="bg-gray-50">
+                                <td colspan="2" class="border p-2 text-right font-bold">Total Sensors:</td>
+                                <td colspan="2" class="border p-2 font-bold" id="summaryTotalSensors">0</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td colspan="2" class="border p-2 text-right font-bold">Total Price:</td>
+                                <td colspan="2" class="border p-2 font-bold" id="summaryTotalPrice">$0</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -175,6 +228,7 @@
 
                 <p>In attesa di vs. riscontro inviamo distinti saluti</p>
 
+
                 <table style="width: 100%; margin-top: 30px;border:0 !important;">
                     <tr>
                         <td style="text-align: left; width: 50%; border:0 !important;">
@@ -206,13 +260,15 @@
         </div>
     </div>
 
-</x-app-layout>
 
-<!-- Bootstrap Bundle JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-    // Global variables
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+    <script>
+        // Global variables
     let apiData = null; // Holds the full API response data.data
     let sensorDots = []; // Sensor dots info for click detection
 
@@ -238,7 +294,7 @@
                     console.error("No image URL provided in API data.");
                     return;
                 }
-
+                console.log(apiData);
                 buildEstimationTable(apiData);
                 drawFloorPlan(apiData);
             })
@@ -261,80 +317,123 @@
             return;
         }
 
-        data.sensorsData.forEach((sensor, index) => {
+        // Group sensors by name to calculate quantities
+        const sensorGroups = {};
+        data.sensorsData.forEach(sensor => {
+            const sensorName = sensor.sensorName || sensor.name || "N/A";
+            if (!sensorGroups[sensorName]) {
+                sensorGroups[sensorName] = {
+                    name: sensorName,
+                    quantity: 0,
+                    unitPrice: parseFloat(sensor.sensorPrice || sensor.price || 0),
+                    total: 0,
+                    room: sensor.roomName || "",
+                    description: sensor.sensorDescription || sensor.note || "",
+                    code: sensor.productCode || "",
+                    image: sensor.sensorImage || sensor.image || ""
+                };
+            }
+            sensorGroups[sensorName].quantity++;
+            sensorGroups[sensorName].total = sensorGroups[sensorName].quantity * sensorGroups[sensorName].unitPrice;
+        });
+
+        // Add rows for each unique sensor
+        let rowIndex = 1;
+        Object.values(sensorGroups).forEach(sensor => {
             const tr = document.createElement("tr");
 
             // Serial Number
             const tdSrNo = document.createElement("td");
-            tdSrNo.textContent = index + 1;
+            tdSrNo.textContent = rowIndex++;
             tr.appendChild(tdSrNo);
 
-            // Room Name (matched by roomId)
+            // Room
             const tdRoom = document.createElement("td");
-            const room = data.roomsData.find(r => r.roomId === sensor.roomId);
-            tdRoom.textContent = room ? room.roomName : "Unknown Room";
+            tdRoom.textContent = sensor.roomName;
             tr.appendChild(tdRoom);
-
-            // Sensor Image - handle nested structure
-            const tdSensorImage = document.createElement("td");
-            // Handle different possible image property structures
-            let imagePath = null;
-            if (sensor.image) {
-                imagePath = sensor.image;
-            } else if (sensor.sensorImage) {
-                if (typeof sensor.sensorImage === 'object' && sensor.sensorImage.image) {
-                    // Handle nested object: {sensorImage: {image: 'path/to/image.jpg'}}
-                    imagePath = sensor.sensorImage.image;
-                } else {
-                    // Direct string: {sensorImage: 'path/to/image.jpg'}
-                    imagePath = sensor.sensorImage;
-                }
-            }
-
-            // Create proper image URL
-            let imageUrl = imagePath;
-            if (imagePath && !imagePath.startsWith('http')) {
-                imageUrl = "{{ asset('storage') }}/" + imagePath;
-            }
-
-            if (imageUrl) {
-                tdSensorImage.innerHTML =
-                    `<img src="${imageUrl}" alt="${sensor.sensorName || sensor.name}" style="width:50px; height:50px; object-fit:contain; border-radius:4px;" onerror="this.onerror=null; this.src='https://via.placeholder.com/50?text=No+Image';">`;
-            } else {
-                tdSensorImage.innerHTML =
-                    `<div style="width:50px; height:50px; display:flex; align-items:center; justify-content:center; background-color:#f0f0f0; border-radius:4px; font-size:10px; color:#666;">No Image</div>`;
-            }
-            tr.appendChild(tdSensorImage);
-            const tdproductCode = document.createElement("td");
-            tdproductCode.textContent = sensor.productCode || sensor.productCode || "N/A";
-            tr.appendChild(tdproductCode);
-            // Sensor Name
-            const tdSensorName = document.createElement("td");
-            tdSensorName.textContent = sensor.sensorName || sensor.name || "N/A";
-            tr.appendChild(tdSensorName);
-
-            // Sensor Name
-            const tdProductName = document.createElement("td");
-            tdProductName.textContent = sensor.productName || sensor.productName || "N/A";
-            tr.appendChild(tdProductName);
-
-            // Sensor Description
-            const tdSensorDescription = document.createElement("td");
-            tdSensorDescription.textContent = sensor.sensorDescription || sensor.note || "N/A";
-            tr.appendChild(tdSensorDescription);
-
-
+// Image
+    const tdImage = document.createElement("td");
+    const imageHtml = sensor.image ?
+    `<img src="${sensor.image}" alt="${sensor.name}" style="width:50px; height:50px; object-fit:contain; border-radius:4px;"
+        onerror="this.onerror=null; this.src='https://via.placeholder.com/50?text=No+Image';">` :
+    `<div
+        style="width:50px; height:50px; display:flex; align-items:center; justify-content:center; background-color:#f0f0f0; border-radius:4px; font-size:10px; color:#666;">
+        No Image</div>`;
+            tdImage.innerHTML = imageHtml;
+            tr.appendChild(tdImage);
+            // Code
+            
+            const tdCode = document.createElement("td");
+            tdCode.textContent = sensor.code;
+            tr.appendChild(tdCode);
+            // Name
+            const tdName = document.createElement("td");
+            tdName.textContent = sensor.name;
+            tr.appendChild(tdName);
+            // Sensor
+            const tdSensor = document.createElement("td");
+            tdSensor.textContent = sensor.name;
+            tr.appendChild(tdSensor);
+            // Installation Notes
+            const tdNotes = document.createElement("td");
+            tdNotes.textContent = sensor.description;
+            tr.appendChild(tdNotes);
             // Price
             const tdPrice = document.createElement("td");
-            tdPrice.textContent = "$" + (sensor.sensorPrice || sensor.price || "0.00");
+            tdPrice.textContent = "$" + Number(sensor.unitPrice).toFixed(2);
             tr.appendChild(tdPrice);
 
             tableBody.appendChild(tr);
         });
 
-        // Set total price and count from API
-        totalPriceCell.textContent = "$" + (data.totalPrice || "0.00");
-        totalCountCell.textContent = data.sensorsData ? data.sensorsData.length : "0";
+        // Calculate and set total price and count
+        const totalPrice = Object.values(sensorGroups).reduce((sum, sensor) => sum + Number(sensor.total), 0);
+        const totalCount = Object.values(sensorGroups).reduce((sum, sensor) => sum + sensor.quantity, 0);
+        
+        totalPriceCell.textContent = "$" + Number(totalPrice).toFixed(2);
+        totalCountCell.textContent = totalCount;
+
+        // Update sensor summary table
+        updateSensorSummary(sensorGroups);
+    }
+
+    function updateSensorSummary(sensorGroups) {
+        const summaryTableBody = document.querySelector('#sensorSummaryTable tbody');
+        summaryTableBody.innerHTML = '';
+
+        // Create a map to aggregate quantities for the same sensor type
+        const aggregatedSensors = {};
+        Object.values(sensorGroups).forEach(sensor => {
+            if (!aggregatedSensors[sensor.name]) {
+                aggregatedSensors[sensor.name] = {
+                    name: sensor.name,
+                    quantity: 0,
+                    unitPrice: sensor.unitPrice,
+                    total: 0
+                };
+            }
+            aggregatedSensors[sensor.name].quantity += sensor.quantity;
+            aggregatedSensors[sensor.name].total = aggregatedSensors[sensor.name].quantity * aggregatedSensors[sensor.name].unitPrice;
+        });
+
+        // Add rows for each aggregated sensor type
+        Object.values(aggregatedSensors).forEach(sensor => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="border p-2">${sensor.name}</td>
+                <td class="border p-2">${sensor.quantity}</td>
+                <td class="border p-2">$${sensor.unitPrice.toFixed(2)}</td>
+                <td class="border p-2">$${sensor.total.toFixed(2)}</td>
+            `;
+            summaryTableBody.appendChild(row);
+        });
+
+        // Update totals
+        const totalSensors = Object.values(aggregatedSensors).reduce((sum, sensor) => sum + sensor.quantity, 0);
+        const totalPrice = Object.values(aggregatedSensors).reduce((sum, sensor) => sum + sensor.total, 0);
+
+        document.getElementById('summaryTotalSensors').textContent = totalSensors;
+        document.getElementById('summaryTotalPrice').textContent = `$${totalPrice.toFixed(2)}`;
     }
 
     // Draw the floor plan image, rooms (as polygons) and sensor dots on the canvas
@@ -493,4 +592,49 @@
         const sensorModal = new bootstrap.Modal(modalElement, {});
         sensorModal.show();
     }
-</script>
+    </script>
+    {{-- print screen --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+        fetchEstimations();
+    });
+    
+    function printMainContent() {
+        // 1. Clone the printMain node
+        const original = document.getElementById('printMain');
+        const clone    = original.cloneNode(true);
+    
+        // 2. Replace canvas with an <img> snapshot
+        const canvasEl = document.getElementById('estimationCanvas');
+        const cloneCanvasContainer = clone.querySelector('#estimationCanvas');
+        if (canvasEl && cloneCanvasContainer) {
+            const dataURL = canvasEl.toDataURL();
+            const img     = document.createElement('img');
+            img.src       = dataURL;
+            img.style.maxWidth = '100%';
+            img.style.height   = 'auto';
+            cloneCanvasContainer.parentNode.replaceChild(img, cloneCanvasContainer);
+        }
+    
+        // 3. Open a print window
+        const printWindow = window.open('', '_blank', 'width=800,height=600');
+        printWindow.document.write(`
+            <html>
+            <head>
+              <title>Print</title>
+              <link rel="stylesheet" href="/css/app.css">
+            </head>
+            <body>${clone.innerHTML}</body>
+            </html>
+        `);
+        printWindow.document.close();
+    
+        // 4. Print and close
+        printWindow.onload = () => {
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+        };
+    }
+    </script>
+</x-app-layout>
