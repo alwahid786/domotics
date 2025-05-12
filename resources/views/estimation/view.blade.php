@@ -294,7 +294,7 @@
                     console.error("No image URL provided in API data.");
                     return;
                 }
-                console.log(apiData);
+                console.log(apiData)
                 buildEstimationTable(apiData);
                 drawFloorPlan(apiData);
             })
@@ -302,100 +302,109 @@
                 console.error("Error fetching estimations:", error);
             });
     }
-
-    // Builds the table with sensor details and total price
-    function buildEstimationTable(data) {
-        const tableBody = document.getElementById("estimationTableBody");
-        const totalPriceCell = document.getElementById("totalPrice");
-        const totalCountCell = document.getElementById("totalCount");
-        tableBody.innerHTML = ""; // Clear any existing rows
-
-        if (!data.sensorsData || data.sensorsData.length === 0) {
-            totalPriceCell.textContent = "$0.00";
-            totalCountCell.textContent = "0";
-            console.warn("No sensor data available.");
-            return;
-        }
-
-        // Group sensors by name to calculate quantities
-        const sensorGroups = {};
-        data.sensorsData.forEach(sensor => {
-            const sensorName = sensor.sensorName || sensor.name || "N/A";
-            if (!sensorGroups[sensorName]) {
-                sensorGroups[sensorName] = {
-                    name: sensorName,
-                    quantity: 0,
-                    unitPrice: parseFloat(sensor.sensorPrice || sensor.price || 0),
-                    total: 0,
-                    room: sensor.roomName || "",
-                    description: sensor.sensorDescription || sensor.note || "",
-                    code: sensor.productCode || "",
-                    image: sensor.sensorImage || sensor.image || ""
-                };
-            }
-            sensorGroups[sensorName].quantity++;
-            sensorGroups[sensorName].total = sensorGroups[sensorName].quantity * sensorGroups[sensorName].unitPrice;
-        });
-
-        // Add rows for each unique sensor
-        let rowIndex = 1;
-        Object.values(sensorGroups).forEach(sensor => {
-            const tr = document.createElement("tr");
-
-            // Serial Number
-            const tdSrNo = document.createElement("td");
-            tdSrNo.textContent = rowIndex++;
-            tr.appendChild(tdSrNo);
-
-            // Room
-            const tdRoom = document.createElement("td");
-            tdRoom.textContent = sensor.roomName;
-            tr.appendChild(tdRoom);
-// Image
+function buildEstimationTable(data) {
+    const tableBody = document.getElementById("estimationTableBody");
+    const totalPriceCell = document.getElementById("totalPrice");
+    const totalCountCell = document.getElementById("totalCount");
+    tableBody.innerHTML = ""; // Clear any existing rows
+    
+    if (!data.sensorsData || data.sensorsData.length === 0) {
+    totalPriceCell.textContent = "$0.00";
+    totalCountCell.textContent = "0";
+    console.warn("No sensor data available.");
+    return;
+    }
+    
+    // Group sensors by sensorName + roomId
+    const sensorGroups = {};
+    data.sensorsData.forEach(sensor => {
+    const sensorName = sensor.sensorName || sensor.name || "N/A";
+    const key = sensorName + "::" + sensor.roomId; // ensure grouping by room too
+    const matchedRoom = data.roomsData.find(room => room.roomId === sensor.roomId);
+    const roomName = matchedRoom ? matchedRoom.roomName : "N/A";
+    
+    if (!sensorGroups[key]) {
+    sensorGroups[key] = {
+    name: sensorName,
+    quantity: 0,
+    unitPrice: parseFloat(sensor.sensorPrice || sensor.price || 0),
+    total: 0,
+    room: roomName,
+    description: sensor.sensorDescription || sensor.note || "",
+    code: sensor.productCode || "",
+    image: sensor.sensorImage?.image || sensor.image || ""
+    };
+    }
+    
+    sensorGroups[key].quantity++;
+    sensorGroups[key].total = sensorGroups[key].quantity * sensorGroups[key].unitPrice;
+    });
+    
+    // Add rows to table
+    let rowIndex = 1;
+    Object.values(sensorGroups).forEach(sensor => {
+    const tr = document.createElement("tr");
+    
+    // Serial Number
+    const tdSrNo = document.createElement("td");
+    tdSrNo.textContent = rowIndex++;
+    tr.appendChild(tdSrNo);
+    
+    // Room Name
+    const tdRoom = document.createElement("td");
+    tdRoom.textContent = sensor.room;
+    tr.appendChild(tdRoom);
+    
+    // Image
     const tdImage = document.createElement("td");
-    const imageHtml = sensor.image ?
-    `<img src="${sensor.image}" alt="${sensor.name}" style="width:50px; height:50px; object-fit:contain; border-radius:4px;"
-        onerror="this.onerror=null; this.src='https://via.placeholder.com/50?text=No+Image';">` :
-    `<div
+    const imageHtml = sensor.image
+    ? `<img src="${sensor.image}" alt="${sensor.name}"
+        style="width:50px; height:50px; object-fit:contain; border-radius:4px;"
+        onerror="this.onerror=null; this.src='https://via.placeholder.com/50?text=No+Image';">`
+    : `<div
         style="width:50px; height:50px; display:flex; align-items:center; justify-content:center; background-color:#f0f0f0; border-radius:4px; font-size:10px; color:#666;">
         No Image</div>`;
-            tdImage.innerHTML = imageHtml;
-            tr.appendChild(tdImage);
-            // Code
-            
-            const tdCode = document.createElement("td");
-            tdCode.textContent = sensor.code;
-            tr.appendChild(tdCode);
-            // Name
-            const tdName = document.createElement("td");
-            tdName.textContent = sensor.name;
-            tr.appendChild(tdName);
-            // Sensor
-            const tdSensor = document.createElement("td");
-            tdSensor.textContent = sensor.name;
-            tr.appendChild(tdSensor);
-            // Installation Notes
-            const tdNotes = document.createElement("td");
-            tdNotes.textContent = sensor.description;
-            tr.appendChild(tdNotes);
-            // Price
-            const tdPrice = document.createElement("td");
-            tdPrice.textContent = "$" + Number(sensor.unitPrice).toFixed(2);
-            tr.appendChild(tdPrice);
-
-            tableBody.appendChild(tr);
-        });
-
-        // Calculate and set total price and count
-        const totalPrice = Object.values(sensorGroups).reduce((sum, sensor) => sum + Number(sensor.total), 0);
-        const totalCount = Object.values(sensorGroups).reduce((sum, sensor) => sum + sensor.quantity, 0);
-        
-        totalPriceCell.textContent = "$" + Number(totalPrice).toFixed(2);
-        totalCountCell.textContent = totalCount;
-
-        // Update sensor summary table
-        updateSensorSummary(sensorGroups);
+    tdImage.innerHTML = imageHtml;
+    tr.appendChild(tdImage);
+    
+    // Code
+    const tdCode = document.createElement("td");
+    tdCode.textContent = sensor.code;
+    tr.appendChild(tdCode);
+    
+    // Name
+    const tdName = document.createElement("td");
+    tdName.textContent = sensor.name;
+    tr.appendChild(tdName);
+    
+    // Sensor Name (again if needed)
+    const tdSensor = document.createElement("td");
+    tdSensor.textContent = sensor.name;
+    tr.appendChild(tdSensor);
+    
+    // Description / Notes
+    const tdNotes = document.createElement("td");
+    tdNotes.textContent = sensor.description;
+    tr.appendChild(tdNotes);
+    
+    // Price
+    const tdPrice = document.createElement("td");
+    tdPrice.textContent = "$" + Number(sensor.unitPrice).toFixed(2);
+    tr.appendChild(tdPrice);
+    
+    tableBody.appendChild(tr);
+    });
+    
+    // Totals
+    const totalPrice = Object.values(sensorGroups).reduce((sum, sensor) => sum + Number(sensor.total), 0);
+    const totalCount = Object.values(sensorGroups).reduce((sum, sensor) => sum + sensor.quantity, 0);
+    
+    totalPriceCell.textContent = "$" + totalPrice.toFixed(2);
+    totalCountCell.textContent = totalCount;
+    
+    updateSensorSummary(sensorGroups);
     }
+    
 
     function updateSensorSummary(sensorGroups) {
         const summaryTableBody = document.querySelector('#sensorSummaryTable tbody');
