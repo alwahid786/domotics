@@ -371,7 +371,7 @@ class EstimationController extends Controller
     {
 
         $id = $estimate;
-        $estimation = DB::table('estimations')->select('id', 'user_id', 'total', 'floor_name', 'clean_image', 'name' , 'address')->where('id', $id)->first();
+        $estimation = DB::table('estimations')->select('id', 'user_id', 'total', 'floor_name', 'clean_image', 'name', 'address')->where('id', $id)->first();
 
         $user = Auth::user();
         $role = DB::table('roles')
