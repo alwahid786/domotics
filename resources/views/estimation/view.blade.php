@@ -327,6 +327,7 @@
         if (!sensorGroups[key]) {
         sensorGroups[key] = {
         name: sensorName,
+        productName: sensor.productName,
         quantity: 0,
         unitPrice: parseFloat(sensor.sensorPrice || sensor.price || 0),
         total: 0,
@@ -387,7 +388,7 @@
         
         // Sensor Name (again if needed)
         const tdSensor = document.createElement("td");
-        tdSensor.textContent = sensor.name;
+        tdSensor.textContent = sensor.productName;
         tr.appendChild(tdSensor);
         
         // Description / Notes
