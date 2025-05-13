@@ -611,43 +611,105 @@
                 tempGroup.appendChild(circle);
             });
         }
-        // Final image click handler: different behavior for floor vs device mode
+        // Helper functions for polygon operations
+        function calculatePolygonArea(vertices) {
+            let area = 0;
+            for (let i = 0; i < vertices.length; i++) {
+                const j = (i + 1) % vertices.length;
+                area += vertices[i].x * vertices[j].y;
+                area -= vertices[j].x * vertices[i].y;
+            }
+            return Math.abs(area / 2);
+        }
+
+        function lineIntersectsLine(line1Start, line1End, line2Start, line2End) {
+            const denominator = ((line2End.y - line2Start.y) * (line1End.x - line1Start.x)) -
+                ((line2End.x - line2Start.x) * (line1End.y - line1Start.y));
+
+            if (denominator === 0) return false;
+
+            const ua = (((line2End.x - line2Start.x) * (line1Start.y - line2Start.y)) -
+                ((line2End.y - line2Start.y) * (line1Start.x - line2Start.x))) / denominator;
+            const ub = (((line1End.x - line1Start.x) * (line1Start.y - line2Start.y)) -
+                ((line1End.y - line1Start.y) * (line1Start.x - line2Start.x))) / denominator;
+
+            return ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1;
+        }
+
+        function polygonsIntersect(poly1, poly2) {
+            // Check if any line segment from poly1 intersects with any line segment from poly2
+            for (let i = 0; i < poly1.length; i++) {
+                const line1Start = poly1[i];
+                const line1End = poly1[(i + 1) % poly1.length];
+
+                for (let j = 0; j < poly2.length; j++) {
+                    const line2Start = poly2[j];
+                    const line2End = poly2[(j + 1) % poly2.length];
+
+                    if (lineIntersectsLine(line1Start, line1End, line2Start, line2End)) {
+                        return true;
+                    }
+                }
+            }
+
+            // Check if one polygon is completely inside the other
+            if (pointInPolygon(poly1[0], poly2) || pointInPolygon(poly2[0], poly1)) {
+                return true;
+            }
+
+            return false;
+        }
+
+        function checkRoomOverlap(newPolygon) {
+            // Convert relative coordinates to absolute for comparison
+            const newPolygonAbs = newPolygon.vertices.map(v => toAbsoluteCoords(v.x, v.y));
+            
+            // Check against all existing polygons
+            for (const existingPolygon of polygons) {
+                const existingPolygonAbs = existingPolygon.vertices.map(v => toAbsoluteCoords(v.x, v.y));
+                
+                if (polygonsIntersect(newPolygonAbs, existingPolygonAbs)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Modify the finalImage click handler for floor mode
         finalImage.addEventListener('click', function(e) {
             const rect = finalImage.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-            const clickPoint = {
-                x,
-                y
-            };
-
-            // Create relative coordinates for storage
+            const clickPoint = { x, y };
             const relativePoint = toRelativeCoords(x, y);
 
             if (currentMode === 'floor') {
-                // Existing floor mode code…
                 if (!currentPolygon) {
                     currentPolygon = {
                         id: 'room-' + Date.now(),
-                        vertices: [relativePoint], // Store relative coordinates
+                        vertices: [relativePoint],
                         name: ''
                     };
                 } else {
-                    // Convert first vertex to absolute for distance calculation
-                    const firstVertexAbs = toAbsoluteCoords(currentPolygon.vertices[0].x, currentPolygon.vertices[0]
-                        .y);
+                    const firstVertexAbs = toAbsoluteCoords(currentPolygon.vertices[0].x, currentPolygon.vertices[0].y);
 
-                    // Auto-complete if close to the first vertex and at least 3 vertices exist
                     if (currentPolygon.vertices.length >= 3 && distance(clickPoint, firstVertexAbs) < 10) {
-                        // Close polygon with a copy of first point (for complete loop)
-                        currentPolygon.vertices.push({
-                            ...currentPolygon.vertices[0]
-                        });
+                        // Close polygon with a copy of first point
+                        currentPolygon.vertices.push({...currentPolygon.vertices[0]});
+                        
+                        // Check for overlap before proceeding
+                        if (checkRoomOverlap(currentPolygon)) {
+                            alert("This room overlaps with an existing room. Please draw it in a different area.");
+                            currentPolygon = null;
+                            clearTemporaryPolygon();
+                            return;
+                        }
+                        
                         drawTemporaryPolygon();
                         polygonModal.style.display = 'flex';
                         return;
                     } else {
-                        currentPolygon.vertices.push(relativePoint); // Store relative coordinates
+                        currentPolygon.vertices.push(relativePoint);
                     }
                 }
                 drawTemporaryPolygon();
