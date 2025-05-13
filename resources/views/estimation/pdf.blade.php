@@ -110,7 +110,7 @@
             <img src="{{ public_path($imagePath) }}" alt="Floor Plan">
         </div>
 
-        <table>
+        <table class="table table-bordered">
             <thead>
                 <tr>
                     <th>#</th>
@@ -124,34 +124,33 @@
             </thead>
             <tbody>
                 @foreach ($sensorsData as $index => $sensor)
-                    @php
-                        $room = collect($roomsData)->firstWhere('roomId', $sensor->room_id);
-                        $roomName = $room['roomName'] ?? 'Unknown';
-                    @endphp
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $roomName }}</td>
-                        <td>
-                            @if ($sensor->product_image)
-                                <img src="{{ public_path('storage/' . $sensor->product_image) }}"
-                                    alt="{{ $sensor->name ?? $sensor->sensorName }}"
-                                    style="width:50px; height:50px; object-fit:contain;">
-                            @else
-                                <div
-                                    style="
+                @php
+                $room = collect($roomsData)->firstWhere('roomId', $sensor->room_id);
+                $roomName = $room['roomName'] ?? 'Unknown';
+                @endphp
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $roomName }}</td>
+                    <td>
+                        @if ($sensor->product_image)
+                        <img src="{{ public_path('storage/' . $sensor->product_image) }}"
+                            alt="{{ $sensor->name ?? $sensor->sensorName }}"
+                            style="width:50px; height:50px; object-fit:contain;">
+                        @else
+                        <div style="
                             width:50px; height:50px;
                             background:#f0f0f0;
                             display:flex; align-items:center; justify-content:center;
                             font-size:10px; color:#666;">
-                                    No Image
-                                </div>
-                            @endif
-                        </td>
-                        <td>{{ $sensor->name ?? $sensor->sensorName }}</td>
-                        <td>{{ $sensor->product_code ?? $sensor->product_code }}</td>
-                        <td>{{ $sensor->note ?? $sensor->sensorDescription }}</td>
-                        <td>{{ number_format($sensor->price ?? $sensor->sensorPrice, 2) }}</td>
-                    </tr>
+                            No Image
+                        </div>
+                        @endif
+                    </td>
+                    <td>{{ $sensor->name ?? $sensor->sensorName }}</td>
+                    <td>{{ $sensor->product_code ?? $sensor->product_code }}</td>
+                    <td>{{ $sensor->note ?? $sensor->sensorDescription }}</td>
+                    <td>{{ number_format($sensor->price ?? $sensor->sensorPrice, 2) }}</td>
+                </tr>
                 @endforeach
 
             </tbody>
@@ -167,7 +166,7 @@
                             </tr>
                         </table>
                     </td>
-                    <td></td>
+                    {{-- <td></td> --}}
                 </tr>
                 <tr>
                     <td colspan="7" style="text-align:left; padding-right:10px;">
@@ -180,11 +179,59 @@
                             </tr>
                         </table>
                     </td>
-                    <td></td>
+                    {{-- <td></td> --}}
                 </tr>
             </tfoot>
         </table>
+        <br><br>
+        @php
+        $groupedSensors = collect($sensorsData)->groupBy('product_code');
+        @endphp
 
+        <h5 class="fw-bold mb-3">Sensor Summary</h5>
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>Sensor Name</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php
+                $totalQuantity = 0;
+                $totalCost = 0;
+                @endphp
+                @foreach ($groupedSensors as $group)
+                @php
+                $name = $group[0]->name ?? 'N/A';
+                $unitPrice = $group[0]->price;
+                $quantity = $group->count();
+                $groupTotal = $quantity * $unitPrice;
+
+                $totalQuantity += $quantity;
+                $totalCost += $groupTotal;
+                @endphp
+                <tr>
+                    <td>{{ $name }}</td>
+                    <td>{{ $quantity }}</td>
+                    <td>${{ number_format($unitPrice, 2) }}</td>
+                    <td>${{ number_format($groupTotal, 2) }}</td>
+                </tr>
+                @endforeach
+                <tr>
+                    <td colspan="1"><strong>Total Sensors:</strong></td>
+                    <td colspan="3">{{ $totalQuantity }}</td>
+                </tr>
+                <tr>
+                    <td colspan="1"><strong>Total Price:</strong></td>
+                    <td colspan="3">${{ number_format($totalCost, 2) }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p class="fw-bold">Delivery time</p>
         <p><b>Tempistica di fornitura</b></p>
 
         <p>

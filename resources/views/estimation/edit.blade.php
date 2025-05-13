@@ -7,150 +7,150 @@
 
     <!-- Custom CSS for modal and styling -->
     <style>
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.6);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 10000;
-    }
-
-    .modal-content {
-        background: #fff;
-        padding: 30px;
-        border-radius: 8px;
-        max-width: 400px;
-        width: 90%;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.1);
-        animation: fadeIn 0.3s ease;
-        position: relative;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
         }
 
-        to {
-            opacity: 1;
-            transform: translateY(0);
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease;
+            position: relative;
         }
-    }
 
-    .modal-header {
-        font-size: 20px;
-        margin-bottom: 15px;
-        font-weight: bold;
-        color: #333;
-    }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
 
-    .close-modal {
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        font-size: 24px;
-        color: #888;
-        cursor: pointer;
-        border: none;
-        background: transparent;
-        outline: none;
-    }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-    .modal-body {
-        margin-bottom: 20px;
-    }
+        .modal-header {
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #333;
+        }
 
-    .modal-body label {
-        font-weight: 500;
-        margin-bottom: 5px;
-        display: block;
-        color: #555;
-    }
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            color: #888;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            outline: none;
+        }
 
-    .modal-body input,
-    .modal-body select {
-        width: 100%;
-        padding: 8px 10px;
-        margin-top: 5px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
-    }
+        .modal-body {
+            margin-bottom: 20px;
+        }
 
-    .modal-footer {
-        text-align: right;
-    }
+        .modal-body label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            display: block;
+            color: #555;
+        }
 
-    .modal-footer button {
-        padding: 8px 16px;
-        font-size: 14px;
-        border-radius: 4px;
-        border: none;
-        cursor: pointer;
-        margin-left: 8px;
-    }
+        .modal-body input,
+        .modal-body select {
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
 
-    .modal-footer .btn-secondary {
-        background-color: #ccc;
-        color: #333;
-    }
+        .modal-footer {
+            text-align: right;
+        }
 
-    .modal-footer .btn-primary {
-        background-color: #007bff;
-        color: #fff;
-    }
+        .modal-footer button {
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            margin-left: 8px;
+        }
 
-    /* Table styling */
-    #sensorTable {
-        margin-top: 20px;
-        width: 100%;
-        border-collapse: collapse;
-    }
+        .modal-footer .btn-secondary {
+            background-color: #ccc;
+            color: #333;
+        }
 
-    #sensorTable th,
-    #sensorTable td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: center;
-    }
+        .modal-footer .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+        }
 
-    /* Loader style for Generate PDF Button */
-    .loading {
-        opacity: 0.7;
-        pointer-events: none;
-        position: relative;
-    }
+        /* Table styling */
+        #sensorTable {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-    .loading:after {
-        content: "Please wait...";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(0, 0, 0, 0.5);
-        color: white;
-        border-radius: 4px;
-    }
+        #sensorTable th,
+        #sensorTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
 
-    /* Hide mode buttons initially */
-    .mode-btn {
-        display: none;
-    }
+        /* Loader style for Generate PDF Button */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+            position: relative;
+        }
 
-    /* Active mode button styling */
-    .mode-active {
-        background-color: #007bff !important;
-    }
+        .loading:after {
+            content: "Please wait...";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border-radius: 4px;
+        }
+
+        /* Hide mode buttons initially */
+        .mode-btn {
+            display: none;
+        }
+
+        /* Active mode button styling */
+        .mode-active {
+            background-color: #007bff !important;
+        }
     </style>
 
     <!-- Mode Switching Buttons & Other UI -->
@@ -160,21 +160,25 @@
             <!-- Image Upload -->
             <div class="mb-2 mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-                <input type="text" class="form-control border p-2 floor-name w-full" value="{{ $estimation->floor_name }}" placeholder="Nome della piantina" required />
-                <input type="text" class="form-control border p-2 w-full" id="forUserName" value="{{ $estimation->name }}" placeholder="Nome dell'utente" />
-                <input type="text" class="form-control border p-2 w-full" id="forUserAddress" value="{{ $estimation->address }}" placeholder="Indirizzo dell'utente" />
-                
+                <input type="text" class="form-control border p-2 floor-name w-full"
+                    value="{{ $estimation->floor_name }}" placeholder="Nome della piantina" required />
+                <input type="text" class="form-control border p-2 w-full" id="forUserName"
+                    value="{{ $estimation->name }}" placeholder="Nome dell'utente" />
+                <input type="text" class="form-control border p-2 w-full" id="forUserAddress"
+                    value="{{ $estimation->address }}" placeholder="Indirizzo dell'utente" />
+
                 @if($roleId == 1 || $roleId == 2)
                 <select class="form-control border p-2 w-full" name="user_id" id="user_id">
                     <option value="">Select User</option>
                     @foreach ($users as $user)
-                        <option value="{{ $user->id }}" {{ $user->id == $estimation->user_id ? 'selected' : '' }}>{{ $user->name }} - {{ $user->email }}</option>
+                    <option value="{{ $user->id }}" {{ $user->id == $estimation->user_id ? 'selected' : '' }}>{{
+                        $user->name }} - {{ $user->email }}</option>
                     @endforeach
                 </select>
                 @endif
 
                 <input type="file" id="imageUpload" accept="image/*" class="form-control border p-2 w-full">
-            </div>  
+            </div>
             <!-- Mode buttons: initially hidden, will be shown after picture upload -->
             <div id="modeButtons" class="my-4 flex items-center gap-4">
                 <button id="floorModeBtn" class="mode-btn bg-dark rounded-md text-white font-medium px-4 py-2">Floor
@@ -238,6 +242,32 @@
                                 </div>
                             </td>
                             <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Sensor Summary Table -->
+            <div class="mt-4 table-responsive" id="sensorSummaryContainer" style="display: none;">
+                <h3 class="text-lg font-semibold mb-2">Sensor Summary</h3>
+                <table id="sensorSummaryTable" class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border p-2">Sensor Name</th>
+                            <th class="border p-2">Quantity</th>
+                            <th class="border p-2">Unit Price</th>
+                            <th class="border p-2">Total Price</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr class="bg-gray-50">
+                            <td colspan="2" class="border p-2 text-right font-bold">Total Sensors:</td>
+                            <td colspan="2" class="border p-2 font-bold" id="summaryTotalSensors">0</td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td colspan="2" class="border p-2 text-right font-bold">Total Price:</td>
+                            <td colspan="2" class="border p-2 font-bold" id="summaryTotalPrice">$0</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -318,7 +348,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function() {
         fetchEstimationData();
     });
 
@@ -401,7 +431,7 @@
                           <td>${sensor.productCode}</td>
                           <td style="width: 200px">${sensor.productName}</td>
                           <td>${roomName}</td>
-                          <td>$${sensor.sensorPrice}</td>
+                          <td><input type="number" value="${sensor.sensorPrice}" class="price-input" onchange="TotalPriceChanges(this)" /></td>
                           <td><button class="delete-btn" data-dotid="${dotId}">✕</button></td>`;
                 tableBody.appendChild(tr);
 
@@ -420,8 +450,14 @@
                     renumberSensors();
 
                     updateTotalPrice();
+                    updateSensorSummary();
                 });
             });
+            
+            // Initialize the sensor summary table
+            updateSensorSummary();
+            // Show the sensor summary container
+            document.getElementById('sensorSummaryContainer').style.display = 'block';
         } else {
             totalPriceCell.textContent = "0";
             totalCountCell.textContent = "0";
@@ -456,6 +492,7 @@
 
                 // Show sensor list and PDF button
                 sensorListContainer.style.display = 'block';
+                sensorSummaryContainer.style.display = 'block';
                 pdfBtnContainer.style.display = 'block';
 
                 // First draw all the rooms (polygons)
@@ -535,7 +572,7 @@
                             id: dotId,
                             name: sensor.sensorName,
                             description: sensor.sensorDescription,
-                            sensor: sensor.sensorType || sensor.type || '',
+                            sensor: sensor.sensorType || sensor.type || sensor.productName || '',
                             sensorId: sensor.sensorId || sensor.productId,
                             sensorImage: imagePath,
                             price: sensor.sensorPrice,
@@ -551,6 +588,8 @@
 
                     // Update totals
                     updateTotalPrice();
+                    // Initialize sensor summary table
+                    updateSensorSummary();
                 }
             };
         }
@@ -558,7 +597,7 @@
     </script>
 
     <script>
-    const {
+        const {
         jsPDF
     } = window.jspdf;
     // Global Variables
@@ -578,6 +617,7 @@
     const sensorTableBody = document.querySelector('#sensorTable tbody');
     const generatePDFBtn = document.getElementById('generatePDF');
     const sensorListContainer = document.getElementById('sensorListContainer');
+    const sensorSummaryContainer = document.getElementById('sensorSummaryContainer');
     const pdfBtnContainer = document.getElementById('pdfBtnContainer');
     const sensorSelectTag = document.getElementById('sensorSelect');
     const floorNameInput = document.querySelector('.floor-name');
@@ -798,6 +838,69 @@
         }
         return inside;
     }
+    // Helper functions for polygon operations
+    function calculatePolygonArea(vertices) {
+        let area = 0;
+        for (let i = 0; i < vertices.length; i++) {
+            const j = (i + 1) % vertices.length;
+            area += vertices[i].x * vertices[j].y;
+            area -= vertices[j].x * vertices[i].y;
+        }
+        return Math.abs(area / 2);
+    }
+
+    function lineIntersectsLine(line1Start, line1End, line2Start, line2End) {
+        const denominator = ((line2End.y - line2Start.y) * (line1End.x - line1Start.x)) -
+            ((line2End.x - line2Start.x) * (line1End.y - line1Start.y));
+
+        if (denominator === 0) return false;
+
+        const ua = (((line2End.x - line2Start.x) * (line1Start.y - line2Start.y)) -
+            ((line2End.y - line2Start.y) * (line1Start.x - line2Start.x))) / denominator;
+        const ub = (((line1End.x - line1Start.x) * (line1Start.y - line2Start.y)) -
+            ((line1End.y - line1Start.y) * (line1Start.x - line2Start.x))) / denominator;
+
+        return ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1;
+    }
+
+    function polygonsIntersect(poly1, poly2) {
+        // Check if any line segment from poly1 intersects with any line segment from poly2
+        for (let i = 0; i < poly1.length; i++) {
+            const line1Start = poly1[i];
+            const line1End = poly1[(i + 1) % poly1.length];
+
+            for (let j = 0; j < poly2.length; j++) {
+                const line2Start = poly2[j];
+                const line2End = poly2[(j + 1) % poly2.length];
+
+                if (lineIntersectsLine(line1Start, line1End, line2Start, line2End)) {
+                    return true;
+                }
+            }
+        }
+
+        // Check if one polygon is completely inside the other
+        if (pointInPolygon(poly1[0], poly2) || pointInPolygon(poly2[0], poly1)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function checkRoomOverlap(newPolygon) {
+        // Convert relative coordinates to absolute for comparison
+        const newPolygonAbs = newPolygon.vertices.map(v => toAbsoluteCoords(v.x, v.y));
+        
+        // Check against all existing polygons
+        for (const existingPolygon of polygons) {
+            const existingPolygonAbs = existingPolygon.vertices.map(v => toAbsoluteCoords(v.x, v.y));
+            
+            if (polygonsIntersect(newPolygonAbs, existingPolygonAbs)) {
+                return true;
+            }
+        }
+        return false;
+    }
     // Draw temporary polygon in Floor Mode (only clear temp group)
     function drawTemporaryPolygon() {
         tempGroup.innerHTML = ""; // clear temporary drawings
@@ -857,6 +960,15 @@
                     currentPolygon.vertices.push({
                         ...currentPolygon.vertices[0]
                     });
+                    
+                    // Check for overlap before proceeding
+                    if (checkRoomOverlap(currentPolygon)) {
+                        alert("This room overlaps with an existing room. Please draw it in a different area.");
+                        currentPolygon = null;
+                        clearTemporaryPolygon();
+                        return;
+                    }
+                    
                     drawTemporaryPolygon();
                     polygonModal.style.display = 'flex';
                     return;
@@ -1004,10 +1116,12 @@
             return true;
         });
 
-        // Renumber all remaining sensors starting from 1
+        // Renumber all remaining sensors after deletion
         renumberSensors();
 
         updateTotalPrice();
+        updateSensorSummary();
+        
         // Redraw finished group: clear and draw all finished polygons from polygons array
         finishedGroup.innerHTML = "";
         polygons.forEach(p => drawFinalPolygon(p));
@@ -1079,7 +1193,7 @@
             id: currentDotId,
             name, // sensor name from modal input
             description, // description name from modal input
-            sensor, // sensor type/attached sensor name
+            sensor, // sensor type/attached sensor name (will be used for grouping in summary)
             sensorId: sensorIdVal,
             sensorImage,
             price,
@@ -1131,9 +1245,9 @@
                       <td>${imageHtml}</td>
                       <td>${description}</td>
                       <td>${sensorCode}</td>
-                      <td>${sensor}</td>
+                      <td data-sensor-type="${sensor}">${sensor}</td>
                       <td>${roomName}</td>
-                      <td>$${price}</td>
+                      <td><input type="number" value="${price}" class="price-input" onchange="TotalPriceChanges(this)" /></td>
                       <td><button class="delete-btn" data-dotid="${currentDotId}">✕</button></td>`;
         sensorTableBody.appendChild(tr);
         // Sensor row delete handler
@@ -1151,11 +1265,13 @@
             renumberSensors();
 
             updateTotalPrice();
+            updateSensorSummary();
         });
         hideDotModal({
             keepDot: true
         });
         updateTotalPrice();
+        updateSensorSummary();
     });
     // Update total price display and sensor count
     function updateTotalPrice() {
@@ -1164,6 +1280,99 @@
         document.getElementById('totalCount').textContent = productsData.length;
         totalPrice = total;
     }
+    // Update sensor summary table
+    function updateSensorSummary() {
+        const summaryTableBody = document.querySelector('#sensorSummaryTable tbody');
+        const sensorSummary = {};
+
+        // Group sensors by product name (not sensor variable which might be inconsistent)
+        productsData.forEach(sensor => {
+            // Use productName from the sensor table as the key for grouping
+            const sensorType = sensor.sensor || "Unknown";
+            
+            if (!sensorSummary[sensorType]) {
+                sensorSummary[sensorType] = {
+                    name: sensorType,
+                    quantity: 0,
+                    unitPrice: parseFloat(sensor.price) || 0,
+                    totalPrice: 0
+                };
+            }
+            
+            sensorSummary[sensorType].quantity++;
+            
+            // Ensure unit price is consistent for all sensors of the same type
+            // (this should already be handled by TotalPriceChanges, but we'll ensure it)
+            sensorSummary[sensorType].unitPrice = parseFloat(sensor.price) || 0;
+            sensorSummary[sensorType].totalPrice = sensorSummary[sensorType].quantity * sensorSummary[sensorType].unitPrice;
+        });
+
+        // Clear existing rows
+        summaryTableBody.innerHTML = '';
+
+        // Add rows for each sensor type
+        Object.values(sensorSummary).forEach(sensor => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="border p-2">${sensor.name}</td>
+                <td class="border p-2">${sensor.quantity}</td>
+                <td class="border p-2">$${sensor.unitPrice.toFixed(2)}</td>
+                <td class="border p-2">$${sensor.totalPrice.toFixed(2)}</td>
+            `;
+            summaryTableBody.appendChild(row);
+        });
+
+        // Update totals
+        const totalSensors = productsData.length;
+        const totalPrice = Object.values(sensorSummary).reduce((sum, sensor) => sum + sensor.totalPrice, 0);
+
+        document.getElementById('summaryTotalSensors').textContent = totalSensors;
+        document.getElementById('summaryTotalPrice').textContent = `$${totalPrice.toFixed(2)}`;
+    }
+
+    // Handle price changes
+    function TotalPriceChanges(element) {
+        var updatePrice = parseFloat(element.value) || 0;
+        var totalPrice = 0;
+        
+        // Get the sensor type from the row
+        const row = element.closest('tr');
+        const sensorType = row.querySelector('td:nth-child(6)').textContent.trim();
+        
+        // Update all price inputs for the same sensor type
+        document.querySelectorAll('#sensorTable tbody tr').forEach(function(row) {
+            const rowSensorType = row.querySelector('td:nth-child(6)').textContent.trim();
+            if (rowSensorType === sensorType) {
+                const priceInput = row.querySelector('.price-input');
+                if (priceInput) {
+                    priceInput.value = updatePrice;
+                }
+            }
+        });
+        
+        // Calculate total from editable price inputs
+        document.querySelectorAll('.price-input').forEach(function(input) {
+            const price = parseFloat(input.value) || 0;
+            totalPrice += price;
+        });
+        
+        // Update the total price display
+        document.getElementById('totalPrice').innerHTML = totalPrice;
+        
+        // Update the global totalPrice variable
+        window.totalPrice = totalPrice;
+        
+        // Update all prices in productsData array for the same sensor type
+        productsData.forEach((item, index) => {
+            if (item.sensor === sensorType) {
+                productsData[index].price = updatePrice;
+            }
+        });
+
+        // Update the sensor summary table
+        updateSensorSummary();
+    }
+
     // Generate PDF using jsPDF and prepare data in the desired format
     generatePDFBtn.addEventListener('click', function() {
 
@@ -1280,6 +1489,18 @@
                     coordinates: room.vertices // Already stored as relative coordinates
                 }));
 
+                // Get updated prices from the UI inputs
+                document.querySelectorAll('#sensorTable tbody tr').forEach(function(row) {
+                    const dotId = row.id.replace('row-', '');
+                    const priceInput = row.querySelector('.price-input');
+                    if (priceInput && dotId) {
+                        const sensor = productsData.find(s => s.id === dotId);
+                        if (sensor) {
+                            sensor.price = parseFloat(priceInput.value) || 0;
+                        }
+                    }
+                });
+
                 const sensorsData = productsData.map(sensor => {
                     const roomObj = polygons.find(p => p.id === sensor.roomId);
 
@@ -1336,7 +1557,11 @@
                 // Convert object data to strings for FormData
                 formData.append('roomsData', JSON.stringify(roomsData));
                 formData.append('sensorsData', JSON.stringify(sensorsData));
-                formData.append('totalPrice', totalPrice);
+                
+                // Use current total price from totalPrice element
+                const currentTotalPrice = parseFloat(document.getElementById('totalPrice').textContent) || 0;
+                formData.append('totalPrice', currentTotalPrice);
+                
                 formData.append('floorName', floorNameInput.value);
                 formData.append('forUserName', forUserName.value);
                 formData.append('forUserAddress', forUserAddress.value);
