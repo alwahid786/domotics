@@ -206,75 +206,77 @@
 
             <!-- Sensor List Table -->
             <div id="sensorListContainer" style="display: none;">
-                <table id="sensorTable">
-                    <thead>
-                        <tr>
-                            <th>Sr. No</th>
-                            <th>Room</th>
-                            <th>Name</th>
-                            <th>Image</th>
-                            <th>Installation Notes</th>
-                            <th>Code</th>
-                            <th>Sensor</th>
-                            <th>Price</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                    <tfoot>
-                        <tr id="totalCountRow">
-                            <td colspan="8" class="text-end">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div><strong>Total Sensors:</strong></div>
-                                    <div id="totalCount">0</div>
-                                </div>
-                            </td>
-                            <td></td>
-                        </tr>
-                        <tr id="totalRow">
-                            <td colspan="8" class="text-end">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div><strong>Total Price:</strong></div>
-                                    <div>$<span id="totalPrice">0</span></div>
-                                </div>
-                            </td>
-                            <td></td>
-                        </tr>
-                    </tfoot>
-                </table>
-
-                <!-- New Sensor Summary Table -->
-                <div class="mt-4">
-                    <h3 class="text-lg font-semibold mb-2">Sensor Summary</h3>
-                    <table id="sensorSummaryTable" class="w-full border-collapse">
+                <<div class="mt-4 table-responsive">
+                    <table id="sensorTable">
                         <thead>
-                            <tr class="bg-gray-100">
-                                <th class="border p-2">Sensor Name</th>
-                                <th class="border p-2">Quantity</th>
-                                <th class="border p-2">Unit Price</th>
-                                <th class="border p-2">Total Price</th>
+                            <tr>
+                                <th>Sr. No</th>
+                                <th>Room</th>
+                                <th>Name</th>
+                                <th>Image</th>
+                                <th>Installation Notes</th>
+                                <th>Code</th>
+                                <th>Sensor</th>
+                                <th>Price</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                         <tfoot>
-                            <tr class="bg-gray-50">
-                                <td colspan="2" class="border p-2 text-right font-bold">Total Sensors:</td>
-                                <td colspan="2" class="border p-2 font-bold" id="summaryTotalSensors">0</td>
+                            <tr id="totalCountRow">
+                                <td colspan="8" class="text-end">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div><strong>Total Sensors:</strong></div>
+                                        <div id="totalCount">0</div>
+                                    </div>
+                                </td>
+                                <td></td>
                             </tr>
-                            <tr class="bg-gray-50">
-                                <td colspan="2" class="border p-2 text-right font-bold">Total Price:</td>
-                                <td colspan="2" class="border p-2 font-bold" id="summaryTotalPrice">$0</td>
+                            <tr id="totalRow">
+                                <td colspan="8" class="text-end">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div><strong>Total Price:</strong></div>
+                                        <div>$<span id="totalPrice">0</span></div>
+                                    </div>
+                                </td>
+                                <td></td>
                             </tr>
                         </tfoot>
                     </table>
-                </div>
             </div>
 
-            <!-- Generate PDF Button: initially hidden -->
-            <div id="pdfBtnContainer" class="mt-3 mb-2" style="display: none;">
-                <button id="generatePDF" class="btn btn-success">Generate PDF Estimation</button>
-            </div>
+            <!-- New Sensor Summary Table -->
+            <<div class="mt-4 table-responsive">
+                <h3 class="text-lg font-semibold mb-2">Sensor Summary</h3>
+                <table id="sensorSummaryTable" class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border p-2">Sensor Name</th>
+                            <th class="border p-2">Quantity</th>
+                            <th class="border p-2">Unit Price</th>
+                            <th class="border p-2">Total Price</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr class="bg-gray-50">
+                            <td colspan="2" class="border p-2 text-right font-bold">Total Sensors:</td>
+                            <td colspan="2" class="border p-2 font-bold" id="summaryTotalSensors">0</td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td colspan="2" class="border p-2 text-right font-bold">Total Price:</td>
+                            <td colspan="2" class="border p-2 font-bold" id="summaryTotalPrice">$0</td>
+                        </tr>
+                    </tfoot>
+                </table>
         </div>
+    </div>
+
+    <!-- Generate PDF Button: initially hidden -->
+    <div id="pdfBtnContainer" class="mt-3 mb-2" style="display: none;">
+        <button id="generatePDF" class="btn btn-success">Generate PDF Estimation</button>
+    </div>
+    </div>
     </div>
 
     <!-- Sensor (Device) Modal -->
