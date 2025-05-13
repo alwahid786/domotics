@@ -169,7 +169,7 @@
                 </div>
 
                 <!-- Sensor Summary Table -->
-                <div class="mt-4">
+                <div class="mt-4 table-responsive">
                     <h3 class="text-lg font-semibold mb-2">Sensor Summary</h3>
                     <table id="sensorSummaryTable" class="w-full border-collapse">
                         <thead>
