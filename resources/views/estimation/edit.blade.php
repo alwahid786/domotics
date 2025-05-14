@@ -431,7 +431,7 @@
                           <td>${sensor.productCode}</td>
                           <td style="width: 200px">${sensor.productName}</td>
                           <td>${roomName}</td>
-                          <td><input type="number" value="${sensor.sensorPrice}" class="price-input" onchange="TotalPriceChanges(this)" /></td>
+                          <td><input type="number" value="${sensor.sensorPrice.toFixed(2)}" class="price-input" onchange="TotalPriceChanges(this)" /></td>
                           <td><button class="delete-btn" data-dotid="${dotId}">✕</button></td>`;
                 tableBody.appendChild(tr);
 
@@ -1274,11 +1274,14 @@
         updateSensorSummary();
     });
     // Update total price display and sensor count
-    function updateTotalPrice() {
-        const total = productsData.reduce((acc, item) => acc + Number(item.price), 0);
-        document.getElementById('totalPrice').textContent = total;
-        document.getElementById('totalCount').textContent = productsData.length;
-        totalPrice = total;
+   function updateTotalPrice() {
+    const total = productsData.reduce((acc, item) => acc + Number(item.price), 0);
+    const roundedTotal = total.toFixed(2); // Keeps two decimal places as a string
+    
+    document.getElementById('totalPrice').textContent = roundedTotal;
+    document.getElementById('totalCount').textContent = productsData.length;
+    
+    totalPrice = parseFloat(roundedTotal); // Store as number for further calculations
     }
     // Update sensor summary table
     function updateSensorSummary() {
@@ -1353,19 +1356,19 @@
         // Calculate total from editable price inputs
         document.querySelectorAll('.price-input').forEach(function(input) {
             const price = parseFloat(input.value) || 0;
-            totalPrice += price;
+            totalPrice += price.toFixed(2);
         });
         
         // Update the total price display
-        document.getElementById('totalPrice').innerHTML = totalPrice;
+        document.getElementById('totalPrice').innerHTML = totalPrice.toFixed(2);
         
         // Update the global totalPrice variable
-        window.totalPrice = totalPrice;
+        window.totalPrice = totalPrice.toFixed(2);
         
         // Update all prices in productsData array for the same sensor type
         productsData.forEach((item, index) => {
             if (item.sensor === sensorType) {
-                productsData[index].price = updatePrice;
+                productsData[index].price = updatePrice.toFixed(2);
             }
         });
 
@@ -1523,7 +1526,7 @@
                         // Properties for backend/PHP template
                         name: sensor.name,
                         note: sensor.description,
-                        price: sensor.price,
+                        price: sensor.price.toFixed(2),
                         room_id: sensor.roomId,
                         type: sensor.sensor,
                         sensor_id: sensor.sensorId,
@@ -1540,7 +1543,7 @@
                         sensorName: sensor.name,
                         sensorDescription: sensor.description,
                         sensorType: sensor.sensor,
-                        sensorPrice: sensor.price,
+                        sensorPrice: sensor.price.toFixed(2),
                         sensorId: sensor.sensorId,
                         sensorImage: imagePath, // Pass the actual image path string
                         roomName: roomObj ? roomObj.name : '',
