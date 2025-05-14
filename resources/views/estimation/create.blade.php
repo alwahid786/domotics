@@ -491,9 +491,8 @@
         fetchRooms();
 
         // Close handlers for sensor modal
-        function hideDotModal({
-            keepDot = false
-        }) {
+        function hideDotModal({ keepDot = false}) 
+        {
             if (!keepDot && temporaryDotId) {
                 const tempDot = document.getElementById(temporaryDotId);
                 if (tempDot) {
@@ -989,23 +988,26 @@
                             onchange="TotalPriceChanges(this)" />
                     </td>
                       <td><button class="delete-btn" data-dotid="${currentDotId}">✕</button></td>`;
-            sensorTableBody.appendChild(tr);
+                    sensorTableBody.appendChild(tr);
             // Sensor row delete handler
-            tr.querySelector('.delete-btn').addEventListener('click', function() {
-                const dotId = this.getAttribute('data-dotid');
-                const dotElem = document.getElementById(dotId);
-                if (dotElem) dotElem.remove();
-                const labelElem = document.getElementById('label-' + dotId);
-                if (labelElem) labelElem.remove();
-                const row = document.getElementById('row-' + dotId);
-                if (row) row.remove();
-                productsData = productsData.filter(item => item.id !== dotId);
-
-                // Renumber all remaining sensors after deletion
-                renumberSensors();
-
-                updateTotalPrice();
-            });
+          
+            // Sensor row delete handler
+                        tr.querySelector('.delete-btn').addEventListener('click', function() {
+                        const dotId = this.getAttribute('data-dotid');
+                        const dotElem = document.getElementById(dotId);
+                        if (dotElem) dotElem.remove();
+                        const labelElem = document.getElementById('label-' + dotId);
+                        if (labelElem) labelElem.remove();
+                        const row = document.getElementById('row-' + dotId);
+                        if (row) row.remove();
+                        productsData = productsData.filter(item => item.id !== dotId);
+                        
+                        // Renumber all remaining sensors after deletion
+                        renumberSensors();
+                        
+                        updateTotalPrice();
+                        updateSensorSummary(); // Add this line to update sensor summary
+                        });
             hideDotModal({
                 keepDot: true
             });
@@ -1019,45 +1021,57 @@
             document.getElementById('totalCount').textContent = productsData.length;
             totalPrice = total;
         }
+    
         function updateSensorSummary() {
-            const summaryTableBody = document.querySelector('#sensorSummaryTable tbody');
-            const sensorSummary = {};
-
-            // Group sensors by name and calculate quantities and totals
-            productsData.forEach(sensor => {
-                if (!sensorSummary[sensor.sensor]) {
-                    sensorSummary[sensor.sensor] = {
-                        name: sensor.sensor,
-                        quantity: 0,
-                        unitPrice: parseFloat(sensor.price) || 0,
-                        totalPrice: 0
-                    };
-                }
-                sensorSummary[sensor.sensor].quantity++;
-                sensorSummary[sensor.sensor].totalPrice = sensorSummary[sensor.sensor].quantity * sensorSummary[sensor.sensor].unitPrice;
-            });
-
-            // Clear existing rows
-            summaryTableBody.innerHTML = '';
-
-            // Add rows for each sensor type
-            Object.values(sensorSummary).forEach(sensor => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="border p-2">${sensor.name}</td>
-                    <td class="border p-2">${sensor.quantity}</td>
-                    <td class="border p-2">$${sensor.unitPrice.toFixed(2)}</td>
-                    <td class="border p-2">$${sensor.totalPrice.toFixed(2)}</td>
-                `;
-                summaryTableBody.appendChild(row);
-            });
-
-            // Update totals
-            const totalSensors = productsData.length;
-            const totalPrice = Object.values(sensorSummary).reduce((sum, sensor) => sum + sensor.totalPrice, 0);
-
-            document.getElementById('summaryTotalSensors').textContent = totalSensors;
-            document.getElementById('summaryTotalPrice').textContent = `$${totalPrice.toFixed(2)}`;
+        const summaryTableBody = document.querySelector('#sensorSummaryTable tbody');
+        const sensorSummary = {};
+        
+        // Group sensors by name and calculate quantities and totals using actual table values
+        productsData.forEach(sensor => {
+        // Get the actual price from the table input instead of stored value
+        const tableRow = document.getElementById('row-' + sensor.id);
+        const priceInput = tableRow ? tableRow.querySelector('.price-input') : null;
+        const actualPrice = priceInput ? parseFloat(priceInput.value) || 0 : sensor.price;
+        
+        if (!sensorSummary[sensor.sensor]) {
+        sensorSummary[sensor.sensor] = {
+        name: sensor.sensor,
+        quantity: 0,
+        unitPrice: actualPrice,
+        totalPrice: 0
+        };
+        }
+        
+        sensorSummary[sensor.sensor].quantity++;
+        // Use the actual price from table for calculations
+        sensorSummary[sensor.sensor].unitPrice = actualPrice;
+        sensorSummary[sensor.sensor].totalPrice = sensorSummary[sensor.sensor].quantity * actualPrice;
+        });
+        
+        // Clear existing rows
+        summaryTableBody.innerHTML = '';
+        
+        // Add rows for each sensor type
+        Object.values(sensorSummary).forEach(sensor => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+        <td class="border p-2">${sensor.name}</td>
+        <td class="border p-2">${sensor.quantity}</td>
+        <td class="border p-2">$${sensor.unitPrice.toFixed(2)}</td>
+        <td class="border p-2">$${sensor.totalPrice.toFixed(2)}</td>
+        `;
+        summaryTableBody.appendChild(row);
+        });
+        
+        // Update totals using actual prices from table
+        const totalSensors = productsData.length;
+        let totalPrice = 0;
+        document.querySelectorAll('.price-input').forEach(function(input) {
+        totalPrice += parseFloat(input.value) || 0;
+        });
+        
+        document.getElementById('summaryTotalSensors').textContent = totalSensors;
+        document.getElementById('summaryTotalPrice').textContent = `$${totalPrice.toFixed(2)}`;
         }
         function TotalPriceChanges(element) {
             var updatePrice = parseFloat(element.value) || 0;
@@ -1082,6 +1096,7 @@
             // Calculate total from editable price inputs
             document.querySelectorAll('.price-input').forEach(function(input) {
                 const price = parseFloat(input.value) || 0;
+                console.log(price);
                 totalPrice += price;
                 DiscountedPrice += price; // Add to discounted price total
             });
@@ -1228,55 +1243,110 @@
                         coordinates: room.vertices // Already stored as relative coordinates
                     }));
 
-                    const sensorsData = productsData.map(sensor => {
-                        const roomObj = polygons.find(p => p.id === sensor.roomId);
+                    // const sensorsData = productsData.map(sensor => {
+                    //     const roomObj = polygons.find(p => p.id === sensor.roomId);
 
-                        // Extract image path from sensorImage (could be object or string)
-                        let imagePath = null;
-                        if (typeof sensor.sensorImage === 'object' && sensor.sensorImage) {
-                            imagePath = sensor.sensorImage.image || '';
-                        } else {
-                            imagePath = sensor.sensorImage || '';
-                        }
+                    //     // Extract image path from sensorImage (could be object or string)
+                    //     let imagePath = null;
+                    //     if (typeof sensor.sensorImage === 'object' && sensor.sensorImage) {
+                    //         imagePath = sensor.sensorImage.image || '';
+                    //     } else {
+                    //         imagePath = sensor.sensorImage || '';
+                    //     }
 
-                        // Trim any URL parts to get just the relative path
-                        if (imagePath && imagePath.includes('/storage/')) {
-                            const parts = imagePath.split('/storage/');
-                            imagePath = parts[parts.length -
-                                1]; // Get the last part after '/storage/'
-                        }
+                    //     // Trim any URL parts to get just the relative path
+                    //     if (imagePath && imagePath.includes('/storage/')) {
+                    //         const parts = imagePath.split('/storage/');
+                    //         imagePath = parts[parts.length -
+                    //             1]; // Get the last part after '/storage/'
+                    //     }
 
-                        return {
-                            // Properties for backend/PHP template
-                            name: sensor.name,
-                            note: sensor.description,
-                            price: sensor.price,
-                            room_id: sensor.roomId,
-                            type: sensor.sensor,
-                            sensor_id: sensor.sensorId,
-                            image: imagePath, // Plain path for storage
-                            raw_image_path: imagePath, // Path without processing
-                            image_url: "{{ asset('storage') }}/" +
-                                imagePath, // Full URL for browser
-                            coordinates: {
-                                x: sensor.x,
-                                y: sensor.y
-                            },
+                    //     return {
+                    //         // Properties for backend/PHP template
+                    //         name: sensor.name,
+                    //         note: sensor.description,
+                    //         price: sensor.price,
+                    //         room_id: sensor.roomId,
+                    //         type: sensor.sensor,
+                    //         sensor_id: sensor.sensorId,
+                    //         image: imagePath, // Plain path for storage
+                    //         raw_image_path: imagePath, // Path without processing
+                    //         image_url: "{{ asset('storage') }}/" +
+                    //             imagePath, // Full URL for browser
+                    //         coordinates: {
+                    //             x: sensor.x,
+                    //             y: sensor.y
+                    //         },
 
-                            // Properties for frontend/JavaScript
-                            sensorName: sensor.name,
-                            sensorDescription: sensor.description,
-                            sensorType: sensor.sensor,
-                            sensorPrice: sensor.price,
-                            sensorId: sensor.sensorId,
-                            sensorImage: imagePath, // Pass the actual image path string
-                            roomName: roomObj ? roomObj.name : '',
-                            sensorCoordinates: {
-                                x: sensor.x,
-                                y: sensor.y
-                            },
-                            roomId: sensor.roomId
-                        };
+                    //         // Properties for frontend/JavaScript
+                    //         sensorName: sensor.name,
+                    //         sensorDescription: sensor.description,
+                    //         sensorType: sensor.sensor,
+                    //         sensorPrice: sensor.price,
+                    //         sensorId: sensor.sensorId,
+                    //         sensorImage: imagePath, // Pass the actual image path string
+                    //         roomName: roomObj ? roomObj.name : '',
+                    //         sensorCoordinates: {
+                    //             x: sensor.x,
+                    //             y: sensor.y
+                    //         },
+                    //         roomId: sensor.roomId
+                    //     };
+                    // });
+                    const sensorsData = productsData.map((sensor, index) => {
+                    const roomObj = polygons.find(p => p.id === sensor.roomId);
+                    
+                    // Extract image path from sensorImage (could be object or string)
+                    let imagePath = null;
+                    if (typeof sensor.sensorImage === 'object' && sensor.sensorImage) {
+                    imagePath = sensor.sensorImage.image || '';
+                    } else {
+                    imagePath = sensor.sensorImage || '';
+                    }
+                    
+                    // Trim any URL parts to get just the relative path
+                    if (imagePath && imagePath.includes('/storage/')) {
+                    const parts = imagePath.split('/storage/');
+                    imagePath = parts[parts.length -
+                    1]; // Get the last part after '/storage/'
+                    }
+                    
+                    // Get the actual price from the table input instead of stored value
+                    const tableRow = document.getElementById('row-' + sensor.id);
+                    const priceInput = tableRow ? tableRow.querySelector('.price-input') : null;
+                    const actualPrice = priceInput ? parseFloat(priceInput.value) || 0 : sensor.price;
+                    
+                    return {
+                    // Properties for backend/PHP template
+                    name: sensor.name,
+                    note: sensor.description,
+                    price: actualPrice, // Use actual price from table input
+                    room_id: sensor.roomId,
+                    type: sensor.sensor,
+                    sensor_id: sensor.sensorId,
+                    image: imagePath, // Plain path for storage
+                    raw_image_path: imagePath, // Path without processing
+                    image_url: "{{ asset('storage') }}/" +
+                    imagePath, // Full URL for browser
+                    coordinates: {
+                    x: sensor.x,
+                    y: sensor.y
+                    },
+                    
+                    // Properties for frontend/JavaScript
+                    sensorName: sensor.name,
+                    sensorDescription: sensor.description,
+                    sensorType: sensor.sensor,
+                    sensorPrice: actualPrice, // Use actual price from table input
+                    sensorId: sensor.sensorId,
+                    sensorImage: imagePath, // Pass the actual image path string
+                    roomName: roomObj ? roomObj.name : '',
+                    sensorCoordinates: {
+                    x: sensor.x,
+                    y: sensor.y
+                    },
+                    roomId: sensor.roomId
+                    };
                     });
 
                     // Calculate final DiscountedPrice before sending
