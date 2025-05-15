@@ -1337,7 +1337,8 @@
     // Handle price changes
     function TotalPriceChanges(element) {
         var updatePrice = parseFloat(element.value) || 0;
-        var totalPrice = 0;
+        let totalPrice = 0;
+        // var totalPrice = 0;
         
         // Get the sensor type from the row
         const row = element.closest('tr');
@@ -1354,17 +1355,17 @@
             }
         });
         
-        // Calculate total from editable price inputs
+        
         document.querySelectorAll('.price-input').forEach(function(input) {
-            const price = parseFloat(input.value) || 0;
-            totalPrice += price.toFixed(2);
+        const price = parseFloat(input.value) || 0;
+        totalPrice += parseFloat(price.toFixed(2)); // Ensures numeric addition
         });
         
         // Update the total price display
-        document.getElementById('totalPrice').innerHTML = totalPrice.toFixed(2);
+        document.getElementById('totalPrice').innerHTML = totalPrice.toFixed(2); // Display in proper 2-decimal format
         
         // Update the global totalPrice variable
-        window.totalPrice = totalPrice.toFixed(2);
+        window.totalPrice = totalPrice;
         
         // Update all prices in productsData array for the same sensor type
         productsData.forEach((item, index) => {
@@ -1563,8 +1564,8 @@
                 formData.append('sensorsData', JSON.stringify(sensorsData));
                 
                 // Use current total price from totalPrice element
-                const currentTotalPrice = parseFloat(document.getElementById('totalPrice').textContent) || 0;
-                formData.append('totalPrice', currentTotalPrice);
+                // const currentTotalPrice = parseFloat(document.getElementById('totalPrice').textContent) || 0;
+                formData.append('totalPrice', totalPrice.toFixed(2));
                 
                 formData.append('floorName', floorNameInput.value);
                 formData.append('forUserName', forUserName.value);
