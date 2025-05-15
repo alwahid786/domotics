@@ -210,7 +210,7 @@
         }
 
         $totalQuantity = array_sum(array_column($mergedSensors, 'quantity'));
-        $totalPrice = array_sum(array_column($mergedSensors, 'total'));
+        // $totalPrice = array_sum(array_column($mergedSensors, 'total'));
         @endphp
         {{-- <h5 class="fw-bold mb-3">Sensor Summary (Grouped by Product ID)</h5> --}}
 
@@ -237,8 +237,8 @@
                 <tr>
                     <td colspan="2" style="border: 1px solid #000;"><strong>Total Sensors:</strong></td>
                     <td style="border: 1px solid #000;">{{ $totalQuantity }}</td>
-                    <td style="border: 1px solid #000;"><strong>Total Price:</strong> ${{ number_format($totalPrice, 2)
-                        }}</td>
+                    <td style="border: 1px solid #000;"><strong>Total Price:</strong> <strong>${{
+                            number_format($totalPrice, 2) }}</strong> </td>
                 </tr>
             </tbody>
         </table>
