@@ -1275,10 +1275,13 @@
     });
     // Update total price display and sensor count
     function updateTotalPrice() {
-        const total = productsData.reduce((acc, item) => acc + Number(item.price), 0);
-        document.getElementById('totalPrice').textContent = total;
-        document.getElementById('totalCount').textContent = productsData.length;
-        totalPrice = total;
+    const total = productsData.reduce((acc, item) => acc + Number(item.price), 0);
+    const formattedTotal = parseFloat(total.toFixed(2)); // ensures float with 2 decimals
+    
+    document.getElementById('totalPrice').textContent = formattedTotal;
+    document.getElementById('totalCount').textContent = productsData.length;
+    
+    totalPrice = formattedTotal; // if you need to use this variable elsewhere
     }
     // Update sensor summary table
     function updateSensorSummary() {

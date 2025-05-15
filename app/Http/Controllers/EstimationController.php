@@ -536,10 +536,10 @@ class EstimationController extends Controller
         $user = Auth::user();
         $user_id = $request->user_id ? $request->user_id : $user->id;
         $user = DB::table('users')->where('id', $user_id)->first();
-        Mail::to($user->email)
-            ->cc('dott.izzo@mydomotics.it')
-            ->cc('preventivi@mydomotics.it')
-            ->send(new SendEstimation($pdfFileName));
+        // Mail::to($user->email)
+        //     ->cc('dott.izzo@mydomotics.it')
+        //     ->cc('preventivi@mydomotics.it')
+        //     ->send(new SendEstimation($pdfFileName));
 
         if ($productData) {
 
