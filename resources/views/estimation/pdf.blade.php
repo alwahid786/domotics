@@ -184,42 +184,42 @@
             </tfoot>
         </table>
         <br><br>
-        @php
-        $groupedSensors = collect($sensorsData)->groupBy('product_code');
-        @endphp
+
 
         <h5 class="fw-bold mb-3">Sensor Summary</h5>
+
         @php
-        // Merge sensors with same name and unit price
         $mergedSensors = [];
 
-        foreach ($groupedSensors as $group) {
-        $name = $group[0]->name ?? 'N/A';
-        $unitPrice = $group[0]->price;
-        $key = $name . '|' . $unitPrice;
+        foreach ($sensorsData as $sensor) {
+        $productId = $sensor->product_id;
 
-        if (!isset($mergedSensors[$key])) {
-        $mergedSensors[$key] = [
-        'name' => $name,
-        'unitPrice' => $unitPrice,
+        if (!isset($mergedSensors[$productId])) {
+        $mergedSensors[$productId] = [
+        'name' => $sensor->name ?? 'N/A',
+        'productCode' => $sensor->product_code ?? 'N/A',
+        'unitPrice' => $sensor->price ?? 0,
         'quantity' => 0,
-        'total' => 0
+        'total' => 0,
         ];
         }
 
-        $mergedSensors[$key]['quantity'] += count($group);
-        $mergedSensors[$key]['total'] = $mergedSensors[$key]['quantity'] * $unitPrice;
+        $mergedSensors[$productId]['quantity'] += 1;
+        $mergedSensors[$productId]['total'] = $mergedSensors[$productId]['quantity'] *
+        $mergedSensors[$productId]['unitPrice'];
         }
 
-        $totalQuantity = 0;
-        $totalPrice = 0;
+        $totalQuantity = array_sum(array_column($mergedSensors, 'quantity'));
+        $totalPrice = array_sum(array_column($mergedSensors, 'total'));
         @endphp
+        {{-- <h5 class="fw-bold mb-3">Sensor Summary (Grouped by Product ID)</h5> --}}
 
         <table class="table table-bordered" width="100%" cellspacing="0" cellpadding="5"
             style="border-collapse: collapse;">
             <thead style="background-color: #f8f9fa;">
                 <tr>
                     <th style="border: 1px solid #dee2e6;">Sensor Name</th>
+                    {{-- <th style="border: 1px solid #dee2e6;">Product Code</th> --}}
                     <th style="border: 1px solid #dee2e6;">Quantity</th>
                     <th style="border: 1px solid #dee2e6;">Unit Price</th>
                     <th style="border: 1px solid #dee2e6;">Total Price</th>
@@ -227,28 +227,22 @@
             </thead>
             <tbody>
                 @foreach ($mergedSensors as $sensor)
-                @php
-                $totalQuantity += $sensor['quantity'];
-                $totalPrice += $sensor['total'];
-                @endphp
                 <tr>
                     <td style="border: 1px solid #dee2e6;">{{ $sensor['name'] }}</td>
+                    {{-- <td style="border: 1px solid #dee2e6;">{{ $sensor['productCode'] }}</td> --}}
                     <td style="border: 1px solid #dee2e6;">{{ $sensor['quantity'] }}</td>
                     <td style="border: 1px solid #dee2e6;">${{ number_format($sensor['unitPrice'], 2) }}</td>
                     <td style="border: 1px solid #dee2e6;">${{ number_format($sensor['total'], 2) }}</td>
                 </tr>
                 @endforeach
                 <tr>
-                    <td style="border: 1px solid #dee2e6;"><strong>Total Sensors:</strong></td>
-                    <td colspan="3" style="border: 1px solid #dee2e6;">{{ $totalQuantity }}</td>
-                </tr>
-                <tr>
-                    <td style="border: 1px solid #dee2e6;"><strong>Total Price:</strong></td>
-                    <td colspan="3" style="border: 1px solid #dee2e6;">${{ number_format($totalPrice, 2) }}</td>
+                    <td colspan="2" style="border: 1px solid #dee2e6;"><strong>Total Sensors:</strong></td>
+                    <td style="border: 1px solid #dee2e6;">{{ $totalQuantity }}</td>
+                    <td colspan="2" style="border: 1px solid #dee2e6;"><strong>Total Price:</strong> ${{
+                        number_format($totalPrice, 2) }}</td>
                 </tr>
             </tbody>
         </table>
-
         <p class="fw-bold">Delivery time</p>
         <p><b>Tempistica di fornitura</b></p>
 
