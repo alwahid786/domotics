@@ -23,7 +23,13 @@ class EstimationController extends Controller
             ->where('model_has_roles.model_id', $user->id)
             ->select('roles.id')
             ->first();
-
+            
+        // $role = DB::table('roles')
+        //     ->join('model_has_roles', 'roles.id', '=', 'model_has_roles.role_id')
+        //     ->where('model_has_roles.model_id', $user->id)
+        //     ->where('model_has_roles.model_type', get_class($user)) // very important
+        //     ->select('roles.id')
+        //     ->first();
         if ($user->hasRole(['Super Admin', 'Admin'])) {
             $estimations = DB::table('estimations')
                 ->join('users', 'users.id', '=', 'estimations.user_id')
@@ -38,6 +44,22 @@ class EstimationController extends Controller
                 ->orderBy('estimations.id', 'desc')
                 ->paginate(25);
         }
+
+        // if ($role && ($role->id == 1 || $role->id == 2)) {
+        //     $estimations = DB::table('estimations')
+        //         ->join('users', 'users.id', '=', 'estimations.user_id')
+        //         ->select('estimations.*', 'users.name as user_name')
+        //         ->orderBy('estimations.id', 'desc')
+        //         ->paginate(25);
+        // } else {
+        //     $estimations = DB::table('estimations')
+        //         ->join('users', 'users.id', '=', 'estimations.user_id')
+        //         ->select('estimations.*', 'users.name as user_name')
+        //         ->where('estimations.user_id', '=', $user->id)
+        //         ->orderBy('estimations.id', 'desc')
+        //         ->paginate(25);
+        // }
+
 
         $roleId = $role->id;
         return view('estimation.index', compact('estimations', 'roleId'));
