@@ -983,10 +983,11 @@
                       <td>${description}</td>
                       <td>${sensorCode}</td>
                       <td>${sensor}</td>    
-                      <td>
-                        <input type="number" value="${price}" required ${RoleId===1 || RoleId===2 ? 'readonly' : '' } class="price-input"
-                            onchange="TotalPriceChanges(this)" />
-                    </td>
+                   <td>
+                   <input type="number" value="${parseFloat(price).toFixed(2)}" required ${RoleId===1 || RoleId===2 ? 'readonly' : '' }
+                    class="price-input" step="0.01" min="0.01" onblur="enforceTwoDecimalFormat(this)" onchange="TotalPriceChanges(this)"
+                    inputmode="decimal" />
+                </td>
                       <td><button class="delete-btn" data-dotid="${currentDotId}">✕</button></td>`;
                     sensorTableBody.appendChild(tr);
             // Sensor row delete handler
@@ -1014,6 +1015,21 @@
             updateTotalPrice();
             updateSensorSummary();
         });
+       function enforceTwoDecimalFormat(input) {
+        let value = input.value.trim();
+        
+        // If empty or invalid number
+        if (!value || isNaN(value)) {
+        input.value = "0.01";
+        return;
+        }
+        
+        let floatVal = parseFloat(value);
+        
+        // Enforce minimum value
+        if (floatVal < 0.01) { input.value="0.01" ; return; } // Round to exactly 2 decimal places
+            input.value=floatVal.toFixed(2); // Re-trigger change manually (optional, if onchange doesn't fire) //
+            input.dispatchEvent(new Event('change')); }
         // Update total price display and sensor count
       function updateTotalPrice() {
         const total = productsData.reduce((acc, item) => acc + Number(item.price), 0);
@@ -1092,17 +1108,22 @@
                     const priceInput = row.querySelector('.price-input');
                     if (priceInput) {
                         priceInput.value = updatePrice;
+                        // console.log(priceInput.value);
                     }
                 }
             });
             
             // Calculate total from editable price inputs
-            document.querySelectorAll('.price-input').forEach(function(input) {
-                const price = parseFloat(input.value) || 0;
-                // console.log(price);
-                totalPrice += price.toFixed(2);
-                DiscountedPrice += price.toFixed(2);// Add to discounted price total
+        document.querySelectorAll('.price-input').forEach(function(input) {
+            const price = parseFloat(input.value) || 0;
+            totalPrice += price;
+            DiscountedPrice += price;
+
             });
+            
+            // Round and display to 2 decimal places
+            totalPrice = parseFloat(totalPrice.toFixed(2));
+            DiscountedPrice = parseFloat(DiscountedPrice.toFixed(2));
             
             // Update the total price display
             document.getElementById('totalPrice').innerHTML = totalPrice;
