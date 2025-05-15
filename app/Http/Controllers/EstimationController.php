@@ -431,7 +431,7 @@ class EstimationController extends Controller
             $cleanimagePath = 'uploads/estimations/' . $cleanimageName;
         }
 
-        if ($request->user_id) {
+        if ($request->user_id != null && $request->user_id != '') {
             DB::table('estimations')
                 ->where('id', $estimationId)
                 ->update([

@@ -1390,12 +1390,12 @@
                     formData.append('forUserName', forUserName.value);
                     formData.append('forUserAddress', forUserAddress.value);
                     
-                    if(user_id.value){
-                        formData.append('user_id', user_id.value);
-                    }else{
-                        formData.append('user_id', '');
+                  if (typeof user_id !== 'undefined' && user_id !== null && user_id.value !== undefined && user_id.value !== null &&  user_id.value !== '') {
+                    formData.append('user_id', user_id.value);
+                    } else {
+                    formData.append('user_id', '');
                     }
-
+                  
                     // Make sure the image blob is valid before sending
                     if (imageFile instanceof Blob) {
                         formData.append('image', imageFile, 'canvas-image.png');
