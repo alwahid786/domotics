@@ -431,7 +431,7 @@
                           <td>${sensor.productCode}</td>
                           <td style="width: 200px">${sensor.productName}</td>
                           <td>${roomName}</td>
-                          <td><input type="number" value="${sensor.sensorPrice.toFixed(2)}" class="price-input" onchange="TotalPriceChanges(this)" /></td>
+                          <td><input type="number" value="${sensor.sensorPrice}" class="price-input" onchange="TotalPriceChanges(this)" /></td>
                           <td><button class="delete-btn" data-dotid="${dotId}">✕</button></td>`;
                 tableBody.appendChild(tr);
 
@@ -1570,7 +1570,8 @@
                 formData.append('forUserName', forUserName.value);
                 formData.append('forUserAddress', forUserAddress.value);
                 
-                if(user_id.value){
+               if (typeof user_id !== 'undefined' && user_id !== null && user_id.value !== undefined && user_id.value !== null &&
+                user_id.value !== '') {
                     formData.append('user_id', user_id.value);
                 }else{
                     formData.append('user_id', '');
