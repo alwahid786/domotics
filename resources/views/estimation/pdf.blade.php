@@ -189,44 +189,62 @@
         @endphp
 
         <h5 class="fw-bold mb-3">Sensor Summary</h5>
-        <table class="table table-bordered">
-            <thead class="table-light">
+        @php
+        // Merge sensors with same name and unit price
+        $mergedSensors = [];
+
+        foreach ($groupedSensors as $group) {
+        $name = $group[0]->name ?? 'N/A';
+        $unitPrice = $group[0]->price;
+        $key = $name . '|' . $unitPrice;
+
+        if (!isset($mergedSensors[$key])) {
+        $mergedSensors[$key] = [
+        'name' => $name,
+        'unitPrice' => $unitPrice,
+        'quantity' => 0,
+        'total' => 0
+        ];
+        }
+
+        $mergedSensors[$key]['quantity'] += count($group);
+        $mergedSensors[$key]['total'] = $mergedSensors[$key]['quantity'] * $unitPrice;
+        }
+
+        $totalQuantity = 0;
+        $totalPrice = 0;
+        @endphp
+
+        <table class="table table-bordered" width="100%" cellspacing="0" cellpadding="5"
+            style="border-collapse: collapse;">
+            <thead style="background-color: #f8f9fa;">
                 <tr>
-                    <th>Sensor Name</th>
-                    <th>Quantity</th>
-                    <th>Unit Price</th>
-                    <th>Total Price</th>
+                    <th style="border: 1px solid #dee2e6;">Sensor Name</th>
+                    <th style="border: 1px solid #dee2e6;">Quantity</th>
+                    <th style="border: 1px solid #dee2e6;">Unit Price</th>
+                    <th style="border: 1px solid #dee2e6;">Total Price</th>
                 </tr>
             </thead>
             <tbody>
+                @foreach ($mergedSensors as $sensor)
                 @php
-                $totalQuantity = 0;
-                $totalCost = 0;
-                @endphp
-                @foreach ($groupedSensors as $group)
-                @php
-                $name = $group[0]->name ?? 'N/A';
-                $unitPrice = $group[0]->price;
-                $quantity = $group->count();
-                $groupTotal = $quantity * $unitPrice;
-
-                $totalQuantity += $quantity;
-                $totalCost += $groupTotal;
+                $totalQuantity += $sensor['quantity'];
+                $totalPrice += $sensor['total'];
                 @endphp
                 <tr>
-                    <td>{{ $name }}</td>
-                    <td>{{ $quantity }}</td>
-                    <td>${{ number_format($unitPrice, 2) }}</td>
-                    <td>${{ number_format($groupTotal, 2) }}</td>
+                    <td style="border: 1px solid #dee2e6;">{{ $sensor['name'] }}</td>
+                    <td style="border: 1px solid #dee2e6;">{{ $sensor['quantity'] }}</td>
+                    <td style="border: 1px solid #dee2e6;">${{ number_format($sensor['unitPrice'], 2) }}</td>
+                    <td style="border: 1px solid #dee2e6;">${{ number_format($sensor['total'], 2) }}</td>
                 </tr>
                 @endforeach
                 <tr>
-                    <td colspan="1"><strong>Total Sensors:</strong></td>
-                    <td colspan="3">{{ $totalQuantity }}</td>
+                    <td style="border: 1px solid #dee2e6;"><strong>Total Sensors:</strong></td>
+                    <td colspan="3" style="border: 1px solid #dee2e6;">{{ $totalQuantity }}</td>
                 </tr>
                 <tr>
-                    <td colspan="1"><strong>Total Price:</strong></td>
-                    <td colspan="3">${{ number_format($totalCost, 2) }}</td>
+                    <td style="border: 1px solid #dee2e6;"><strong>Total Price:</strong></td>
+                    <td colspan="3" style="border: 1px solid #dee2e6;">${{ number_format($totalPrice, 2) }}</td>
                 </tr>
             </tbody>
         </table>
