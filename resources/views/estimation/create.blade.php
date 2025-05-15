@@ -1015,11 +1015,14 @@
             updateSensorSummary();
         });
         // Update total price display and sensor count
-        function updateTotalPrice() {
-            const total = productsData.reduce((acc, item) => acc + Number(item.price), 0);
-            document.getElementById('totalPrice').textContent = total;
-            document.getElementById('totalCount').textContent = productsData.length;
-            totalPrice = total;
+      function updateTotalPrice() {
+        const total = productsData.reduce((acc, item) => acc + Number(item.price), 0);
+        const roundedTotal = total.toFixed(2); // Keep as string with exactly 2 decimal places
+        
+        document.getElementById('totalPrice').textContent = roundedTotal; // Show 2 decimals
+        document.getElementById('totalCount').textContent = productsData.length;
+        
+        totalPrice = parseFloat(roundedTotal); // Keep numeric value internally
         }
     
         function updateSensorSummary() {
@@ -1096,16 +1099,16 @@
             // Calculate total from editable price inputs
             document.querySelectorAll('.price-input').forEach(function(input) {
                 const price = parseFloat(input.value) || 0;
-                console.log(price);
-                totalPrice += price;
-                DiscountedPrice += price; // Add to discounted price total
+                // console.log(price);
+                totalPrice += price.toFixed(2);
+                DiscountedPrice += price.toFixed(2);// Add to discounted price total
             });
             
             // Update the total price display
             document.getElementById('totalPrice').innerHTML = totalPrice;
             
             // Update the global totalPrice variable
-            totalPrice = totalPrice;
+            totalPrice = totalPrice.toFixed(2);
             
             // Update all prices in productsData array for the same sensor type
             productsData.forEach((item, index) => {
