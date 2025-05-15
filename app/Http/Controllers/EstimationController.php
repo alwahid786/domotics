@@ -24,7 +24,7 @@ class EstimationController extends Controller
             ->select('roles.id')
             ->first();
 
-        if ($role->id == 1 || $role->id == 2) {
+        if ($user->hasRole(['Super Admin', 'Admin'])) {
             $estimations = DB::table('estimations')
                 ->join('users', 'users.id', '=', 'estimations.user_id')
                 ->select('estimations.*', 'users.name as user_name')
