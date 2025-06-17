@@ -1,9 +1,9 @@
 <?php return array (
-  1 => 'concurrency',
-  5 => 'hashing',
-  10 => 'broadcasting',
-  11 => 'cors',
-  12 => 'view',
+  2 => 'cors',
+  5 => 'broadcasting',
+  7 => 'view',
+  8 => 'concurrency',
+  13 => 'hashing',
   'app' => 
   array (
     'name' => 'Domotics',
@@ -158,8 +158,8 @@
       'file' => 
       array (
         'driver' => 'file',
-        'path' => '/var/www/html/office/domotics/storage/framework/cache/data',
-        'lock_path' => '/var/www/html/office/domotics/storage/framework/cache/data',
+        'path' => '/var/www/html/domotics/storage/framework/cache/data',
+        'lock_path' => '/var/www/html/domotics/storage/framework/cache/data',
       ),
       'memcached' => 
       array (
@@ -337,7 +337,7 @@
       'enabled' => true,
       'open' => NULL,
       'driver' => 'file',
-      'path' => '/var/www/html/office/domotics/storage/debugbar',
+      'path' => '/var/www/html/domotics/storage/debugbar',
       'connection' => NULL,
       'provider' => '',
       'hostname' => '127.0.0.1',
@@ -486,10 +486,10 @@
     'convert_entities' => true,
     'options' => 
     array (
-      'font_dir' => '/var/www/html/office/domotics/storage/fonts',
-      'font_cache' => '/var/www/html/office/domotics/storage/fonts',
+      'font_dir' => '/var/www/html/domotics/storage/fonts',
+      'font_cache' => '/var/www/html/domotics/storage/fonts',
       'temp_dir' => '/tmp',
-      'chroot' => '/var/www/html/office/domotics',
+      'chroot' => '/var/www/html/domotics',
       'allowed_protocols' => 
       array (
         'file://' => 
@@ -536,14 +536,14 @@
       'local' => 
       array (
         'driver' => 'local',
-        'root' => '/var/www/html/office/domotics/storage/app/private',
+        'root' => '/var/www/html/domotics/storage/app/private',
         'serve' => true,
         'throw' => false,
       ),
       'public' => 
       array (
         'driver' => 'local',
-        'root' => '/var/www/html/office/domotics/storage/app/public',
+        'root' => '/var/www/html/domotics/storage/app/public',
         'url' => 'http://localhost/storage',
         'visibility' => 'public',
         'throw' => false,
@@ -563,7 +563,7 @@
     ),
     'links' => 
     array (
-      '/var/www/html/office/domotics/public/storage' => '/var/www/html/office/domotics/storage/app/public',
+      '/var/www/html/domotics/public/storage' => '/var/www/html/domotics/storage/app/public',
     ),
   ),
   'logging' => 
@@ -588,14 +588,14 @@
       'single' => 
       array (
         'driver' => 'single',
-        'path' => '/var/www/html/office/domotics/storage/logs/laravel.log',
+        'path' => '/var/www/html/domotics/storage/logs/laravel.log',
         'level' => 'debug',
         'replace_placeholders' => true,
       ),
       'daily' => 
       array (
         'driver' => 'daily',
-        'path' => '/var/www/html/office/domotics/storage/logs/laravel.log',
+        'path' => '/var/www/html/domotics/storage/logs/laravel.log',
         'level' => 'debug',
         'days' => 14,
         'replace_placeholders' => true,
@@ -660,7 +660,7 @@
       ),
       'emergency' => 
       array (
-        'path' => '/var/www/html/office/domotics/storage/logs/laravel.log',
+        'path' => '/var/www/html/domotics/storage/logs/laravel.log',
       ),
     ),
   ),
@@ -736,7 +736,7 @@
       'theme' => 'default',
       'paths' => 
       array (
-        0 => '/var/www/html/office/domotics/resources/views/vendor/mail',
+        0 => '/var/www/html/domotics/resources/views/vendor/mail',
       ),
     ),
   ),
@@ -873,7 +873,7 @@
     'lifetime' => '120',
     'expire_on_close' => false,
     'encrypt' => false,
-    'files' => '/var/www/html/office/domotics/storage/framework/sessions',
+    'files' => '/var/www/html/domotics/storage/framework/sessions',
     'connection' => NULL,
     'table' => 'sessions',
     'store' => NULL,
@@ -890,26 +890,33 @@
     'same_site' => 'lax',
     'partitioned' => false,
   ),
-  'concurrency' => 
+  'cors' => 
   array (
-    'default' => 'process',
-  ),
-  'hashing' => 
-  array (
-    'driver' => 'bcrypt',
-    'bcrypt' => 
+    'paths' => 
     array (
-      'rounds' => 12,
-      'verify' => true,
+      0 => 'api/*',
+      1 => 'sanctum/csrf-cookie',
     ),
-    'argon' => 
+    'allowed_methods' => 
     array (
-      'memory' => 65536,
-      'threads' => 1,
-      'time' => 4,
-      'verify' => true,
+      0 => '*',
     ),
-    'rehash_on_login' => true,
+    'allowed_origins' => 
+    array (
+      0 => '*',
+    ),
+    'allowed_origins_patterns' => 
+    array (
+    ),
+    'allowed_headers' => 
+    array (
+      0 => '*',
+    ),
+    'exposed_headers' => 
+    array (
+    ),
+    'max_age' => 0,
+    'supports_credentials' => false,
   ),
   'broadcasting' => 
   array (
@@ -967,41 +974,34 @@
       ),
     ),
   ),
-  'cors' => 
-  array (
-    'paths' => 
-    array (
-      0 => 'api/*',
-      1 => 'sanctum/csrf-cookie',
-    ),
-    'allowed_methods' => 
-    array (
-      0 => '*',
-    ),
-    'allowed_origins' => 
-    array (
-      0 => '*',
-    ),
-    'allowed_origins_patterns' => 
-    array (
-    ),
-    'allowed_headers' => 
-    array (
-      0 => '*',
-    ),
-    'exposed_headers' => 
-    array (
-    ),
-    'max_age' => 0,
-    'supports_credentials' => false,
-  ),
   'view' => 
   array (
     'paths' => 
     array (
-      0 => '/var/www/html/office/domotics/resources/views',
+      0 => '/var/www/html/domotics/resources/views',
     ),
-    'compiled' => '/var/www/html/office/domotics/storage/framework/views',
+    'compiled' => '/var/www/html/domotics/storage/framework/views',
+  ),
+  'concurrency' => 
+  array (
+    'default' => 'process',
+  ),
+  'hashing' => 
+  array (
+    'driver' => 'bcrypt',
+    'bcrypt' => 
+    array (
+      'rounds' => 12,
+      'verify' => true,
+    ),
+    'argon' => 
+    array (
+      'memory' => 65536,
+      'threads' => 1,
+      'time' => 4,
+      'verify' => true,
+    ),
+    'rehash_on_login' => true,
   ),
   'tinker' => 
   array (
