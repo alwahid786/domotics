@@ -42,7 +42,7 @@
                                     @if ($roleId == 1 || $roleId == 2)
                                         <td class="border px-4 py-2">{{ $estimation->user_name }}</td>
                                     @endif
-                                    <td class="border px-4 py-2">{{ $estimation->total }}</td>
+                                    <td class="border px-4 py-2">€{{ $estimation->total }}</td>
                                     <td class="border px-4 py-2">
                                         <div class="flex flex-wrap gap-2">
                                             <a href="{{ route('estimations.show', $estimation->id) }}"

@@ -236,7 +236,7 @@
                                 <td colspan="8" class="text-end">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div><strong>Total Price:</strong></div>
-                                        <div>$<span id="totalPrice">0</span></div>
+                                        <div>€<span id="totalPrice">0</span></div>
                                     </div>
                                 </td>
                                 <td></td>
@@ -265,7 +265,7 @@
                         </tr>
                         <tr class="bg-gray-50">
                             <td colspan="2" class="border p-2 text-right font-bold">Total Price:</td>
-                            <td colspan="2" class="border p-2 font-bold" id="summaryTotalPrice">$0</td>
+                            <td colspan="2" class="border p-2 font-bold" id="summaryTotalPrice">€0</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -1076,8 +1076,8 @@
         row.innerHTML = `
         <td class="border p-2">${sensor.name}</td>
         <td class="border p-2">${sensor.quantity}</td>
-        <td class="border p-2">$${sensor.unitPrice.toFixed(2)}</td>
-        <td class="border p-2">$${sensor.totalPrice.toFixed(2)}</td>
+        <td class="border p-2">€${sensor.unitPrice.toFixed(2)}</td>
+        <td class="border p-2">€${sensor.totalPrice.toFixed(2)}</td>
         `;
         summaryTableBody.appendChild(row);
         });
@@ -1090,7 +1090,7 @@
         });
         
         document.getElementById('summaryTotalSensors').textContent = totalSensors;
-        document.getElementById('summaryTotalPrice').textContent = `$${totalPrice.toFixed(2)}`;
+        document.getElementById('summaryTotalPrice').textContent = `€${totalPrice.toFixed(2)}`;
         }
         function TotalPriceChanges(element) {
             var updatePrice = parseFloat(element.value) || 0;

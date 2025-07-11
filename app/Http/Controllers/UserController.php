@@ -22,7 +22,13 @@ class UserController extends Controller
     public function index(Request $request): View
     {
         $users = User::latest()->paginate(15);
-
+        
+        foreach ($users as $user) {
+            $user->estimation = DB::table('estimations')
+                ->where('user_id', $user->id)
+                ->count('id');
+        }
+         
         return view('users.index',compact('users'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }

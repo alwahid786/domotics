@@ -174,7 +174,7 @@
                             <tr style="border:none;">
                                 <td style="border:none; text-align:left; width:50%;"><strong>Total Price</strong></td>
                                 <td style="border:none; text-align:right; width:50%;">
-                                    <strong>${{ number_format($totalPrice, 2) }}</strong>
+                                    <strong>€{{ number_format($totalPrice, 2) }}</strong>
                                 </td>
                             </tr>
                         </table>
@@ -230,14 +230,14 @@
                     <td style="border: 1px solid #000;">{{ $sensor['name'] }}</td>
                     {{-- <td>{{ $sensor['productCode'] }}</td> --}}
                     <td style="border: 1px solid #000;">{{ $sensor['quantity'] }}</td>
-                    <td style="border: 1px solid #000;">${{ number_format($sensor['unitPrice'], 2) }}</td>
-                    <td style="border: 1px solid #000;">${{ number_format($sensor['total'], 2) }}</td>
+                    <td style="border: 1px solid #000;">€{{ number_format($sensor['unitPrice'], 2) }}</td>
+                    <td style="border: 1px solid #000;">€{{ number_format($sensor['total'], 2) }}</td>
                 </tr>
                 @endforeach
                 <tr>
                     <td colspan="2" style="border: 1px solid #000;"><strong>Total Sensors:</strong></td>
                     <td style="border: 1px solid #000;">{{ $totalQuantity }}</td>
-                    <td style="border: 1px solid #000;"><strong>Total Price:</strong> <strong>${{
+                    <td style="border: 1px solid #000;"><strong>Total Price:</strong> <strong>€{{
                             number_format($totalPrice, 2) }}</strong> </td>
                 </tr>
             </tbody>
