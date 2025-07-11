@@ -38,7 +38,7 @@
                                         <td class="border px-4 py-2">{{ $user->roles->pluck('name')->implode(', ') }}
                                         </td>
                                         <td class="border px-4 py-2">
-                                            {{ $user->quotations()->count() }}
+                                            {{ $user->estimation ?? 0 }}
                                         </td>
                                         <td class="border px-4 py-2">
 
@@ -47,7 +47,7 @@
                                             @if ($user->roles->pluck('name')->contains('Super Admin'))
                                                 <p>L'utente è Super Admin</p>
                                             @else
-                                                @if ($user->quotations()->count() < 1)
+                                                @if ($user->estimation < 1)
                                                     <form action="{{ route('users.destroy', $user->id) }}"
                                                         method="POST" enctype="multipart/form-data"
                                                         style="display: inline-block;">

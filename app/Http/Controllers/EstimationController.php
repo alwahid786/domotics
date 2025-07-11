@@ -83,7 +83,7 @@ class EstimationController extends Controller
             'roomsData' => 'required|string',
             'sensorsData' => 'required|string',
             'totalPrice' => 'required|numeric',
-            'floorName' => 'required|string|max:255',
+            'floorName' => 'required|string|max:255|unique:estimations,floor_name',
         ]);
 
         // Handle image upload
@@ -419,7 +419,7 @@ class EstimationController extends Controller
             'roomsData' => 'required|string',
             'sensorsData' => 'required|string',
             'totalPrice' => 'required|numeric',
-            'floorName' => 'required|string|max:255',
+            'floorName' => 'required|string|max:255|unique:estimations,floor_name,'.$request->input('id'),
         ]);
 
         $estimationId = $request->input('id');

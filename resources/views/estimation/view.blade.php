@@ -159,7 +159,7 @@
                                 <td colspan="7" class="text-end">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div><strong>Total Price:</strong></div>
-                                        <div>$<span id="totalPrice">0</span></div>
+                                        <div>€<span id="totalPrice">0</span></div>
                                     </div>
                                 </td>
                                 <td></td>
@@ -188,7 +188,7 @@
                             </tr>
                             <tr class="bg-gray-50">
                                 <td colspan="2" class="border p-2 text-right font-bold">Total Price:</td>
-                                <td colspan="2" class="border p-2 font-bold" id="summaryTotalPrice">$0</td>
+                                <td colspan="2" class="border p-2 font-bold" id="summaryTotalPrice">€0</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -310,7 +310,7 @@
             tableBody.innerHTML = ""; // Clear existing rows
 
             if (!data.sensorsData || data.sensorsData.length === 0) {
-                totalPriceCell.textContent = "$0.00";
+                totalPriceCell.textContent = "€0.00";
                 totalCountCell.textContent = "0";
                 console.warn("No sensor data available.");
                 return;
@@ -376,7 +376,7 @@
 
                 // Price
                 const tdPrice = document.createElement("td");
-                tdPrice.textContent = "$" + unitPrice.toFixed(2);
+                tdPrice.textContent = "€" + unitPrice.toFixed(2);
                 tr.appendChild(tdPrice);
 
                 tableBody.appendChild(tr);
@@ -386,7 +386,7 @@
                 totalPrice += unitPrice;
             });
 
-            totalPriceCell.textContent = "$" + totalPrice.toFixed(2);
+            totalPriceCell.textContent = "€" + totalPrice.toFixed(2);
             totalCountCell.textContent = totalCount;
             updateSensorSummary(data.sensorsData);
         }
@@ -421,8 +421,8 @@
         row.innerHTML = `
         <td class="border p-2">${sensor.productName}</td>
         <td class="border p-2">${sensor.quantity}</td>
-        <td class="border p-2">$${sensor.unitPrice.toFixed(2)}</td>
-        <td class="border p-2">$${sensor.total.toFixed(2)}</td>
+        <td class="border p-2">€${sensor.unitPrice.toFixed(2)}</td>
+        <td class="border p-2">€${sensor.total.toFixed(2)}</td>
         `;
         summaryTableBody.appendChild(row);
         });
@@ -432,7 +432,7 @@
         const totalPrice = Object.values(aggregatedSensors).reduce((sum, sensor) => sum + sensor.total, 0);
         
         document.getElementById('summaryTotalSensors').textContent = totalSensors;
-        document.getElementById('summaryTotalPrice').textContent = `$${totalPrice.toFixed(2)}`;
+        document.getElementById('summaryTotalPrice').textContent = `€${totalPrice.toFixed(2)}`;
         }
 
         // Draw the floor plan image, rooms (as polygons) and sensor dots on the canvas
@@ -584,7 +584,7 @@
             <p><strong>Sensor Name:</strong> ${sensor.sensorName || sensor.name}</p>
             <p><strong>Installation Notes:</strong> ${sensor.sensorDescription || sensor.note}</p>
             <p><strong>Room:</strong> ${roomName}</p>
-            <p><strong>Price:</strong> $${sensor.sensorPrice || sensor.price}</p>
+            <p><strong>Price:</strong> €${sensor.sensorPrice || sensor.price}</p>
         `;
 
             const modalElement = document.getElementById("dotInfoModal");
