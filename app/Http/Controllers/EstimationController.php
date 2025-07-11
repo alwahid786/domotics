@@ -23,8 +23,14 @@ class EstimationController extends Controller
             ->where('model_has_roles.model_id', $user->id)
             ->select('roles.id')
             ->first();
-
-        if ($role->id == 1 || $role->id == 2) {
+            
+        // $role = DB::table('roles')
+        //     ->join('model_has_roles', 'roles.id', '=', 'model_has_roles.role_id')
+        //     ->where('model_has_roles.model_id', $user->id)
+        //     ->where('model_has_roles.model_type', get_class($user)) // very important
+        //     ->select('roles.id')
+        //     ->first();
+        if ($user->hasRole(['Super Admin', 'Admin'])) {
             $estimations = DB::table('estimations')
                 ->join('users', 'users.id', '=', 'estimations.user_id')
                 ->select('estimations.*', 'users.name as user_name')
@@ -38,6 +44,22 @@ class EstimationController extends Controller
                 ->orderBy('estimations.id', 'desc')
                 ->paginate(25);
         }
+
+        // if ($role && ($role->id == 1 || $role->id == 2)) {
+        //     $estimations = DB::table('estimations')
+        //         ->join('users', 'users.id', '=', 'estimations.user_id')
+        //         ->select('estimations.*', 'users.name as user_name')
+        //         ->orderBy('estimations.id', 'desc')
+        //         ->paginate(25);
+        // } else {
+        //     $estimations = DB::table('estimations')
+        //         ->join('users', 'users.id', '=', 'estimations.user_id')
+        //         ->select('estimations.*', 'users.name as user_name')
+        //         ->where('estimations.user_id', '=', $user->id)
+        //         ->orderBy('estimations.id', 'desc')
+        //         ->paginate(25);
+        // }
+
 
         $roleId = $role->id;
         return view('estimation.index', compact('estimations', 'roleId'));
@@ -371,7 +393,7 @@ class EstimationController extends Controller
     {
 
         $id = $estimate;
-        $estimation = DB::table('estimations')->select('id', 'user_id', 'total', 'floor_name', 'clean_image', 'name' , 'address')->where('id', $id)->first();
+        $estimation = DB::table('estimations')->select('id', 'user_id', 'total', 'floor_name', 'clean_image', 'name', 'address')->where('id', $id)->first();
 
         $user = Auth::user();
         $role = DB::table('roles')
@@ -431,7 +453,7 @@ class EstimationController extends Controller
             $cleanimagePath = 'uploads/estimations/' . $cleanimageName;
         }
 
-        if ($request->user_id) {
+        if ($request->user_id != null && $request->user_id != '') {
             DB::table('estimations')
                 ->where('id', $estimationId)
                 ->update([
@@ -536,10 +558,10 @@ class EstimationController extends Controller
         $user = Auth::user();
         $user_id = $request->user_id ? $request->user_id : $user->id;
         $user = DB::table('users')->where('id', $user_id)->first();
-        Mail::to($user->email)
-            ->cc('dott.izzo@mydomotics.it')
-            ->cc('preventivi@mydomotics.it')
-            ->send(new SendEstimation($pdfFileName));
+        // Mail::to($user->email)
+        //     ->cc('dott.izzo@mydomotics.it')
+        //     ->cc('preventivi@mydomotics.it')
+        //     ->send(new SendEstimation($pdfFileName));
 
         if ($productData) {
 

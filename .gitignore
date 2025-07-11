@@ -30,7 +30,7 @@ docker-compose.override.yml
 /storage/framework/sessions/
 /storage/framework/views/
 /storage/framework/testing/
-
+/storage
 # OS/Editor junk
 *.DS_Store
 Thumbs.db
@@ -52,3 +52,5 @@ debugbar/
 
 # Laravel Telescope
 /storage/telescope/
+/bootstarp/cache 
+public/uploads

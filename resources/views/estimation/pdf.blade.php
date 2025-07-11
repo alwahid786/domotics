@@ -110,7 +110,7 @@
             <img src="{{ public_path($imagePath) }}" alt="Floor Plan">
         </div>
 
-        <table>
+        <table class="table table-bordered">
             <thead>
                 <tr>
                     <th>#</th>
@@ -124,34 +124,33 @@
             </thead>
             <tbody>
                 @foreach ($sensorsData as $index => $sensor)
-                    @php
-                        $room = collect($roomsData)->firstWhere('roomId', $sensor->room_id);
-                        $roomName = $room['roomName'] ?? 'Unknown';
-                    @endphp
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $roomName }}</td>
-                        <td>
-                            @if ($sensor->product_image)
-                                <img src="{{ public_path('storage/' . $sensor->product_image) }}"
-                                    alt="{{ $sensor->name ?? $sensor->sensorName }}"
-                                    style="width:50px; height:50px; object-fit:contain;">
-                            @else
-                                <div
-                                    style="
+                @php
+                $room = collect($roomsData)->firstWhere('roomId', $sensor->room_id);
+                $roomName = $room['roomName'] ?? 'Unknown';
+                @endphp
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $roomName }}</td>
+                    <td>
+                        @if ($sensor->product_image)
+                        <img src="{{ public_path('storage/' . $sensor->product_image) }}"
+                            alt="{{ $sensor->name ?? $sensor->sensorName }}"
+                            style="width:50px; height:50px; object-fit:contain;">
+                        @else
+                        <div style="
                             width:50px; height:50px;
                             background:#f0f0f0;
                             display:flex; align-items:center; justify-content:center;
                             font-size:10px; color:#666;">
-                                    No Image
-                                </div>
-                            @endif
-                        </td>
-                        <td>{{ $sensor->name ?? $sensor->sensorName }}</td>
-                        <td>{{ $sensor->product_code ?? $sensor->product_code }}</td>
-                        <td>{{ $sensor->note ?? $sensor->sensorDescription }}</td>
-                        <td>{{ number_format($sensor->price ?? $sensor->sensorPrice, 2) }}</td>
-                    </tr>
+                            No Image
+                        </div>
+                        @endif
+                    </td>
+                    <td>{{ $sensor->name ?? $sensor->sensorName }}</td>
+                    <td>{{ $sensor->product_code ?? $sensor->product_code }}</td>
+                    <td>{{ $sensor->note ?? $sensor->sensorDescription }}</td>
+                    <td>{{ number_format($sensor->price ?? $sensor->sensorPrice, 2) }}</td>
+                </tr>
                 @endforeach
 
             </tbody>
@@ -167,7 +166,7 @@
                             </tr>
                         </table>
                     </td>
-                    <td></td>
+                    {{-- <td></td> --}}
                 </tr>
                 <tr>
                     <td colspan="7" style="text-align:left; padding-right:10px;">
@@ -180,11 +179,71 @@
                             </tr>
                         </table>
                     </td>
-                    <td></td>
+                    {{-- <td></td> --}}
                 </tr>
             </tfoot>
         </table>
+        <br><br>
 
+
+        <h5 class="fw-bold mb-3">Sensor Summary</h5>
+
+        @php
+        $mergedSensors = [];
+
+        foreach ($sensorsData as $sensor) {
+        $productId = $sensor->product_id;
+
+        if (!isset($mergedSensors[$productId])) {
+        $mergedSensors[$productId] = [
+        'name' => $sensor->name ?? 'N/A',
+        'productCode' => $sensor->product_code ?? 'N/A',
+        'unitPrice' => $sensor->price ?? 0,
+        'quantity' => 0,
+        'total' => 0,
+        ];
+        }
+
+        $mergedSensors[$productId]['quantity'] += 1;
+        $mergedSensors[$productId]['total'] = $mergedSensors[$productId]['quantity'] *
+        $mergedSensors[$productId]['unitPrice'];
+        }
+
+        $totalQuantity = array_sum(array_column($mergedSensors, 'quantity'));
+        // $totalPrice = array_sum(array_column($mergedSensors, 'total'));
+        @endphp
+        {{-- <h5 class="fw-bold mb-3">Sensor Summary (Grouped by Product ID)</h5> --}}
+
+        <table class="table table-bordered" style="border: 1px solid #000; border-collapse: collapse; width: 100%;">
+            <thead>
+                <tr>
+                    <th>Sensor Name</th>
+                    {{-- <th>Product Code</th> --}}
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($mergedSensors as $sensor)
+                <tr style="border: 1px solid #000;">
+                    <td style="border: 1px solid #000;">{{ $sensor['name'] }}</td>
+                    {{-- <td>{{ $sensor['productCode'] }}</td> --}}
+                    <td style="border: 1px solid #000;">{{ $sensor['quantity'] }}</td>
+                    <td style="border: 1px solid #000;">${{ number_format($sensor['unitPrice'], 2) }}</td>
+                    <td style="border: 1px solid #000;">${{ number_format($sensor['total'], 2) }}</td>
+                </tr>
+                @endforeach
+                <tr>
+                    <td colspan="2" style="border: 1px solid #000;"><strong>Total Sensors:</strong></td>
+                    <td style="border: 1px solid #000;">{{ $totalQuantity }}</td>
+                    <td style="border: 1px solid #000;"><strong>Total Price:</strong> <strong>${{
+                            number_format($totalPrice, 2) }}</strong> </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p class="fw-bold">Delivery time</p>
         <p><b>Tempistica di fornitura</b></p>
 
         <p>
