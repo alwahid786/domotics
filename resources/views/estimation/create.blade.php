@@ -206,7 +206,7 @@
 
             <!-- Sensor List Table -->
             <div id="sensorListContainer" style="display: none;">
-                <<div class="mt-4 table-responsive">
+                <div class="mt-4 table-responsive">
                     <table id="sensorTable">
                         <thead>
                             <tr>
@@ -246,7 +246,7 @@
             </div>
 
             <!-- New Sensor Summary Table -->
-            <<div class="mt-4 table-responsive">
+            <div class="mt-4 table-responsive">
                 <h3 class="text-lg font-semibold mb-2">Sensor Summary</h3>
                 <table id="sensorSummaryTable" class="w-full border-collapse">
                     <thead>
