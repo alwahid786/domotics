@@ -550,9 +550,9 @@
                         sensorLabel.setAttribute('id', 'label-' + dotId);
                         sensorLabel.innerText = displayNumber + ". " + sensor.sensorName;
                         sensorLabel.style.position = 'absolute';
-                        sensorLabel.style.fontSize = '12px';
+                     sensorLabel.style.fontSize = '14px';
                         sensorLabel.style.background = "white";
-                        sensorLabel.style.padding = '2px 4px';
+                        sensorLabel.style.padding = '2px 2px';
                         sensorLabel.style.color = 'black';
                         sensorLabel.style.left = (absCoords.x - 10) + 'px';
                         sensorLabel.style.top = (absCoords.y - 25) + 'px';
@@ -1217,9 +1217,9 @@
         sensorLabel.setAttribute('id', 'label-' + currentDotId);
         sensorLabel.innerText = displayNumber + ". " + name; // Add display number before name
         sensorLabel.style.position = 'absolute';
-        sensorLabel.style.fontSize = '12px';
+        sensorLabel.style.fontSize = '15px';
         sensorLabel.style.background = "white";
-        sensorLabel.style.padding = '2px 4px';
+        sensorLabel.style.padding = '2px 2px';
         sensorLabel.style.color = 'black';
         sensorLabel.style.left = (x - 10) + 'px';
         sensorLabel.style.top = (y - 25) + 'px';
@@ -1454,7 +1454,7 @@
                 ctx.fill();
 
                 // Draw sensor label
-                ctx.font = "12px Arial";
+                ctx.font = "15px Arial";
                 const text = sensorNumber + ". " + sensor.name; // Add number before name
                 const textMetrics = ctx.measureText(text);
                 const textWidth = textMetrics.width;

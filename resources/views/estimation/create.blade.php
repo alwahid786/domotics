@@ -953,9 +953,9 @@
             sensorLabel.setAttribute('id', 'label-' + currentDotId);
             sensorLabel.innerText = displayNumber + ". " + name; // Add display number before name
             sensorLabel.style.position = 'absolute';
-            sensorLabel.style.fontSize = '12px';
+            sensorLabel.style.fontSize = '15px';
             sensorLabel.style.background = "white";
-            sensorLabel.style.padding = '2px 4px';
+            sensorLabel.style.padding = '2px 2px';
             sensorLabel.style.color = 'black';
             sensorLabel.style.left = (x - 10) + 'px';
             sensorLabel.style.top = (y - 25) + 'px';
@@ -1159,7 +1159,7 @@
                 alert("Please enter a floor name.");
                 return;
             }
-
+            
             // Show loading state
             generatePDFBtn.disabled = true;
             generatePDFBtn.classList.add('loading');

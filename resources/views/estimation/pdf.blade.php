@@ -42,6 +42,14 @@
             margin: 20px auto;
             display: block;
         }
+        td.wrap, th.wrap {
+        width: 50px; /* or any fixed width you want */
+        max-width: 50px;
+        word-wrap: break-word;
+        word-break: break-word;
+        white-space: normal;
+
+        }
     </style>
 </head>
 
@@ -146,10 +154,10 @@
                         </div>
                         @endif
                     </td>
-                    <td>{{ $sensor->name ?? $sensor->sensorName }}</td>
-                    <td>{{ $sensor->product_code ?? $sensor->product_code }}</td>
-                    <td>{{ $sensor->note ?? $sensor->sensorDescription }}</td>
-                    <td>{{ number_format($sensor->price ?? $sensor->sensorPrice, 2) }}</td>
+                    <td class="wrap">{{ $sensor->name ?? $sensor->sensorName }}</td>
+                    <td class="wrap">{{ $sensor->product_code ?? $sensor->product_code }}</td>
+                    <td class="wrap">{{ $sensor->note ?? $sensor->sensorDescription }}</td>
+                    <td class="wrap">{{ number_format($sensor->price ?? $sensor->sensorPrice, 2) }}</td>
                 </tr>
                 @endforeach
 
