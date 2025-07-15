@@ -206,7 +206,7 @@
 
             <!-- Sensor List Table -->
             <div id="sensorListContainer" style="display: none;">
-                <<div class="mt-4 table-responsive">
+                <div class="mt-4 table-responsive">
                     <table id="sensorTable">
                         <thead>
                             <tr>
@@ -246,7 +246,7 @@
             </div>
 
             <!-- New Sensor Summary Table -->
-            <<div class="mt-4 table-responsive">
+            <div class="mt-4 table-responsive">
                 <h3 class="text-lg font-semibold mb-2">Sensor Summary</h3>
                 <table id="sensorSummaryTable" class="w-full border-collapse">
                     <thead>
@@ -953,9 +953,9 @@
             sensorLabel.setAttribute('id', 'label-' + currentDotId);
             sensorLabel.innerText = displayNumber + ". " + name; // Add display number before name
             sensorLabel.style.position = 'absolute';
-            sensorLabel.style.fontSize = '12px';
+            sensorLabel.style.fontSize = '15px';
             sensorLabel.style.background = "white";
-            sensorLabel.style.padding = '2px 4px';
+            sensorLabel.style.padding = '2px 2px';
             sensorLabel.style.color = 'black';
             sensorLabel.style.left = (x - 10) + 'px';
             sensorLabel.style.top = (y - 25) + 'px';
@@ -1159,7 +1159,7 @@
                 alert("Please enter a floor name.");
                 return;
             }
-
+            
             // Show loading state
             generatePDFBtn.disabled = true;
             generatePDFBtn.classList.add('loading');
