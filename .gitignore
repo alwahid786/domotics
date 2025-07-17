@@ -4,12 +4,7 @@
 /public/storage/
 /storage/*.key
 /storage/app/public/
-.env
-.env.*
 .env.backup
-.env.local
-.env.development
-.env.production
 Homestead.yaml
 Homestead.json
 /.vagrant/
@@ -54,3 +49,4 @@ debugbar/
 /storage/telescope/
 /bootstarp/cache 
 public/uploads
+config.bat

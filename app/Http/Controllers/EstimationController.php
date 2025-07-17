@@ -164,10 +164,9 @@ class EstimationController extends Controller
         $sensors = DB::table('estimation_products')
             ->join('products', 'estimation_products.product_id', '=', 'products.id')
             ->where('estimation_products.estimation_id', $estimationId)
-            ->select('estimation_products.*', 'products.image as product_image', 'products.code as product_code')
+            ->select('estimation_products.*', 'products.image as product_image', 'products.code as product_code', 'products.name as product_name')
             ->get();
-
-
+// dd($sensors);
         // Group rooms
         $rooms = [];
         foreach ($roomsRaw as $row) {
@@ -259,14 +258,28 @@ class EstimationController extends Controller
         ]);
     }
 
-    public function show($estimate)
+    public function Show($estimate)
     {
-        $estimate;
-        $estimation = DB::table('estimations')->where('id', $estimate)->first();
-        $user_name = $this->userName($estimation->user_id);
-        return view('estimation.view', compact('estimate', 'estimation', 'user_name'));
-    }
 
+        $id = $estimate;
+        $estimation = DB::table('estimations')->select('id', 'user_id', 'total', 'floor_name', 'clean_image', 'name', 'address')->where('id', $id)->first();
+
+        $user = Auth::user();
+        $role = DB::table('roles')
+            ->join('model_has_roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->where('model_has_roles.model_id', $user->id)
+            ->select('roles.id')
+            ->first();
+        $roleId = $role->id;
+        $users = DB::table('users')->where('id', '!=', Auth::user()->id)->get();
+
+
+        if (!$estimation) {
+            return redirect()->route('estimations.index')->with('error', 'Estimation not found.');
+        }
+
+        return view('estimation.view', compact('estimation', 'users', 'roleId'));
+    }
     protected function userName($user_id)
     {
         $user = DB::table('users')->where('id', $user_id)->first();
@@ -527,7 +540,7 @@ class EstimationController extends Controller
         $sensors = DB::table('estimation_products')
             ->join('products', 'estimation_products.product_id', '=', 'products.id')
             ->where('estimation_products.estimation_id', $estimationId)
-            ->select('estimation_products.*', 'products.image as product_image', 'products.code as product_code')
+            ->select('estimation_products.*', 'products.image as product_image', 'products.code as product_code', 'products.name as product_name')
             ->get();
 
 
