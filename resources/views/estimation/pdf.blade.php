@@ -132,6 +132,7 @@
             </thead>
             <tbody>
                 @foreach ($sensorsData as $index => $sensor)
+                {{-- {{ dd($sensor) }} --}}
                 @php
                 $room = collect($roomsData)->firstWhere('roomId', $sensor->room_id);
                 $roomName = $room['roomName'] ?? 'Unknown';
@@ -154,8 +155,8 @@
                         </div>
                         @endif
                     </td>
-                    <td class="wrap">{{ $sensor->name ?? $sensor->sensorName }}</td>
-                    <td class="wrap">{{ $sensor->product_code ?? $sensor->product_code }}</td>
+                    <td class="wrap">{{ $sensor->product->product_name ?? $sensor->product_name}}</td>
+                    <td class="wrap">{{ $sensor->product->code ?? $sensor->product_code }}</td>
                     <td class="wrap">{{ $sensor->note ?? $sensor->sensorDescription }}</td>
                     <td class="wrap">{{ number_format($sensor->price ?? $sensor->sensorPrice, 2) }}</td>
                 </tr>
@@ -204,8 +205,8 @@
 
         if (!isset($mergedSensors[$productId])) {
         $mergedSensors[$productId] = [
-        'name' => $sensor->name ?? 'N/A',
-        'productCode' => $sensor->product_code ?? 'N/A',
+        'name' =>$sensor->product->product_name ?? $sensor->product_name,
+        'productCode' => $sensor->product->code ?? $sensor->product_code,
         'unitPrice' => $sensor->price ?? 0,
         'quantity' => 0,
         'total' => 0,
