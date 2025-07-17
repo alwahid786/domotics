@@ -4,7 +4,126 @@
             {{ __('Nuovo Preventivo') }}
         </h2>
     </x-slot>
+<style>
+    /* Modal Overlay Background */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(17, 24, 39, 0.75);
+        /* semi-transparent dark */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1050;
+    }
 
+    /* Modal Content */
+    .custom-modal {
+        background-color: #fff;
+        width: 100%;
+        max-width: 600px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        position: relative;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    /* Header */
+    .custom-modal-header {
+        background-color: #b11d2d;
+        /* Indigo */
+        color: white !important;
+        padding: 1rem 1.5rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+        border-radius: 10px !important;
+        padding: 10px !important;
+    }
+
+    /* Close button */
+    .close-modal {
+        position: absolute;
+        top: 12px;
+        right: 16px;
+        font-size: 24px;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    /* Modal Body Styling */
+    .modal-body {
+        padding: 1.5rem;
+        background-color: #f9fafb;
+    }
+
+    /* Detail rows */
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    /* Label */
+    .detail-label {
+        font-weight: 600;
+        color: #374151;
+        /* Slate-700 */
+        width: 40%;
+    }
+
+    /* Value */
+    .detail-value {
+        width: 58%;
+        text-align: right;
+        color: #1f2937;
+        /* Slate-800 */
+    }
+
+    /* Footer */
+    .custom-modal-footer {
+        padding: 1rem 1.5rem;
+        background-color: #f1f5f9;
+        text-align: right;
+        border-top: 1px solid #e5e7eb;
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+    }
+
+    /* Button */
+    .custom-modal-footer .btn-secondary {
+        background-color: #b11d2d !important;
+        /* Gray-700 */
+        color: white !important;
+        border: none;
+        padding: 0.5rem 1.2rem;
+        font-weight: 500;
+        border-radius: 6px;
+        transition: background-color 0.2s;
+    }
+
+    .custom-modal-footer .btn-secondary:hover {
+        background-color: #b11d2d !important;
+    }
+
+    /* Fade-in animation */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
     <!-- Custom CSS for modal and styling -->
     <style>
         .modal-overlay {
@@ -335,6 +454,45 @@
         </div>
     </div>
 
+    <!-- Sensor Details Modal -->
+   <div id="sensorDetailsModal" class="modal-overlay">
+    <div class="modal-content custom-modal">
+        <span class="close-modal" id="closeSensorDetailsModal">&times;</span>
+        <div class="modal-header custom-modal-header">Sensor Details</div>
+
+        <div class="modal-body">
+            <div class="detail-row">
+                <label class="detail-label">Sensor Number:</label>
+                <span id="sensorDetailNumber" class="detail-value"></span>
+            </div>
+            <div class="detail-row">
+                <label class="detail-label">Name:</label>
+                <span id="sensorDetailName" class="detail-value"></span>
+            </div>
+            <div class="detail-row">
+                <label class="detail-label">Sensor Type:</label>
+                <span id="sensorDetailType" class="detail-value"></span>
+            </div>
+            <div class="detail-row">
+                <label class="detail-label">Room:</label>
+                <span id="sensorDetailRoom" class="detail-value"></span>
+            </div>
+            <div class="detail-row">
+                <label class="detail-label">Installation Notes:</label>
+                <span id="sensorDetailNotes" class="detail-value"></span>
+            </div>
+            <div class="detail-row">
+                <label class="detail-label">Price:</label>
+                <span id="sensorDetailPrice" class="detail-value"></span>
+            </div>
+        </div>
+
+        <div class="modal-footer custom-modal-footer">
+            <button type="button" id="closeSensorDetailsModalBtn" class="btn btn-secondary">Close</button>
+        </div>
+    </div>
+</div>
+
     <!-- Scripts -->
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -442,6 +600,7 @@
                     throw new Error("Error while fetching sensors");
                 }
                 const data = await res.json();
+                console.log(data);
                 if (data?.sensors?.length > 0) {
                     sensorPrices = {};
                     data.sensors.forEach((sensor) => {
@@ -515,6 +674,56 @@
         }
         closePolygonModal.addEventListener('click', hidePolygonModal);
         cancelPolygonModal.addEventListener('click', hidePolygonModal);
+        
+        // Sensor Details Modal handlers
+        const sensorDetailsModal = document.getElementById('sensorDetailsModal');
+        const closeSensorDetailsModal = document.getElementById('closeSensorDetailsModal');
+        const closeSensorDetailsModalBtn = document.getElementById('closeSensorDetailsModalBtn');
+        
+        function hideSensorDetailsModal() {
+            sensorDetailsModal.style.display = 'none';
+        }
+        
+        closeSensorDetailsModal.addEventListener('click', hideSensorDetailsModal);
+        closeSensorDetailsModalBtn.addEventListener('click', hideSensorDetailsModal);
+        
+        // Function to show sensor details modal
+        function showSensorDetailsModal(dotId) {
+            const sensor = productsData.find(s => s.id === dotId);
+            if (!sensor) return;
+            
+            // Find the room name
+            const room = polygons.find(p => p.id === sensor.roomId);
+            const roomName = room ? room.name : "Unknown";
+            
+            // Get the current price from the table
+            const row = document.getElementById('row-' + dotId);
+            const priceInput = row ? row.querySelector('.price-input') : null;
+            const currentPrice = priceInput ? parseFloat(priceInput.value) || 0 : sensor.price;
+            
+            // Populate modal fields
+            document.getElementById('sensorDetailNumber').textContent = sensor.displayNumber;
+            document.getElementById('sensorDetailName').textContent = sensor.name;
+            document.getElementById('sensorDetailType').textContent = sensor.sensor;
+            document.getElementById('sensorDetailRoom').textContent = roomName;
+            document.getElementById('sensorDetailNotes').textContent = sensor.description;
+            document.getElementById('sensorDetailPrice').textContent = '€' + currentPrice.toFixed(2);
+            
+            // Handle image display
+            // const imageContainer = document.getElementById('sensorDetailImageContainer');
+            // const imageElement = document.getElementById('sensorDetailImage');
+            
+            // if (sensor.sensorImage) {
+            //     imageElement.src = sensor.sensorImage;
+            //     imageElement.style.display = 'block';
+            //     imageContainer.style.display = 'block';
+            // } else {
+            //     imageContainer.style.display = 'none';
+            // }
+            
+            // Show the modal
+            sensorDetailsModal.style.display = 'flex';
+        }
         // Image upload & Cropper initialization
         imageUpload.addEventListener('change', function(event) {
             const file = event.target.files[0];
@@ -743,6 +952,7 @@
                 dot.style.width = '5px';
                 dot.style.height = '5px';
                 dot.style.background = 'red';
+                dot.style.zIndex = '2';
                 dot.style.borderRadius = '50%';
                 dot.style.left = (x - 2.5) + 'px';
                 dot.style.top = (y - 2.5) + 'px';
@@ -872,10 +1082,10 @@
                 const displayNumber = index + 1;
                 sensor.displayNumber = displayNumber;
 
-                // Update the label text
+                // Update the label text - show only the number
                 const labelElem = document.getElementById('label-' + sensor.id);
                 if (labelElem) {
-                    labelElem.innerText = displayNumber + ". " + sensor.name;
+                    labelElem.innerText = displayNumber;
                 }
 
                 // Update the table row
@@ -948,17 +1158,26 @@
                 dot.title = `Name: ${name}, Sensor: ${sensor}`;
             }
 
-            // Create a sensor label element that displays the sensor name with display number
+            // Create a sensor label element that displays only the number
             const sensorLabel = document.createElement('span');
             sensorLabel.setAttribute('id', 'label-' + currentDotId);
-            sensorLabel.innerText = displayNumber + ". " + name; // Add display number before name
+            sensorLabel.innerText = displayNumber; // Show only the number
             sensorLabel.style.position = 'absolute';
             sensorLabel.style.fontSize = '15px';
             sensorLabel.style.background = "white";
-            sensorLabel.style.padding = '2px 2px';
+            sensorLabel.style.padding = '2px 4px';
             sensorLabel.style.color = 'black';
             sensorLabel.style.left = (x - 10) + 'px';
             sensorLabel.style.top = (y - 25) + 'px';
+            sensorLabel.style.cursor = 'pointer'; // Make it clickable
+            sensorLabel.style.border = '1px solid #ccc';
+            sensorLabel.style.borderRadius = '3px';
+            
+            // Add click event to show sensor details modal
+            sensorLabel.addEventListener('click', function() {
+                showSensorDetailsModal(currentDotId);
+            });
+            
             canvasContainer.appendChild(sensorLabel);
 
             // Increment dot count and next sensor number
@@ -1553,14 +1772,12 @@
                         dot.style.left = (x - 2.5) + 'px';
                         dot.style.top = (y - 2.5) + 'px';
 
-                        // Update label position and ensure it has the number prefix
+                        // Update label position and ensure it shows only the number
                         label.style.left = (x - 10) + 'px';
                         label.style.top = (y - 25) + 'px';
 
-                        // Make sure the label text includes the number
-                        if (!label.innerText.startsWith(sensorNumber + ".")) {
-                            label.innerText = sensorNumber + ". " + sensor.name;
-                        }
+                        // Make sure the label text shows only the number
+                        label.innerText = sensorNumber;
                     }
                 });
             }
