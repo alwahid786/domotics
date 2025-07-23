@@ -238,7 +238,7 @@ class EstimationController extends Controller
             ->join('product_role', 'products.id', '=', 'product_role.product_id')
             ->where('product_role.role_id', $role->id)
             ->select('products.*', 'product_role.price')
-            ->orderBy('products.id', 'asc')
+            ->orderBy('products.code', 'asc')
             ->get();
 
         return response()->json([
