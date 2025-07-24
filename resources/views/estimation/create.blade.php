@@ -618,7 +618,7 @@
                         sensorPrices[sensorName] = price;
                         // Store sensor data including image
                         sensorSelectTag.innerHTML +=
-                            `<option data-id="${id}" data-code="${code}" data-image="${imageUrl}" value="${sensorName}"> (${code}) ${sensorName}</option>`;
+                            `<option data-id="${id}" data-code="${code}" data-image="${imageUrl}" value="${sensorName}">${sensorName}</option>`;
                     });
                 }
             } catch (error) {
