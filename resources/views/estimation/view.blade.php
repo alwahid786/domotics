@@ -4,7 +4,8 @@
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ __('Stime') }}
             </h2>
-            <button onclick="printMainContent()" class="btn btn-primary d-print-none">Print</button>
+            {{-- <button onclick="printMainContent()" class="btn btn-primary d-print-none">Print</button> --}}
+            <a href="{{ route('estimation.download', ['id' => $estimation->id]) }}" class="btn btn-primary d-print-none">Print</a>
         </div>
     </x-slot>
     <style>
@@ -2128,46 +2129,44 @@
     });
     </script>
 
-    {{-- print screen --}}
-        <script>
-          
-        
-                function printMainContent() {
-                    // 1. Clone the printMain node
-                    const original = document.getElementById('printMain');
-                    const clone = original.cloneNode(true);
-        
-                    // 2. Replace canvas with an <img> snapshot
-                    const canvasEl = document.getElementById('estimationCanvas');
-                    const cloneCanvasContainer = clone.querySelector('#estimationCanvas');
-                    if (canvasEl && cloneCanvasContainer) {
-                        const dataURL = canvasEl.toDataURL();
-                        const img = document.createElement('img');
-                        img.src = dataURL;
-                        img.style.maxWidth = '100%';
-                        img.style.height = 'auto';
-                        cloneCanvasContainer.parentNode.replaceChild(img, cloneCanvasContainer);
-                    }
-        
-                    // 3. Open a print window
-                    const printWindow = window.open('', '_blank', 'width=800,height=600');
-                    printWindow.document.write(`
-                    <html>
-                    <head>
-                      <title>Print</title>
-                      <link rel="stylesheet" href="/css/app.css">
-                    </head>
-                    <body>${clone.innerHTML}</body>
-                    </html>
-                `);
-                    printWindow.document.close();
-        
-                    // 4. Print and close
-                    printWindow.onload = () => {
-                        printWindow.focus();
-                        printWindow.print();
-                        printWindow.close();
-                    };
-                }
-        </script>
+{{-- print screen --}}
+{{-- <script>
+        function printMainContent() {
+            // 1. Clone the printMain node
+            const original = document.getElementById('printMain');
+            const clone = original.cloneNode(true);
+
+            // 2. Replace canvas with an <img> snapshot
+            const canvasEl = document.getElementById('estimationCanvas');
+            const cloneCanvasContainer = clone.querySelector('#estimationCanvas');
+            if (canvasEl && cloneCanvasContainer) {
+                const dataURL = canvasEl.toDataURL();
+                const img = document.createElement('img');
+                img.src = dataURL;
+                img.style.maxWidth = '100%';
+                img.style.height = 'auto';
+                cloneCanvasContainer.parentNode.replaceChild(img, cloneCanvasContainer);
+            }
+
+            // 3. Open a print window
+            const printWindow = window.open('', '_blank', 'width=800,height=600');
+            printWindow.document.write(`
+            <html>
+            <head>
+                <title>Print</title>
+                <link rel="stylesheet" href="/css/app.css">
+            </head>
+            <body>${clone.innerHTML}</body>
+            </html>
+        `);
+            printWindow.document.close();
+
+            // 4. Print and close
+            printWindow.onload = () => {
+                printWindow.focus();
+                printWindow.print();
+                printWindow.close();
+            };
+        }
+</script> --}}
 </x-app-layout>

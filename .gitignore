@@ -26,6 +26,7 @@ docker-compose.override.yml
 
 # Logs & Cache
 /storage/logs/
+storage/logs/laravel.log
 /storage/framework/cache/data/
 /storage/framework/sessions/
 /storage/framework/views/
