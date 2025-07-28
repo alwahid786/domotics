@@ -86,6 +86,7 @@ Route::middleware('auth')->group(function () {
     // Route::get('/estimations/{estimate}/show', [EstimationController::class, 'show'])->name('estimations.show');
     Route::delete('/estimations/{estimate}/delete', [EstimationController::class, 'destroy'])->name('estimations.destroy');
     Route::get('/estimations/fetch', [EstimationController::class, 'fetch'])->name('estimations.fetch');
+    Route::get('/download/{id}', [EstimationController::class, 'download'])->name('estimation.download');
 
     Route::get('/estimations/download/{file}', function ($file) {
         $path = storage_path("app/private/estimations/{$file}");

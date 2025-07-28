@@ -571,10 +571,10 @@ class EstimationController extends Controller
         $user = Auth::user();
         $user_id = $request->user_id ? $request->user_id : $user->id;
         $user = DB::table('users')->where('id', $user_id)->first();
-        // Mail::to($user->email)
-        //     ->cc('dott.izzo@mydomotics.it')
-        //     ->cc('preventivi@mydomotics.it')
-        //     ->send(new SendEstimation($pdfFileName));
+        Mail::to($user->email)
+            ->cc('dott.izzo@mydomotics.it')
+            ->cc('preventivi@mydomotics.it')
+            ->send(new SendEstimation($pdfFileName));
 
         if ($productData) {
 
@@ -592,5 +592,20 @@ class EstimationController extends Controller
                 'message' => 'Errore durante la creazione della stima.',
             ]);
         }
+    }
+    public function download($estimationId)
+    {
+        $filename = "estimation_{$estimationId}.pdf";
+        $path = storage_path('app/private/estimations/' . $filename);
+
+        if (!file_exists($path)) {
+            abort(404, 'File not found.');
+        }
+
+        return response()->file($path, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $filename . '"'
+        ]);
+        // return response()->download($path);
     }
 }
