@@ -849,9 +849,9 @@
                         sensorLabel.setAttribute('id', 'label-' + dotId);
                         sensorLabel.innerText = displayNumber; // Show only the number
                         sensorLabel.style.position = 'absolute';
-                        sensorLabel.style.fontSize = '14px';
+                        sensorLabel.style.fontSize = '12px';
                         sensorLabel.style.background = "white";
-                        sensorLabel.style.padding = '2px 4px';
+                        sensorLabel.style.padding = '1px 4px';
                         sensorLabel.style.color = 'black';
                         sensorLabel.style.left = (absCoords.x - 10) + 'px';
                         sensorLabel.style.top = (absCoords.y - 25) + 'px';
