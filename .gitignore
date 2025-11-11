@@ -15,7 +15,7 @@ Homestead.json
 /.vagrant/
 /.idea/
 /.vscode/
-/bootstarp/cache/config.php
+/bootstrap/cache/config.php
 # Laravel Mix / Vite
 /public/hot
 /public/build/
@@ -53,5 +53,5 @@ debugbar/
 
 # Laravel Telescope
 /storage/telescope/
-/bootstarp/cache 
+/bootstrap/cache 
 public/uploads

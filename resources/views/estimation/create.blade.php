@@ -275,7 +275,7 @@
     <!-- Mode Switching Buttons & Other UI -->
     <div style="padding-top: 30px; padding-bottom: 30px;">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-white shadow p-2 rounded mt-4">
-            <!-- Image Upload -->
+            <!-- Image/PDF Upload -->
             <div class="mb-2 mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <input type="text" class="form-control border p-2 floor-name w-full" placeholder="Nome della piantina"
                     required />
@@ -293,7 +293,7 @@
                 </select>
                 @endif
 
-                <input type="file" id="imageUpload" accept="image/*" class="form-control border p-2 w-full">
+                <input type="file" id="imageUpload" accept="image/*,application/pdf" class="form-control border p-2 w-full" title="Upload image (JPG, PNG, etc.) or PDF file">
             </div>
             <!-- Mode buttons: initially hidden, will be shown after picture upload -->
             <div id="modeButtons" class="my-4 flex items-center gap-4">
@@ -499,6 +499,8 @@
     <!-- Cropper.js -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <!-- PDF.js for PDF rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <!-- jsPDF and AutoTable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
@@ -724,18 +726,92 @@
             // Show the modal
             sensorDetailsModal.style.display = 'flex';
         }
-        // Image upload & Cropper initialization
+        // Image/PDF upload & Cropper initialization
         imageUpload.addEventListener('change', function(event) {
             const file = event.target.files[0];
-            if (file) {
+            if (!file) return;
+
+            // Check file size (2MB limit)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('File must be less than 2MB.');
+                event.target.value = '';
+                return;
+            }
+
+            // Check if file is PDF
+            if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+                // Handle PDF file
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const typedArray = new Uint8Array(e.target.result);
+                    
+                    // Set PDF.js worker
+                    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+                    
+                    // Load PDF
+                    pdfjsLib.getDocument({ data: typedArray }).promise.then(function(pdf) {
+                        // Get first page
+                        pdf.getPage(1).then(function(page) {
+                            const viewport = page.getViewport({ scale: 2.0 }); // Higher scale for better quality
+                            
+                            // Create canvas to render PDF page
+                            const canvas = document.createElement('canvas');
+                            const context = canvas.getContext('2d');
+                            canvas.height = viewport.height;
+                            canvas.width = viewport.width;
+                            
+                            // Render PDF page to canvas
+                            const renderContext = {
+                                canvasContext: context,
+                                viewport: viewport
+                            };
+                            
+                            page.render(renderContext).promise.then(function() {
+                                // Convert canvas to image
+                                const imageDataUrl = canvas.toDataURL('image/png');
+                                
+                                // Set the image source and proceed with cropping
+                                imageToCrop.onload = function() {
+                                    const naturalWidth = imageToCrop.naturalWidth;
+                                    const naturalHeight = imageToCrop.naturalHeight;
+                                    const dynamicAspectRatio = naturalWidth / naturalHeight;
+
+                                    cropContainer.style.display = 'block';
+
+                                    if (cropper) {
+                                        cropper.destroy();
+                                    }
+
+                                    cropper = new Cropper(imageToCrop, {
+                                        aspectRatio: dynamicAspectRatio,
+                                        viewMode: 1
+                                    });
+                                };
+
+                                imageToCrop.src = imageDataUrl;
+                            }).catch(function(error) {
+                                console.error('Error rendering PDF page:', error);
+                                alert('Error loading PDF. Please try again.');
+                                event.target.value = '';
+                            });
+                        }).catch(function(error) {
+                            console.error('Error getting PDF page:', error);
+                            alert('Error loading PDF page. Please try again.');
+                            event.target.value = '';
+                        });
+                    }).catch(function(error) {
+                        console.error('Error loading PDF:', error);
+                        alert('Error loading PDF. Please make sure it is a valid PDF file.');
+                        event.target.value = '';
+                    });
+                };
+                
+                reader.readAsArrayBuffer(file);
+            } else {
+                // Handle image file (existing code)
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     imageToCrop.onload = function() {
-                        if (file.size > 2 * 1024 * 1024) {
-                            alert('Image must be less than 2MB.');
-                            event.target.value = '';
-                            return;
-                        }
                         const naturalWidth = imageToCrop.naturalWidth;
                         const naturalHeight = imageToCrop.naturalHeight;
                         const dynamicAspectRatio = naturalWidth / naturalHeight;
