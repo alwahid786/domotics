@@ -592,8 +592,17 @@
                           <td style="width: 200px">${sensor.productName}</td>
                           <td>${roomName}</td>
                           <td><input type="number" value="${sensor.sensorPrice}" class="price-input" onchange="TotalPriceChanges(this)" /></td>
-                          <td><button class="delete-btn" data-dotid="${dotId}">✕</button></td>`;
+                          <td>
+                              <button class="edit-btn" data-dotid="${dotId}" style="margin-right: 5px; padding: 4px 8px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer;">✎</button>
+                              <button class="delete-btn" data-dotid="${dotId}" style="padding: 4px 8px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer;">✕</button>
+                          </td>`;
                 tableBody.appendChild(tr);
+
+                // Add event listener for edit button
+                tr.querySelector('.edit-btn').addEventListener('click', function() {
+                    const dotId = this.getAttribute('data-dotid');
+                    editSensor(dotId);
+                });
 
                 // Add event listener for delete button
                 tr.querySelector('.delete-btn').addEventListener('click', function() {
@@ -925,6 +934,13 @@
         temporaryDotId = null;
         dotModal.style.display = 'none';
         document.getElementById('dotForm').reset();
+        
+        // Clear editing flag and reset modal
+        delete dotModal.dataset.editingId;
+        const modalHeader = document.querySelector('#dotModal .modal-header');
+        const saveButton = document.getElementById('saveDot');
+        if (modalHeader) modalHeader.textContent = 'Sensor Information';
+        if (saveButton) saveButton.textContent = 'Save';
     }
     closeModal.addEventListener('click', hideDotModal);
     cancelModal.addEventListener('click', hideDotModal);
@@ -986,6 +1002,43 @@
         
         // Show the modal
         sensorDetailsModal.style.display = 'flex';
+    }
+
+    // Function to edit sensor (keeps same index)
+    function editSensor(dotId) {
+        const sensor = productsData.find(s => s.id === dotId);
+        if (!sensor) return;
+
+        // Populate the sensor modal with current values
+        document.getElementById('dotName').value = sensor.name;
+        document.getElementById('dotNote').value = sensor.description;
+        document.getElementById('dotRoomId').value = sensor.roomId;
+        
+        // Set the sensor select to current sensor
+        const sensorSelect = document.getElementById('sensorSelect');
+        if (sensorSelect) {
+            // Find and select the current sensor option
+            for (let i = 0; i < sensorSelect.options.length; i++) {
+                if (sensorSelect.options[i].value === sensor.sensor) {
+                    sensorSelect.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        // Store the dotId being edited
+        document.getElementById('dotX').value = sensor.x;
+        document.getElementById('dotY').value = sensor.y;
+        dotModal.dataset.editingId = dotId; // Store the ID being edited
+
+        // Change modal title and button text
+        const modalHeader = document.querySelector('#dotModal .modal-header');
+        const saveButton = document.getElementById('saveDot');
+        if (modalHeader) modalHeader.textContent = 'Edit Sensor Information';
+        if (saveButton) saveButton.textContent = 'Update';
+
+        // Show the modal
+        dotModal.style.display = 'flex';
     }
     // Image upload & Cropper initialization
     imageUpload.addEventListener('change', function(event) {
@@ -1391,6 +1444,99 @@
             return;
         }
 
+        // Check if we're editing an existing sensor
+        const editingId = dotModal.dataset.editingId;
+        
+        if (editingId) {
+            // EDIT MODE: Update existing sensor without changing index
+            const sensorIndex = productsData.findIndex(s => s.id === editingId);
+            if (sensorIndex === -1) {
+                alert('Sensor not found for editing.');
+                return;
+            }
+
+            const existingSensor = productsData[sensorIndex];
+            const price = sensorPrices[sensor] || existingSensor.price;
+
+            // Update the sensor in productsData array (keep same index and displayNumber)
+            productsData[sensorIndex] = {
+                ...existingSensor, // Keep existing properties
+                name,
+                description,
+                sensor,
+                sensorId: sensorIdVal,
+                sensorImage,
+                price,
+                // Keep x, y, roomId, displayNumber, id unchanged
+            };
+
+            // Update the table row
+            const row = document.getElementById('row-' + editingId);
+            if (row) {
+                const room = polygons.find(p => p.id === existingSensor.roomId);
+                const roomName = room ? room.name : "";
+
+                const imageHtml = sensorImage ?
+                    `<img src="${sensorImage}" alt="${sensor}" style="width:50px; height:50px; object-fit:contain; border-radius:4px;" onerror="this.onerror=null; this.src='https://via.placeholder.com/50?text=No+Image';">` :
+                    `<div style="width:50px; height:50px; display:flex; align-items:center; justify-content:center; background-color:#f0f0f0; border-radius:4px; font-size:10px; color:#666;">No Image</div>`;
+
+                // Update row content (keep the same row, just update cells)
+                row.innerHTML = `<td>${existingSensor.displayNumber}</td>
+                              <td>${name}</td>
+                              <td>${imageHtml}</td>
+                              <td>${description}</td>
+                              <td>${sensorCode}</td>
+                              <td data-sensor-type="${sensor}">${sensor}</td>
+                              <td>${roomName}</td>
+                              <td><input type="number" value="${price}" class="price-input" onchange="TotalPriceChanges(this)" /></td>
+                              <td>
+                                  <button class="edit-btn" data-dotid="${editingId}" style="margin-right: 5px; padding: 4px 8px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer;">✎</button>
+                                  <button class="delete-btn" data-dotid="${editingId}" style="padding: 4px 8px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer;">✕</button>
+                              </td>`;
+
+                // Re-attach event listeners
+                row.querySelector('.edit-btn').addEventListener('click', function() {
+                    editSensor(editingId);
+                });
+                row.querySelector('.delete-btn').addEventListener('click', function() {
+                    const dotId = this.getAttribute('data-dotid');
+                    const dotElem = document.getElementById(dotId);
+                    if (dotElem) dotElem.remove();
+                    const labelElem = document.getElementById('label-' + dotId);
+                    if (labelElem) labelElem.remove();
+                    const row = document.getElementById('row-' + dotId);
+                    if (row) row.remove();
+                    productsData = productsData.filter(item => item.id !== dotId);
+                    renumberSensors();
+                    updateTotalPrice();
+                    updateSensorSummary();
+                });
+                
+                // Re-attach price input change event
+                const priceInput = row.querySelector('.price-input');
+                if (priceInput) {
+                    priceInput.addEventListener('change', function() {
+                        TotalPriceChanges(this);
+                    });
+                }
+            }
+
+            // Clear editing flag
+            delete dotModal.dataset.editingId;
+
+            // Reset modal title and button
+            const modalHeader = document.querySelector('#dotModal .modal-header');
+            const saveButton = document.getElementById('saveDot');
+            if (modalHeader) modalHeader.textContent = 'Sensor Information';
+            if (saveButton) saveButton.textContent = 'Save';
+
+            hideDotModal({ keepDot: true });
+            updateTotalPrice();
+            updateSensorSummary();
+            return;
+        }
+
+        // CREATE MODE: Add new sensor (existing code)
         // Get relative coordinates from hidden fields
         const relX = parseFloat(document.getElementById('dotX').value);
         const relY = parseFloat(document.getElementById('dotY').value);
@@ -1477,8 +1623,17 @@
                       <td data-sensor-type="${sensor}">${sensor}</td>
                       <td>${roomName}</td>
                       <td><input type="number" value="${price}" class="price-input" onchange="TotalPriceChanges(this)" /></td>
-                      <td><button class="delete-btn" data-dotid="${currentDotId}">✕</button></td>`;
+                      <td>
+                          <button class="edit-btn" data-dotid="${currentDotId}" style="margin-right: 5px; padding: 4px 8px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer;">✎</button>
+                          <button class="delete-btn" data-dotid="${currentDotId}" style="padding: 4px 8px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer;">✕</button>
+                      </td>`;
         sensorTableBody.appendChild(tr);
+        
+        // Add event listener for edit button
+        tr.querySelector('.edit-btn').addEventListener('click', function() {
+            editSensor(currentDotId);
+        });
+        
         // Sensor row delete handler
         tr.querySelector('.delete-btn').addEventListener('click', function() {
             const dotId = this.getAttribute('data-dotid');

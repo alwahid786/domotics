@@ -43,12 +43,20 @@
             display: block;
         }
         td.wrap, th.wrap {
-        width: 50px; /* or any fixed width you want */
-        max-width: 50px;
-        word-wrap: break-word;
-        word-break: break-word;
-        white-space: normal;
-
+            width: 60px;
+            max-width: 60px;
+            word-wrap: break-word;
+            word-break: break-word;
+            white-space: normal;
+            font-size: 12px;
+        }
+        td.wrap-2, th.wrap-2 {
+            width: 140px;
+            max-width: 140px;
+            word-wrap: break-word;
+            word-break: break-word;
+            white-space: normal;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -139,7 +147,7 @@
                 @endphp
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $roomName }}</td>
+                    <td class="wrap">{{ $roomName }}</td>
                     <td>
                         @if ($sensor->product_image)
                         <img src="{{ public_path('storage/' . $sensor->product_image) }}"
@@ -155,7 +163,7 @@
                         </div>
                         @endif
                     </td>
-                    <td class="wrap">{{ $sensor->product->product_name ?? $sensor->product_name}}</td>
+                    <td class="wrap-2">{{ $sensor->product->product_name ?? $sensor->product_name}}</td>
                     <td class="wrap">{{ $sensor->product->code ?? $sensor->product_code }}</td>
                     <td class="wrap">{{ $sensor->note ?? $sensor->sensorDescription }}</td>
                     <td class="wrap">{{ number_format($sensor->price ?? $sensor->sensorPrice, 2) }}</td>
@@ -233,14 +241,14 @@
                     <th>Total Price</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody style="font-size: 12px;">
                 @foreach ($mergedSensors as $sensor)
-                <tr style="border: 1px solid #000;">
-                    <td style="border: 1px solid #000;">{{ $sensor['name'] }}</td>
+                <tr style="border: 1px solid #000; font-size: 12px;">
+                    <td style="border: 1px solid #000; font-size: 12px;">{{ $sensor['name'] }}</td>
                     {{-- <td>{{ $sensor['productCode'] }}</td> --}}
-                    <td style="border: 1px solid #000;">{{ $sensor['quantity'] }}</td>
-                    <td style="border: 1px solid #000;">€{{ number_format($sensor['unitPrice'], 2) }}</td>
-                    <td style="border: 1px solid #000;">€{{ number_format($sensor['total'], 2) }}</td>
+                    <td style="border: 1px solid #000; font-size: 12px;">{{ $sensor['quantity'] }}</td>
+                    <td style="border: 1px solid #000; font-size: 12px;">€{{ number_format($sensor['unitPrice'], 2) }}</td>
+                    <td style="border: 1px solid #000; font-size: 12px;">€{{ number_format($sensor['total'], 2) }}</td>
                 </tr>
                 @endforeach
                 <tr>
