@@ -453,22 +453,24 @@
                     <tbody></tbody>
                     <tfoot>
                         <tr id="totalCountRow">
-                            <td colspan="8" class="text-end">
+                            <td colspan="7" class="text-end">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div><strong>Total Sensors:</strong></div>
-                                    <div id="totalCount">0</div>
                                 </div>
                             </td>
-                            <td></td>
+                            <td>
+                                <div id="totalCount">0</div>
+                            </td>
                         </tr>
                         <tr id="totalRow">
-                            <td colspan="8" class="text-end">
+                            <td colspan="7" class="text-end">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div><strong>Total Price:</strong></div>
-                                    <div>€<span id="totalPrice">0</span></div>
                                 </div>
                             </td>
-                            <td></td>
+                            <td>
+                                <div>€<span id="totalPrice">0</span></div>
+                            </td>
                         </tr>
                     </tfoot>
                 </table>
