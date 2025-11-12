@@ -1523,7 +1523,7 @@
 
                     // Draw sensor label
                     ctx.font = "12px Arial";
-                    const text = sensorNumber + ". " + sensor.name; // Add number before name
+                    const text = sensorNumber;
                     const textMetrics = ctx.measureText(text);
                     const textWidth = textMetrics.width;
                     const textHeight = 12;

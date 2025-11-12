@@ -30,7 +30,7 @@
                             @enderror
                         </div>
                         <div class="form-group mb-4">
-                            <label class="block text-sm font-medium for="email">Email</label>
+                            <label class="block text-sm font-medium" for="email">Email</label>
                             <input type="email" name="email" id="email" class="form-control border p-2 w-full" value="{{ $user->email }}" required>
                             @error('email')
                             <span class="text-red-500">{{ $message }}</span>
@@ -53,8 +53,8 @@
                         <div class="form-group mb-4">
                             <label class="block text-sm font-medium" for="roles">Ruolo</label>
                             <select name="roles" id="roles" class="form-control border p-2 w-full">
-                                <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
-                                <option value="user" {{ $user->role == 'user' ? 'selected' : '' }}>User</option>
+                                <option value="admin" {{ $userRole['Admin'] ?? '' == 'admin' ? 'selected' : '' }}>Admin</option>
+                                <option value="user" {{ $userRole['User'] ?? '' == 'user' ? 'selected' : '' }}>User</option>
                             </select>
                             @error('roles')
                             <span class="text-red-500">{{ $message }}</span>
