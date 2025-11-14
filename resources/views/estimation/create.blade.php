@@ -1192,34 +1192,112 @@
             polygons.forEach(p => drawFinalPolygon(p));
         }
 
-        // Function to renumber all sensors sequentially from 1
-        function renumberSensors() {
-            // Reset the global counter
-            nextSensorNumber = 1;
+        // Function to sort sensors by room name (alphabetically by first letter)
+        function sortSensorsByRoom() {
+            productsData.sort((a, b) => {
+                const roomA = polygons.find(p => p.id === a.roomId);
+                const roomB = polygons.find(p => p.id === b.roomId);
+                const roomNameA = roomA ? roomA.name.toUpperCase() : '';
+                const roomNameB = roomB ? roomB.name.toUpperCase() : '';
+                return roomNameA.localeCompare(roomNameB);
+            });
+        }
 
-            // Update each sensor in productsData array with new display number
+        // Function to re-render the sensor table in sorted order
+        function renderSensorTable() {
+            // Clear existing table rows
+            sensorTableBody.innerHTML = '';
+            
+            const RoleId = document.getElementById('RoleId').value.trim();
+            
+            // Re-render all sensors in sorted order
             productsData.forEach((sensor, index) => {
                 const displayNumber = index + 1;
                 sensor.displayNumber = displayNumber;
-
-                // Update the label text - show only the number
+                
+                // Find room name
+                const room = polygons.find(p => p.id === sensor.roomId);
+                const roomName = room ? room.name : "";
+                
+                // Use the stored price from productsData (prices are updated in productsData when changed in table)
+                const actualPrice = parseFloat(sensor.price) || 0;
+                
+                // Create image HTML
+                const imageHtml = sensor.sensorImage ?
+                    `<img src="${sensor.sensorImage}" alt="${sensor.sensor}" style="width:50px; height:50px; object-fit:contain; border-radius:4px;" onerror="this.onerror=null; this.src='https://via.placeholder.com/50?text=No+Image';">` :
+                    `<div style="width:50px; height:50px; display:flex; align-items:center; justify-content:center; background-color:#f0f0f0; border-radius:4px; font-size:10px; color:#666;">No Image</div>`;
+                
+                // Get sensor code
+                const sensorCode = sensor.sensorCode || '';
+                
+                const tr = document.createElement('tr');
+                tr.setAttribute('id', 'row-' + sensor.id);
+                tr.innerHTML = `<td>${displayNumber}</td>
+                          <td>${roomName}</td>
+                          <td>${sensor.name}</td>
+                          <td>${imageHtml}</td>
+                          <td>${sensor.description}</td>
+                          <td>${sensorCode}</td>
+                          <td>${sensor.sensor}</td>    
+                       <td>
+                       <input type="number" value="${parseFloat(actualPrice).toFixed(2)}" required ${RoleId===1 || RoleId===2 ? 'readonly' : '' }
+                        class="price-input" step="0.01" min="0.01" onblur="enforceTwoDecimalFormat(this)" onchange="TotalPriceChanges(this)"
+                        inputmode="decimal" />
+                    </td>
+                          <td>
+                              <button class="edit-btn" data-dotid="${sensor.id}" style="margin-right: 5px; padding: 4px 8px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer;">✎</button>
+                              <button class="delete-btn" data-dotid="${sensor.id}" style="padding: 4px 8px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer;">✕</button>
+                          </td>`;
+                sensorTableBody.appendChild(tr);
+                
+                // Update label text
                 const labelElem = document.getElementById('label-' + sensor.id);
                 if (labelElem) {
                     labelElem.innerText = displayNumber;
                 }
-
-                // Update the table row
-                const row = document.getElementById('row-' + sensor.id);
-                if (row) {
-                    const firstCell = row.querySelector('td:first-child');
-                    if (firstCell) {
-                        firstCell.textContent = displayNumber;
-                    }
+                
+                // Re-attach event listeners
+                tr.querySelector('.edit-btn').addEventListener('click', function() {
+                    editSensor(sensor.id);
+                });
+                
+                tr.querySelector('.delete-btn').addEventListener('click', function() {
+                    const dotId = this.getAttribute('data-dotid');
+                    const dotElem = document.getElementById(dotId);
+                    if (dotElem) dotElem.remove();
+                    const labelElem = document.getElementById('label-' + dotId);
+                    if (labelElem) labelElem.remove();
+                    const row = document.getElementById('row-' + dotId);
+                    if (row) row.remove();
+                    productsData = productsData.filter(item => item.id !== dotId);
+                    
+                    // Sort, re-render and renumber
+                    sortSensorsByRoom();
+                    renderSensorTable();
+                    
+                    updateTotalPrice();
+                    updateSensorSummary();
+                });
+                
+                // Re-attach price input change event
+                const priceInput = tr.querySelector('.price-input');
+                if (priceInput) {
+                    priceInput.addEventListener('change', function() {
+                        TotalPriceChanges(this);
+                    });
                 }
             });
-
+            
             // Set nextSensorNumber to next available number
             nextSensorNumber = productsData.length + 1;
+        }
+
+        // Function to renumber all sensors sequentially from 1
+        function renumberSensors() {
+            // Sort sensors by room name first
+            sortSensorsByRoom();
+            // Then re-render the table
+            renderSensorTable();
         }
         // Save sensor (device) details from sensor modal
         document.getElementById('saveDot').addEventListener('click', function() {
@@ -1251,72 +1329,22 @@
                 const existingSensor = productsData[sensorIndex];
                 const price = sensorPrices[sensor] || existingSensor.price;
 
-                // Update the sensor in productsData array (keep same index and displayNumber)
+                // Update the sensor in productsData array
                 productsData[sensorIndex] = {
                     ...existingSensor, // Keep existing properties
                     name,
                     description,
                     sensor,
                     sensorId: sensorIdVal,
+                    sensorCode: sensorCode,
                     sensorImage,
                     price,
                     // Keep x, y, roomId, displayNumber, id unchanged
                 };
 
-                // Update the table row
-                const row = document.getElementById('row-' + editingId);
-                if (row) {
-                    const room = polygons.find(p => p.id === existingSensor.roomId);
-                    const roomName = room ? room.name : "";
-
-                    const imageHtml = sensorImage ?
-                        `<img src="${sensorImage}" alt="${sensor}" style="width:50px; height:50px; object-fit:contain; border-radius:4px;" onerror="this.onerror=null; this.src='https://via.placeholder.com/50?text=No+Image';">` :
-                        `<div style="width:50px; height:50px; display:flex; align-items:center; justify-content:center; background-color:#f0f0f0; border-radius:4px; font-size:10px; color:#666;">No Image</div>`;
-
-                    // Update row content (keep the same row, just update cells)
-                    row.innerHTML = `<td>${existingSensor.displayNumber}</td>
-                                  <td>${roomName}</td>
-                                  <td>${name}</td>
-                                  <td>${imageHtml}</td>
-                                  <td>${description}</td>
-                                  <td>${sensorCode}</td>
-                                  <td>${sensor}</td>
-                                  <td>
-                                      <input type="number" value="${parseFloat(price).toFixed(2)}" required ${RoleId===1 || RoleId===2 ? 'readonly' : '' }
-                                       class="price-input" step="0.01" min="0.01" onblur="enforceTwoDecimalFormat(this)" onchange="TotalPriceChanges(this)"
-                                       inputmode="decimal" />
-                                  </td>
-                                  <td>
-                                      <button class="edit-btn" data-dotid="${editingId}" style="margin-right: 5px; padding: 4px 8px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer;">✎</button>
-                                      <button class="delete-btn" data-dotid="${editingId}" style="padding: 4px 8px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer;">✕</button>
-                                  </td>`;
-
-                    // Re-attach event listeners
-                    row.querySelector('.edit-btn').addEventListener('click', function() {
-                        editSensor(editingId);
-                    });
-                    row.querySelector('.delete-btn').addEventListener('click', function() {
-                        const dotId = this.getAttribute('data-dotid');
-                        const dotElem = document.getElementById(dotId);
-                        if (dotElem) dotElem.remove();
-                        const labelElem = document.getElementById('label-' + dotId);
-                        if (labelElem) labelElem.remove();
-                        const row = document.getElementById('row-' + dotId);
-                        if (row) row.remove();
-                        productsData = productsData.filter(item => item.id !== dotId);
-                        renumberSensors();
-                        updateTotalPrice();
-                        updateSensorSummary();
-                    });
-                    
-                    // Re-attach price input change event
-                    const priceInput = row.querySelector('.price-input');
-                    if (priceInput) {
-                        priceInput.addEventListener('change', function() {
-                            TotalPriceChanges(this);
-                        });
-                    }
-                }
+                // Sort and re-render the table to maintain room order
+                sortSensorsByRoom();
+                renderSensorTable();
 
                 // Clear editing flag
                 delete dotModal.dataset.editingId;
@@ -1358,6 +1386,7 @@
                 description, // description name from modal input
                 sensor, // sensor type/attached sensor name
                 sensorId: sensorIdVal,
+                sensorCode: sensorCode,
                 sensorImage,
                 price,
                 x: relX, // store relative X
@@ -1397,61 +1426,13 @@
             
             canvasContainer.appendChild(sensorLabel);
 
-            // Increment dot count and next sensor number
+            // Increment dot count
             dotCount++;
-            nextSensorNumber++;
 
-            // Create sensor table row with room name
-            const room = polygons.find(p => p.id === roomId);
-            const roomName = room ? room.name : "";
-
-            // Create image HTML with proper error handling and styling
-            const imageHtml = sensorImage ?
-                `<img src="${sensorImage}" alt="${sensor}" style="width:50px; height:50px; object-fit:contain; border-radius:4px;" onerror="this.onerror=null; this.src='https://via.placeholder.com/50?text=No+Image';">` :
-                `<div style="width:50px; height:50px; display:flex; align-items:center; justify-content:center; background-color:#f0f0f0; border-radius:4px; font-size:10px; color:#666;">No Image</div>`;
-
-            const tr = document.createElement('tr');
-            tr.setAttribute('id', 'row-' + currentDotId);
-            tr.innerHTML = `<td>${displayNumber}</td>
-                      <td>${roomName}</td>
-                      <td>${name}</td>
-                      <td>${imageHtml}</td>
-                      <td>${description}</td>
-                      <td>${sensorCode}</td>
-                      <td>${sensor}</td>    
-                   <td>
-                   <input type="number" value="${parseFloat(price).toFixed(2)}" required ${RoleId===1 || RoleId===2 ? 'readonly' : '' }
-                    class="price-input" step="0.01" min="0.01" onblur="enforceTwoDecimalFormat(this)" onchange="TotalPriceChanges(this)"
-                    inputmode="decimal" />
-                </td>
-                      <td>
-                          <button class="edit-btn" data-dotid="${currentDotId}" style="margin-right: 5px; padding: 4px 8px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer;">✎</button>
-                          <button class="delete-btn" data-dotid="${currentDotId}" style="padding: 4px 8px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer;">✕</button>
-                      </td>`;
-                    sensorTableBody.appendChild(tr);
+            // Sort sensors by room name and re-render the table
+            sortSensorsByRoom();
+            renderSensorTable();
             
-            // Add event listener for edit button
-            tr.querySelector('.edit-btn').addEventListener('click', function() {
-                editSensor(currentDotId);
-            });
-          
-            // Sensor row delete handler
-            tr.querySelector('.delete-btn').addEventListener('click', function() {
-                const dotId = this.getAttribute('data-dotid');
-                const dotElem = document.getElementById(dotId);
-                if (dotElem) dotElem.remove();
-                const labelElem = document.getElementById('label-' + dotId);
-                if (labelElem) labelElem.remove();
-                const row = document.getElementById('row-' + dotId);
-                if (row) row.remove();
-                productsData = productsData.filter(item => item.id !== dotId);
-                
-                // Renumber all remaining sensors after deletion
-                renumberSensors();
-                
-                updateTotalPrice();
-                updateSensorSummary(); // Add this line to update sensor summary
-            });
             hideDotModal({
                 keepDot: true
             });
