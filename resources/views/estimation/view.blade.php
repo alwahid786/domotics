@@ -329,8 +329,8 @@
             <div class="floorplan">
                 <div style="text-align: center; color: black !important;">
                     <img src="{{ asset('uploads/estimations/invoice-header.png') }}" width="100%" height="auto" alt="Header">
-                    <p style="margin-top: -15px">COVERTEC Design: Via D.Fontana 53/A-80198 - Napoli Tel-0810491219
-                        Cap. Soc. 10.000,00 int. versato p.i. 08218571217 </p>
+                    {{-- <p style="margin-top: -15px">COVERTEC Design: Via D.Fontana 53/A-80198 - Napoli Tel-0810491219
+                        Cap. Soc. 10.000,00 int. versato p.i. 08218571217 </p> --}}
                 </div>
             </div>
             <br>
