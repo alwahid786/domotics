@@ -475,7 +475,7 @@ class EstimationController extends Controller
                     'name' => $request->forUserName,
                     'address' => $request->forUserAddress,
                     'clean_image' => $cleanimagePath,
-                    'total' => $validatedData['totalPrice'],
+                    'total' => (float) $validatedData['totalPrice'],
                     'floor_name' => $validatedData['floorName'],
                     'updated_at' => now(),
                 ]);
@@ -487,7 +487,7 @@ class EstimationController extends Controller
                     'name' => $request->forUserName,
                     'address' => $request->forUserAddress,
                     'clean_image' => $cleanimagePath,
-                    'total' => $validatedData['totalPrice'],
+                    'total' => (float) $validatedData['totalPrice'],
                     'floor_name' => $validatedData['floorName'],
                     'updated_at' => now(),
                 ]);
