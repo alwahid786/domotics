@@ -4,17 +4,11 @@
 /public/storage/
 /storage/*.key
 /storage/app/public/
-.env
-.env.*
 .env.backup
-.env.local
-.env.development
-.env.production
 Homestead.yaml
 Homestead.json
 /.vagrant/
 /.idea/
-/.vscode/
 /bootstrap/cache/config.php
 # Laravel Mix / Vite
 /public/hot
@@ -55,3 +49,4 @@ debugbar/
 /storage/telescope/
 /bootstrap/cache 
 public/uploads
+config.bat
